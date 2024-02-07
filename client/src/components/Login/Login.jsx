@@ -83,10 +83,10 @@ const Login = () => {
 							</form>
 
 							{/* Temporary Button */}
-							<button 
+							{/* <button 
 								onClick={auth.logout}
 								className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-3xl text-sm px-5 py-2.5 text-center "
-							>Log out</button>
+							>Log out</button> */}
 						</div>
 					</div>
 				</div>
