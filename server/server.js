@@ -51,8 +51,6 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || 'An unknown error occurred!' });
 });
 
-// mongoDB connection URI
-// const uriDB = 'mongodb+srv://eziokittu:southpoint19@cluster0.nmjiwwv.mongodb.net/test'; // ATLAS
 
 // community server
 // const uriDB = 'mongodb://localhost:27017/rnpsoft_employee_portal_test'; 
