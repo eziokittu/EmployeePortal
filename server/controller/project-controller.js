@@ -1,6 +1,5 @@
 const { validationResult } = require('express-validator');
 
-const { v4: uuidv4 } = require('uuid');
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
 const Project = require('../models/project');
@@ -26,15 +25,14 @@ const createProject = async (req, res, next) => {
       return next(new HttpError('Invalid inputs passed, please check your data.', 422));
     }
 
-    const { title, description } = req.body;
-
-    const generatedProjectId = uuidv4();
+    // const { title, description } = req.body;
+    const { title, startDate, endDate } = req.body;
 
     const createdProject = new Project({
-      projectId: generatedProjectId,
       title: title,
-      description: description,
-      date_start: Date.now()
+      // description: description,
+      date_start: startDate,
+      date_end: endDate
     });
 
     await createdProject.save();
@@ -82,93 +80,82 @@ const updateProjectInfo = async (req, res, next) => {
   }
 }
 
-const deleteProduct = async (req, res, next) => {
-	const productId = req.params.pid;
-
-	let product;
+const deleteProject = async (req, res, next) => {
+  // console.log(req.params.pid);
+  const { projectId } = req.body;
+	let project;
   try {
-    product = await Product.findById(productId).populate('creator');;
+    // project = await Project.findById(req.params.pid);
+    project = await Project.findById(projectId);
   } catch (err) {
     const error = new HttpError(
-      'Something went wrong[3], could not find product to delete. [1]',
+      'Something went wrong, could not find project to delete.',
       500
     );
     return next(error);
   }
 
-  if (!product) {
-    const error = new HttpError('Could not find product for this id.', 404);
+  if (!project) {
+    const error = new HttpError('Could not find project for this id.', 404);
     return next(error);
   }
 
-  if (product.creator.id !== req.userData.userId) {
-    const error = new HttpError(
-      'You are not allowed to delete this product.',
-      401
-    );
-    return next(error);
-  }
-
-  const imagePath = product.image;
+  // Check if Admin
+  // if (req.userData.isAdmin !== true) {
+  //   const error = new HttpError(
+  //     'You are not allowed to delete this product.',
+  //     401
+  //   );
+  //   return next(error);
+  // }
 
   try {
-    // const sess = await mongoose.startSession();
-    // sess.startTransaction();
-    // await product.remove({ session: sess });
-    // product.creator.products.pull(product);
-    // await product.creator.save({ session: sess });
-    // await sess.commitTransaction();
-
-    await product.remove();
-    product.creator.products.pull(product);
-    await product.creator.save();
+    await Project.deleteOne(project);
   } 
   catch (err) {
+    console.log(err);
     const error = new HttpError(
-      'Something went wrong[4], could not delete product.',
+      'Something went wrong[4], could not delete project.',
       500
     );
     return next(error);
   }
 
-  fs.unlink(imagePath, err => {
-    console.log(err);
-  });
-
-  res.status(200).json({ message: 'Deleted product.' });
+  res.status(200).json({ message: 'Deleted project.' });
 };
 
-const addEmployee = async(req, res, next) => {
-  try{
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return next(new HttpError('Invalid inputs passed, please check your data.', 422));
-    }
+// const addEmployee = async(req, res, next) => {
+//   try{
+//     const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//       return next(new HttpError('Invalid inputs passed, please check your data.', 422));
+//     }
 
-    const { userId, projectId } = req.body;
+//     const { userId, projectId } = req.body;
 
-    // Find the existing project by projectId
-    const existingProject = await Project.findOne({ projectId: projectId });
-    if (!existingProject) {
-      return next(new HttpError('Project not found, update failed.', 404));
-    }
+//     // Find the existing project by projectId
+//     const existingProject = await Project.findOne({ projectId: projectId });
+//     if (!existingProject) {
+//       return next(new HttpError('Project not found, update failed.', 404));
+//     }
     
-    // Update project details
-    existingProject.employees = title;
-    existingProject.description = description;
+//     // Update project details
+//     existingProject.employees = title;
+//     existingProject.description = description;
 
-    // Save the updated user
-    await existingProject.save();
-  } 
-  catch (err) {
-    console.error(err); // Log the error for debugging
-    return next(new HttpError('Creating project failed!, please try again later.', 500));
-  }
-}
+//     // Save the updated user
+//     await existingProject.save();
+//   } 
+//   catch (err) {
+//     console.error(err); // Log the error for debugging
+//     return next(new HttpError('Creating project failed!, please try again later.', 500));
+//   }
+// }
 
 module.exports = {
   getProjects,
   createProject,
-  updateProjectInfo
+  updateProjectInfo,
+  deleteProject
   // addEmployee
 };

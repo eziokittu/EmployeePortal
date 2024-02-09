@@ -12,12 +12,26 @@ router.post(
   [
     check('title')
       .not()
-      .isEmpty(),
-    check('description')
-      .not()
       .isEmpty()
+    // check('description')
+    //   .not()
+    //   .isEmpty()
   ],
   projectController.createProject
+);
+
+router.delete(
+  // '/delete/:pid',
+  '/',
+  [
+    // check('title')
+    //   .not()
+    //   .isEmpty()
+    // check('description')
+    //   .not()
+    //   .isEmpty()
+  ],
+  projectController.deleteProject
 );
 
 router.patch(

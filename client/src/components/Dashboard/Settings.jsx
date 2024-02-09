@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useHttpClient } from '../Backend/hooks/http-hook';
 import { AuthContext } from '../Backend/context/auth-context';
-// import UploadImage from '../Common/UploadImage';
 
 const Settings = () => {
   const { sendRequest } = useHttpClient();
