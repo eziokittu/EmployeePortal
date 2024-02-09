@@ -20,7 +20,8 @@ const userSchema = new Schema({
     projects_ongoing: {type: Number, required: true, default: 0},
     tenure: {type: String, required: true, default: "1 year" },
     date: {type: Date, required: true, default: Date.now() },
-    status_termination: {type: Boolean, required: true, default: true }
+    status_termination: {type: Boolean, required: true, default: true },
+    applied_leave: {type: Boolean, default: false }
 });
 
 userSchema.plugin(uniqueValidator);

@@ -1,9 +1,28 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Card from '../Common/Card'
 import ticketsOpen from '../../assets/ticketsOpen.png'
 import ticketsClosed from '../../assets/ticketsClosed.png'
 
+import { useHttpClient } from '../Backend/hooks/http-hook';
+
 const Projects = () => {
+  const [projects, setProjects] = useState();
+  const { sendRequest } = useHttpClient();
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const responseData = await sendRequest(
+          `http://localhost:5000/api/projects/`
+        );
+        setProjects(responseData.projects);
+      } catch (err) {
+        console.log("Error in fetching projects: "+err);
+      }
+    };
+    fetchProjects();
+  }, []);
+
   return (
     <div className="p-4 sm:ml-64">
       <div className="p-4 border-2 border-gray-200 rounded-lg">
@@ -40,25 +59,29 @@ const Projects = () => {
           </div>
           {/* Searchbar and Heading End */}
 
-          <div className='my-3'>
-            <div className="flex justify-between items-center border border-black/10 rounded-lg px-3 py-1.5 gap-x-3 shadow-sm shadow-white/50 duration-300 text-black">
-              <input type="checkbox" className="cursor-pointer" />
-              <h2>Project 1</h2>
-              <h2>11/12/2022</h2>
-              <h2>11/12/2022</h2>
-              {/* Edit, Save Button */}
-              <button
-                className="text-white bg-primary-600 border-2 hover:bg-white hover:text-primary-600 hover:border-primary-600 focus:ring-2 focus:ring-indigo-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2"
-              > Edit
-              </button>
-              {/* Delete project Button */}
-              <button
-                className="text-white border-2 bg-red-600 hover:bg-white hover:text-red-600 hover:border-red-600 focus:ring-2 focus:ring-indigo-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2"
-              >
-                Dlelete
-              </button>
+          {/* Project Card */}
+          {projects && projects.map(project => (
+            <div className='my-3'>
+              <div className="flex justify-between items-center border border-black/10 rounded-lg px-3 py-1.5 gap-x-3 shadow-sm shadow-white/50 duration-300 text-black">
+                <input type="checkbox" className="cursor-pointer" />
+                <h2>{project.title}</h2>
+                <h2>{project.date_start.split('T')[0]}</h2>
+                <h2>{project.date_end || '∞'}</h2>
+                {/* Edit, Save Button */}
+                <button
+                  className="text-white bg-primary-600 border-2 hover:bg-white hover:text-primary-600 hover:border-primary-600 focus:ring-2 focus:ring-indigo-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2"
+                > Edit
+                </button>
+                {/* Delete project Button */}
+                <button
+                  className="text-white border-2 bg-red-600 hover:bg-white hover:text-red-600 hover:border-red-600 focus:ring-2 focus:ring-indigo-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2"
+                >
+                  Dlelete
+                </button>
+              </div>
             </div>
-          </div>
+          ))}
+          
 
         </div>
 

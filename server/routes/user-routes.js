@@ -31,30 +31,6 @@ router.post(
 
 router.post('/login', userController.login);
 
-// PATCH: Update user all details
-router.patch(
-  '/edit/all',
-  fileUpload.single('image'),
-  [
-    check('firstname')
-      .not()
-      .isEmpty(),
-    check('lastname')
-      .not()
-      .isEmpty(),
-    check('userName')
-      .not()
-      .isEmpty()
-      .isLength({ min: 2 })
-      .withMessage("userName must be atleast 2 characters long"),
-    check('phone')
-      .not()
-      .isEmpty()
-      .isLength({ min: 10 })
-  ],
-  userController.updateUserAllDetails
-);
-
 // PATCH: Update user info
 router.patch(
   '/edit/info',

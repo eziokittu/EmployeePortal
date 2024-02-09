@@ -231,55 +231,6 @@ const login = async (req, res, next) => {
 
 // PATCH 
 
-const updateUserAllDetails = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return next(new HttpError('Invalid inputs passed, please check your data.', 422));
-  }
-
-  const { firstname, lastname, userName, email, phone } = req.body;
-
-  try {
-    // Find the existing user by email
-    const existingUser = await User.findOne({ email });
-    if (!existingUser) {
-      return next(new HttpError('User not found, update failed.', 404));
-    }
-
-    // Check if the updated userName already exists
-    if (userName !== existingUser.userName) {
-      const userWithSameId = await User.findOne({ userName });
-      if (userWithSameId) {
-        return next(new HttpError('The entered username is taken. Try something else.', 422));
-      }
-    }
-
-    // const hashedPassword = await bcrypt.hash(password, 12);
-    
-    // Update user details
-    existingUser.firstname = firstname;
-    existingUser.lastname = lastname;
-    existingUser.userName = userName;
-    existingUser.phone = phone;
-    // existingUser.password = hashedPassword;
-    try {
-      existingUser.image = req.file.path;
-    }
-    catch (err2){
-      console.log("File path error:\n",err2);
-    }
-
-    // Save the updated user
-    await existingUser.save();
-    console.log("User all details updated!");
-    
-    res.status(200).json({ user: existingUser.toObject({ getters: true }) });
-  } catch (err) {
-    // Handle database or server errors
-    return next(new HttpError('Something went wrong[1], could not update user.', 500));
-  }
-};
-
 const updateUserInfo = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -415,7 +366,6 @@ module.exports = {
   getUser,
 	signup,
 	login,
-  updateUserAllDetails,
   updateUserInfo,
   updateUserImage,
   updateEmployeeAsUser,

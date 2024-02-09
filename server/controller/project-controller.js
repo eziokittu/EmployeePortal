@@ -1,268 +1,174 @@
-// const { validationResult } = require('express-validator');
+const { validationResult } = require('express-validator');
 
-// const bcrypt = require('bcryptjs');
-// const jwt = require('jsonwebtoken');
-// const { v4: uuidv4 } = require('uuid');
-// const HttpError = require('../models/http-error');
-// const User = require('../models/user');
+const { v4: uuidv4 } = require('uuid');
+const HttpError = require('../models/http-error');
+const User = require('../models/user');
+const Project = require('../models/project');
 
-// const getUsers = async (req, res, next) => {
-//   let users;
-//   try {
-//     users = await User.find({}, '-password');
-//   } catch (err) {
-//     const error = new HttpError(
-//       'Fetching users failed, please try again later.',
-//       500
-//     );
-//     return next(error);
-//   }
-//   res.json({users: users.map(user => user.toObject({ getters: true }))});
-// };
+const getProjects = async (req, res, next) => {
+  let projects;
+  try {
+    projects = await Project.find();
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching projects failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+  res.json({projects: projects.map(project => project.toObject({ getters: true }))});
+};
 
-// const getUser = async (req, res, next) => {
-//   const uid = req.params['uid'];
-//   console.log('DEBUG -- user-controller.js -- 1: '+uid);
-//   let user;
-//   try {
-//     // user = await User.find();
-//     user = await User.findById(uid);
-//     console.log('DEBUG -- user-controller.js -- 2: '+user.name);
-//   } catch (err) {
-//     const error = new HttpError(
-//       'Fetching user failed, please try again later.',
-//       500
-//     );
-//     return next(error);
-//   }
-//   res.json({user: user});
-// };
+const createProject = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return next(new HttpError('Invalid inputs passed, please check your data.', 422));
+    }
 
-// const getEmployeeCount = async (req, res, next) => {
-//   let employeeCount;
-//   try {
-//     employeeCount = await User.countDocuments({ isEmployee: true });
-//   } catch (err) {
-//     const error = new HttpError(
-//       'Fetching employee count failed, please try again later.',
-//       500
-//     );
-//     return next(error);
-//   }
+    const { title, description } = req.body;
 
-//   res.json({ employeeCount });
-//   console.log("DEBUG -- Employee-Controller - Fetching employee count successful!");
-// };
+    const generatedProjectId = uuidv4();
 
-// const getEmployees = async (req, res, next) => {
-//   const page = req.query.page || 0;
-//   const employeesPerPage = 2;
+    const createdProject = new Project({
+      projectId: generatedProjectId,
+      title: title,
+      description: description,
+      date_start: Date.now()
+    });
 
-//   let allEmployees;
-//   try {
-//     allEmployees = await User
-//       .find({ isEmployee: true })  // Adjust the query to filter by isEmployee
-//       .skip(page * employeesPerPage)
-//       .limit(employeesPerPage);
-//   } catch (err) {
-//     const error = new HttpError(
-//       'Fetching Employees failed, please try again later.',
-//       500
-//     );
-//     return next(error);
-//   }
+    await createdProject.save();
 
-//   if (!allEmployees || allEmployees.length === 0) {
-//     return next(new HttpError('No employees found.', 404));
-//   }
+    res.status(201).json({
+      createdProject
+    });
+  } 
+  catch (err) {
+    console.error(err); // Log the error for debugging
+    return next(new HttpError('Creating project failed!, please try again later.', 500));
+  }
+}
 
-//   res.json({
-//     employees: allEmployees.map((emp) => emp.toObject({ getters: true })),
-//   });
-//   console.log("DEBUG -- Employee-Controller - Fetching employees successful!");
-// };
+// updates project, req.params provides the id
+const updateProjectInfo = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return next(new HttpError('Invalid inputs passed, please check your data.', 422));
+    }
 
-// // Utility Function to generate user id in format
-// // const generateFormattedUserId = (date, userNumber) => {
-// //   const year = date.getFullYear().toString().slice(2);
-// //   const month = padNumber(date.getMonth() + 1);
-// //   const day = padNumber(date.getDate());
-// //   // const hours = padNumber(date.getHours());
-// //   // const minutes = padNumber(date.getMinutes());
+    const { title, description } = req.body;
 
-// //   // atmost 99999 unique userIDs possible in 1 hour span XD (a lot though)
-// //   return `${year}${month}${day}${padNumber(userNumber, 5)}`;
-// // };
+    const projectId = req.params.pid;
 
-// // Utility function
-// // const padNumber = (num, length = 2) => {
-// //   return num.toString().padStart(length, '0');
-// // };
+    // Find the existing project by projectId
+    const existingProject = await Project.findOne({ projectId: projectId });
+    if (!existingProject) {
+      return next(new HttpError('Project not found, update failed.', 404));
+    }
+    
+    // Update project details
+    existingProject.title = title;
+    existingProject.description = description;
 
-// const signup = async (req, res, next) => {
-//   const errors = validationResult(req);
-//   // console.log(errors);
-//   if (!errors.isEmpty()) {
-//     return next(
-//       new HttpError('Invalid inputs passed, please check your data.', 422)
-//     );
-//   }
+    // Save the updated user
+    await existingProject.save();
 
-//   const { firstname, lastname, email, password } = req.body;
+    res.status(200).json({ project: existingProject.toObject({ getters: true }) });
+  } 
+  catch (err) {
+    console.error(err); // Log the error for debugging
+    return next(new HttpError('Creating project failed!, please try again later.', 500));
+  }
+}
 
-//   let existingUser;
-//   try {
-//     existingUser = await User.findOne({ email: email });
-//   } catch (err) {
-//     const error = new HttpError(
-//       'Signing up failed, please try again later.',
-//       500
-//     );
-//     console.log("ERROR 500 [In Database Access assign Read/write roles to your user]\n ",err);
-//     return next(error);
-//   }
+const deleteProduct = async (req, res, next) => {
+	const productId = req.params.pid;
 
-//   if (existingUser) {
-//     const error = new HttpError(
-//       'User exists already, please login instead.',
-//       422
-//     );
-//     return next(error);
-//   }
+	let product;
+  try {
+    product = await Product.findById(productId).populate('creator');;
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong[3], could not find product to delete. [1]',
+      500
+    );
+    return next(error);
+  }
 
-//   let hashedPassword;
-//   try {
-//     hashedPassword = await bcrypt.hash(password, 12);
-//   } catch (err) {
-//     const error = new HttpError(
-//       'Could not create user, please try again.',
-//       500
-//     );
-//     return next(error);
-//   }
+  if (!product) {
+    const error = new HttpError('Could not find product for this id.', 404);
+    return next(error);
+  }
 
-//   // const currentDate = new Date();
-//   // const userNumber = await User.countDocuments({
-//   //   createdAt: {
-//   //     $gte: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()),
-//   //     $lt: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1),
-//   //   },
-//   // }) + 1;
-//   // const formattedUserId = generateFormattedUserId(currentDate, userNumber);
+  if (product.creator.id !== req.userData.userId) {
+    const error = new HttpError(
+      'You are not allowed to delete this product.',
+      401
+    );
+    return next(error);
+  }
 
-//   const generatedUserId = uuidv4();
+  const imagePath = product.image;
 
-//   const createdUser = new User({
-//     firstname,
-//     lastname,
-//     email,
-//     password: hashedPassword,
-//     userId: generatedUserId
-//   });
+  try {
+    // const sess = await mongoose.startSession();
+    // sess.startTransaction();
+    // await product.remove({ session: sess });
+    // product.creator.products.pull(product);
+    // await product.creator.save({ session: sess });
+    // await sess.commitTransaction();
 
-//   try {
-//     await createdUser.save();
-//   } catch (err) {
-//     const error = new HttpError(
-//       'Signing up failed, please try again.',
-//       500
-//     );
-//     return next(error);
-//   }
+    await product.remove();
+    product.creator.products.pull(product);
+    await product.creator.save();
+  } 
+  catch (err) {
+    const error = new HttpError(
+      'Something went wrong[4], could not delete product.',
+      500
+    );
+    return next(error);
+  }
 
-//   let token;
-//   try {
-//     token = jwt.sign(
-//       { userId: createdUser.id, email: createdUser.email },
-//       'supersecret_dont_share',
-//       { expiresIn: '15min' }
-//     );
-//   } catch (err) {
-//     const error = new HttpError(
-//       'Signing up failed, please try again later.',
-//       500
-//     );
-//     return next(error);
-//   }
+  fs.unlink(imagePath, err => {
+    console.log(err);
+  });
 
-//   res
-//     .status(201)
-//     .json({
-//       userId: createdUser.id,
-//       email: createdUser.email,
-//       token: token
-//     });
-// };
+  res.status(200).json({ message: 'Deleted product.' });
+};
 
-// const login = async (req, res, next) => {
-//   const { email, password } = req.body;
+const addEmployee = async(req, res, next) => {
+  try{
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return next(new HttpError('Invalid inputs passed, please check your data.', 422));
+    }
 
-//   let existingUser;
+    const { userId, projectId } = req.body;
 
-//   try {
-//     existingUser = await User.findOne({ email: email });
-//   } catch (err) {
-//     const error = new HttpError(
-//       'Logging in failed, please try again later.',
-//       500
-//     );
-//     return next(error);
-//   }
+    // Find the existing project by projectId
+    const existingProject = await Project.findOne({ projectId: projectId });
+    if (!existingProject) {
+      return next(new HttpError('Project not found, update failed.', 404));
+    }
+    
+    // Update project details
+    existingProject.employees = title;
+    existingProject.description = description;
 
-//   if (!existingUser) {
-//     const error = new HttpError(
-//       'Invalid credentials, could not log you in.',
-//       403
-//     );
-//     return next(error);
-//   }
+    // Save the updated user
+    await existingProject.save();
+  } 
+  catch (err) {
+    console.error(err); // Log the error for debugging
+    return next(new HttpError('Creating project failed!, please try again later.', 500));
+  }
+}
 
-//   let isValidPassword = false;
-//   try {
-//     isValidPassword = await bcrypt.compare(password, existingUser.password);
-//   } catch (err) {
-//     const error = new HttpError(
-//       'Could not log you in, please check your credentials and try again.',
-//       500
-//     );
-//     return next(error);
-//   }
-
-//   if (!isValidPassword) {
-//     const error = new HttpError(
-//       'Invalid credentials, could not log you in.',
-//       403
-//     );
-//     return next(error);
-//   }
-
-//   let token;
-//   try {
-//     token = jwt.sign(
-//       { userId: existingUser.id, email: existingUser.email },
-//       'supersecret_dont_share',
-//       { expiresIn: '1h' }
-//     );
-//   } catch (err) {
-//     const error = new HttpError(
-//       'Logging in failed, please try again later.',
-//       500
-//     );
-//     return next(error);
-//   }
-
-//   res.json({
-//     userId: existingUser.id,
-//     email: existingUser.email,
-//     token: token
-//   });
-// };
-
-// module.exports = {
-//   getEmployeeCount,
-//   getEmployees,
-// 	getUsers,
-//   getUser,
-// 	signup,
-// 	login
-// };
+module.exports = {
+  getProjects,
+  createProject,
+  updateProjectInfo
+  // addEmployee
+};

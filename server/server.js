@@ -1,17 +1,21 @@
 require('dotenv').config()
 
+// libraries
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const fs = require('fs');
 const path = require('path');
-
-const userRoutes = require('./routes/user-routes');
-// const projectRoutes = require('./routes/project-routes');
-const offerRoutes = require('./routes/offer-routes');
-const HttpError = require('./models/http-error');
-
 const app = express();
+
+// routes
+const userRoutes = require('./routes/user-routes');
+const projectRoutes = require('./routes/project-routes');
+const offerRoutes = require('./routes/offer-routes');
+const terminationRoutes = require('./routes/termination-routes');
+const leaveRoutes = require('./routes/leave-routes');
+
+const HttpError = require('./models/http-error');
 
 app.use(bodyParser.json());
 
@@ -30,8 +34,10 @@ app.use((req, res, next) => {
 
 // app.use(express.urlencoded({extended: true}));
 app.use('/api/users', userRoutes);
-// app.use('/api/projects', projectRoutes);
+app.use('/api/projects', projectRoutes);
 app.use('/api/offers', offerRoutes);
+app.use('/api/leaves', leaveRoutes);
+app.use('/api/terminations', terminationRoutes);
 
 app.use((req, res, next) => {
   const error = new HttpError('Could not find this route. ['+req.body.url+']', 404);
