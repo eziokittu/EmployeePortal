@@ -14,7 +14,7 @@ const userSchema = new Schema({
     phone: {type: String, required: true, default: '91XXXXXXXX' },
     bio: {type: String, required: true, default: '-' },
 
-    role: { type: String, required: true, default: "none" },
+    role: { type: String, required: true, default: "Software Engineer" },
     projects: [{ type: mongoose.Types.ObjectId, required: true, ref: 'Project' }],
     projects_complete: {type: Number, required: true, default: 0},
     projects_ongoing: {type: Number, required: true, default: 0},

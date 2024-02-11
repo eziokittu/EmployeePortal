@@ -59,7 +59,7 @@ const getEmployeeCount = async (req, res, next) => {
 
 const getEmployees = async (req, res, next) => {
   const page = req.query.page || 0;
-  const employeesPerPage = 2;
+  const employeesPerPage = 3;
 
   let allEmployees;
   try {
@@ -90,7 +90,7 @@ const getEmployee = async (req, res, next) => {
   // console.log(userId);
   let employee;
   try {
-    employee = await User.findOne({ userId: userId })
+    employee = await User.findById({ _id: userId })
   } catch (err) {
     const error = new HttpError(
       'Fetching Employee failed, please try again later.',
@@ -100,13 +100,13 @@ const getEmployee = async (req, res, next) => {
     return next(error);
   }
 
-  if (employee.isEmployee == false){
-    const error = new HttpError(
-      'User is not an employee.',
-      422
-    );
-    return next(error);
-  }
+  // if (employee.isEmployee == false){
+  //   const error = new HttpError(
+  //     'User is not an employee.',
+  //     422
+  //   );
+  //   return next(error);
+  // }
 
   res.json({employee: employee});
 };

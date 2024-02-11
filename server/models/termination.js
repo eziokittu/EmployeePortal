@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 const terminationSchema = new Schema({
   reason: {type: String, required: true, default: '-' },
   employee: { type: mongoose.Types.ObjectId, required: true, ref: 'User' },
+  isApproved: {type: Boolean, default: false, required: true },
   date_terminated: {type: Date },
   date_applied: {type: Date } 
 });

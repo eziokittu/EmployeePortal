@@ -5,10 +5,16 @@ const Termination = require('../models/termination');
 
 // GET
 
-const getTerminations = async (req, res, next) => {
+const getAllTerminations = async (req, res, next) => {
+  const page = req.query.page || 0;
+  const terminationsPerPage = 2;
+
   let terminations;
   try {
-    terminations = await Termination.find();
+    terminations = await Termination
+      .find()
+      .skip(page * terminationsPerPage)
+      .limit(terminationsPerPage);
   } catch (err) {
     const error = new HttpError(
       'Fetching terminations failed, please try again later.',
@@ -16,7 +22,105 @@ const getTerminations = async (req, res, next) => {
     );
     return next(error);
   }
+
+  if (!terminations || terminations.length === 0) {
+    return next(new HttpError('No terminations found.', 404));
+  }
+
   res.json({terminations: terminations.map(termination => termination.toObject({ getters: true }))});
+};
+
+const getAllTerminationsCount = async (req, res, next) => {
+  let terminationCount;
+  try {
+    terminationCount = await Termination.countDocuments();
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching termination count failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
+  res.json({count: terminationCount });
+};
+
+const getAppliedTerminations = async (req, res, next) => {
+  const page = req.query.page || 0;
+  const terminationsPerPage = 2;
+  
+  let terminations;
+  try {
+    terminations = await Termination
+      .find({isApproved: false})
+      .skip(page * terminationsPerPage)
+      .limit(terminationsPerPage);
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching terminations failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
+  if (!terminations || terminations.length === 0) {
+    return next(new HttpError('No terminations found.', 404));
+  }
+  res.json({terminations: terminations.map(termination => termination.toObject({ getters: true }))});
+};
+
+const getAppliedTerminationsCount = async (req, res, next) => {
+  let terminationCount;
+  try {
+    terminationCount = await Termination.countDocuments({isApproved: false});
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching termination count failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
+  res.json({count: terminationCount });
+};
+
+const getApprovedTerminations = async (req, res, next) => {
+  const page = req.query.page || 0;
+  const terminationsPerPage = 2;
+  
+  let terminations;
+  try {
+    terminations = await Termination
+      .find({isApproved: true})
+      .skip(page * terminationsPerPage)
+      .limit(terminationsPerPage);
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching terminations failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
+  if (!terminations || terminations.length === 0) {
+    return next(new HttpError('No terminations found.', 404));
+  }
+  res.json({terminations: terminations.map(termination => termination.toObject({ getters: true }))});
+};
+
+const getApprovedTerminationsCount = async (req, res, next) => {
+  let terminationCount;
+  try {
+    terminationCount = await Termination.countDocuments({isApproved: true});
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching termination count failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
+  res.json({count: terminationCount });
 };
 
 const applyTermination = async (req, res, next) => {
@@ -70,6 +174,7 @@ const approveTermination = async (req, res, next) => {
     }
 
     existingTermination.date_terminated = Date.now();
+    existingTermination.isApproved = true;
     await existingTermination.save();
 
     res.status(201).json({termination: existingTermination});
@@ -84,7 +189,12 @@ const approveTermination = async (req, res, next) => {
 }
 
 module.exports = {
-  getTerminations,
+  getAllTerminations,
+  getAppliedTerminations,
+  getApprovedTerminations,
+  getAllTerminationsCount,
+  getAppliedTerminationsCount,
+  getApprovedTerminationsCount,
   applyTermination,
   approveTermination
 };

@@ -1,5 +1,10 @@
 import { Link, NavLink } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../Backend/context/auth-context";
+
 const Sidebar = () => {
+  const auth = useContext(AuthContext);
+
   return (
     <div>
       <aside
@@ -30,8 +35,10 @@ const Sidebar = () => {
             </li>
             {/* Dashboard Start */}
 
+            
+
             {/* Employee Start */}
-            <li>
+            {(auth.isAdmin || auth.isEmployee) && (<li>
               <Link
                 to="/employee"
                 className="flex items-center p-2 text-white rounded-lg  hover:bg-primary-600 hover:rounded-3xl group focus:bg-primary-600 focus:rounded-3xl group"
@@ -48,11 +55,11 @@ const Sidebar = () => {
                 </svg>
                 <span className="ms-3">Employees</span>
               </Link>
-            </li>
+            </li>)}
             {/* Employee End */}
 
             {/* Projects Start */}
-            <li>
+            {(auth.isAdmin || auth.isEmployee) && (<li>
               <Link
                 to="/projects"
                 className="flex items-center p-2 text-white rounded-lg  hover:bg-primary-600 hover:rounded-3xl group focus:bg-primary-600 focus:rounded-3xl group"
@@ -69,11 +76,11 @@ const Sidebar = () => {
                 </svg>
                 <span className="ms-3">Projects</span>
               </Link>
-            </li>
+            </li>)}
             {/* Projects End */}
 
             {/* Termination Start */}
-            <li>
+            {(auth.isAdmin || auth.isEmployee) && (<li>
               <Link
                 to="/termination"
                 className="flex items-center p-2 text-white rounded-lg  hover:bg-primary-600 hover:rounded-3xl group focus:bg-primary-600 focus:rounded-3xl group"
@@ -90,7 +97,7 @@ const Sidebar = () => {
                 </svg>
                 <span className="ms-3">Termination</span>
               </Link>
-            </li>
+            </li>)}
             {/* Termination End */}
 
             {/* Internships Start */}
@@ -144,9 +151,8 @@ const Sidebar = () => {
             </li>
             {/* Jobs End */}
 
-              {/* Settings start */}
-
-              <li>
+            {/* Settings start */}
+            <li>
               <Link
                 to="/settings"
                 className="flex items-center p-2 text-white rounded-lg  hover:bg-primary-600 hover:rounded-3xl group focus:bg-primary-600 focus:rounded-3xl group"
@@ -164,7 +170,7 @@ const Sidebar = () => {
                 <span className="ms-3">Settings</span>
               </Link>
             </li>
-              {/* Settings end */}
+            {/* Settings end */}
 
             {/* Chat Start */}
             <li>

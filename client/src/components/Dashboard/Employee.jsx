@@ -5,8 +5,8 @@ import ReactPaginate from "react-paginate";
 import { useHttpClient } from '../Backend/hooks/http-hook';
 
 const Employee = () => {
-	const { isLoading, error, sendRequest, clearError } = useHttpClient();
-  const employeesDisplayedPerPage = 2;
+	const { sendRequest } = useHttpClient();
+  const employeesDisplayedPerPage = 3;
 
   // fetching the no. of employees from mongoDB database
   const [employeeCount, setEmployeeCount] = useState(null);
@@ -49,11 +49,11 @@ const Employee = () => {
   }, [sendRequest, page]);
 
   // getting the employee details when an employee is selected
-  const [empDetails, setEmpDetails] = useState('');
-  const handleEmployeeClick = (details) => {
-    setEmpDetails(details);
-    // console.log(empDetails.image);
-  };
+  // const [empDetails, setEmpDetails] = useState('');
+  // const handleEmployeeClick = (details) => {
+  //   setEmpDetails(details);
+  //   // console.log(empDetails.image);
+  // };
 
 	return (
 		<div className="p-4 sm:ml-64">
@@ -76,6 +76,7 @@ const Employee = () => {
 				</div>
 
 			</div>
+      <div className='flex justify-center items-center'>    
 			<ReactPaginate
 				previousLabel={"previous"}
 				nextLabel={"next"}
@@ -91,6 +92,7 @@ const Employee = () => {
 				nextLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-blue-100 hover:text-blue-700"}
 				breakLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-blue-100 hover:text-blue-700 "}
 			/>
+      </div>
 		</div>
 	)
 }

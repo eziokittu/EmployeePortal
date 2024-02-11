@@ -7,7 +7,12 @@ const router = express.Router();
 // GET
 
 // Get all the terminations
-router.get('/', terminationController.getTerminations);
+router.get('/get/all', terminationController.getAllTerminations);
+router.get('/get/all/count', terminationController.getAllTerminationsCount);
+router.get('/get/applied', terminationController.getAppliedTerminations);
+router.get('/get/applied/count', terminationController.getAppliedTerminationsCount);
+router.get('/get/approved', terminationController.getApprovedTerminations);
+router.get('/get/approved/count', terminationController.getApprovedTerminationsCount);
 
 // POST
 

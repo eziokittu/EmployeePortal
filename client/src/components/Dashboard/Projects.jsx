@@ -10,19 +10,50 @@ const Projects = () => {
   const { sendRequest } = useHttpClient();
 
   // getting all the projects from database
-  const [tasks, setTasks] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [completedProjects, setCompletedProjects] = useState();
+  const [ongoingProjects, setOngoingProjects] = useState();
   useEffect(() => {
+
+    // Function to fetch all the products
     const fetchProjects = async () => {
       try {
         const responseData = await sendRequest(
           `http://localhost:5000/api/projects/`
         );
-        setTasks(responseData.projects);
+        setProjects(responseData.projects);
       } catch (err) {
         console.log("Error in fetching projects: "+err);
       }
     };
+
+    // Function to fetch the count of completed projects
+    const fetchCompletedProjectsCount = async () => {
+      try {
+        const responseData = await sendRequest(
+          `http://localhost:5000/api/projects/completed`
+        );
+        setCompletedProjects(responseData.count);
+      } catch (err) {
+        console.log("Error in fetching completed projects count: "+err);
+      }
+    }
+
+    // Function to fetch the count of Ongoing projects
+    const fetchOngoingProjectsCount = async () => {
+      try {
+        const responseData = await sendRequest(
+          `http://localhost:5000/api/projects/ongoing`
+        );
+        setOngoingProjects(responseData.count);
+      } catch (err) {
+        console.log("Error in fetching ongoing projects count: "+err);
+      }
+    }
+
     fetchProjects();
+    fetchCompletedProjectsCount();
+    fetchOngoingProjectsCount();
   }, []);
 
   const [text, setText] = useState('');
@@ -59,10 +90,20 @@ const Projects = () => {
 		}  
   };  
 
+  function toggleIsCompleted(id) {
+    setProjects(projects.map(project => {
+      if (project.id === id) {
+        return { ...project, isCompleted: !project.isCompleted };
+      } else {
+        return project;
+      }
+    }));
+  }
+
   //Pagination
   const itemsPerPage = 5;
   const pagesVisited = pageNumber * itemsPerPage;
-  const pageCount = Math.ceil(tasks.length / itemsPerPage);
+  const pageCount = Math.ceil(Projects.length / itemsPerPage);
   const changePage = ({ selected }) => {
     setPageNumber(selected);
   }
@@ -72,8 +113,16 @@ const Projects = () => {
       <div className="p-4 border-2 border-gray-200 rounded-lg">
         {/* Projects Overview */}
         <div className="grid grid-cols-3 gap-4 mb-4">
-          <Card name='Ongoing Projects' value='182' imgValue={ticketsOpen} />
-          <Card name='Closed Projects' value='321' imgValue={ticketsClosed} />
+          {ongoingProjects>0 ? 
+            (<Card name='Ongoing Projects' value={ongoingProjects} imgValue={ticketsOpen} />)
+            :
+            (<Card name='Ongoing Projects' value='0' imgValue={ticketsOpen} />)
+          }
+          {completedProjects>0 ? 
+            (<Card name='Closed Projects' value={completedProjects} imgValue={ticketsClosed} />)
+            :
+            (<Card name='Closed Projects' value='0' imgValue={ticketsClosed} />)
+          }
           <Card name='Hold' value='48' imgValue={ticketsOpen} />
         </div>
 
@@ -100,107 +149,128 @@ const Projects = () => {
                 </div>
               </form>
             </div>
-            <div className='w-64'>
-              <select id="filter" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                <option value="week" selected>This Week</option>
-                <option value="day" selected>Today</option>
-                <option value="month">This Month</option>
-                <option value="year">This Year</option>
-              </select>
-            </div>
-          </div>
+          </div >
           {/* Searchbar and Heading End */}
 
-          {/* Projects start */}
-          <div className='my-3'>
-            <div className="mb-2">
-              {/* Optional Add Projects with start and end date */}
-              <div className='flex justify-around items-center mb-4'>
-                <h2 className='font-bold text-lg'>Add Projects</h2>
-                <input
-                  className='border-2 w-72 border-gray-200 rounded-lg px-3 py-1.5 mr-2'
-                  value={text}
-                  placeholder='Enter Project name'
-                  onChange={e => setText(e.target.value)}
-                  required
-                />
-                <input
-                  required
-                  className='border-2 border-gray-200 rounded-lg px-3 py-1.5 mr-2'
-                  type="date"
-                  placeholder='Enter Start Date'
-                  value={startDate}
-                  onChange={e => setStartDate(e.target.value)}
-                />
-                <input
-                  required
-                  className='border-2 border-gray-200 rounded-lg px-3 py-1.5 mr-2'
-                  type="date"
-                  placeholder='Enter Start Date'
-                  value={endDate}
-                  onChange={e => setEndDate(e.target.value)}
-                />
-                <button
-                  className='text-white bg-primary-600 border-2 hover:bg-white hover:text-primary-600 hover:border-primary-600 focus:ring-2 focus:ring-indigo-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2'
-                  onClick={projectAddHandler}>Add</button>
-
+          < div className='my-3' >
+            <div className="flex justify-between items-center border border-black/10 rounded-lg px-3 py-1.5 gap-x-3 shadow-sm shadow-white/50 duration-300 text-black">
+              <input type="checkbox" className="cursor-pointer" />
+              <h2>Project 1</h2>
+              <h2>11/12/2022</h2>
+              <h2>11/12/2022</h2>
+              {/* Edit, Save Button */}
+              <button
+                className="text-white bg-primary-600 border-2 hover:bg-white hover:text-primary-600 hover:border-primary-600 focus:ring-2 focus:ring-indigo-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2"
+              > Edit
+              </button>
+              {/* Delete project Button */}
+              <button
+                className="text-white border-2 bg-red-600 hover:bg-white hover:text-red-600 hover:border-red-600 focus:ring-2 focus:ring-indigo-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2"
+              >
+                Delete
+              </button>
+              <div className='w-64'>
+                <select id="filter" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                  <option value="week" selected>This Week</option>
+                  <option value="day" selected>Today</option>
+                  <option value="month">This Month</option>
+                  <option value="year">This Year</option>
+                </select>
               </div>
-              {/* Optional Add Projects with start and end date */}
-              {/* Project Heading Start */}
-              <div className='flex justify-between items center font-bold text-lg bg-gray-100 h-12 mb-3 rounded-lg'>
-                <div>Completed</div>
-                <div className='mr-20 pr-10'>Projects</div>
-                <div className='flex justify-center items-center'>
-                  <div className='flex justify-around items-center mr-32'>
-                    <h2 className='w-30 mr-10'>Start</h2>
-                    <h2 className='w-30 mr-10 '>Deadline</h2>
-                  </div>
-                  <h2 className=' w-32'>Actions</h2>
-                </div>
-              </div>
-              {/* Project Heading End */}
-              {/* Project Component Start */}
-              <div>
-                {tasks
-                  .slice(pagesVisited, pagesVisited + itemsPerPage)
-                  .map(task => (
-                    // console.log(task.title, task.id),
-                    <ProjectItem
-                      key={task.id}
-                      task={task}
-                      startDate={task.date_start}
-                      // toggleCompleted={toggleCompleted}
-                      endDate={task.date_end}
-                    />
-                  ))}
-              </div>
-              {/* Project Component End */}
             </div>
+            {/* Searchbar and Heading End */}
+            {/* Projects start */}
+            <div className='my-3'>
+              <div className="mb-2">
+                {/* Optional Add Projects with start and end date */}
+                <div className='flex justify-around items-center mb-4'>
+                  <h2 className='font-bold text-lg'>Add Projects</h2>
+                  <input
+                    className='border-2 w-72 border-gray-200 rounded-lg px-3 py-1.5 mr-2'
+                    value={text}
+                    placeholder='Enter Project name'
+                    onChange={e => setText(e.target.value)}
+                    required
+                  />
+                  <input
+                    required
+                    className='border-2 border-gray-200 rounded-lg px-3 py-1.5 mr-2'
+                    type="date"
+                    placeholder='Enter Start Date'
+                    value={startDate}
+                    onChange={e => setStartDate(e.target.value)}
+                  />
+                  <input
+                    required
+                    className='border-2 border-gray-200 rounded-lg px-3 py-1.5 mr-2'
+                    type="date"
+                    placeholder='Enter Start Date'
+                    value={endDate}
+                    onChange={e => setEndDate(e.target.value)}
+                  />
+                  <button
+                    className='text-white bg-primary-600 border-2 hover:bg-white hover:text-primary-600 hover:border-primary-600 focus:ring-2 focus:ring-indigo-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2'
+                    onClick={projectAddHandler}>Add</button>
+
+                </div>
+                {/* Optional Add Projects with start and end date */}
+                {/* Project Heading Start */}
+                <div className='flex justify-between items center font-bold text-lg bg-gray-100 h-12 mb-3 rounded-lg'>
+                  <div>Completed</div>
+                  <div className='mr-20 pr-10'>Projects</div>
+                  <div className='flex justify-center items-center'>
+                    <div className='flex justify-around items-center mr-32'>
+                      <h2 className='w-30 mr-10'>Start</h2>
+                      <h2 className='w-30 mr-10 '>Deadline</h2>
+                    </div>
+                    <h2 className=' w-32'>Actions</h2>
+                  </div>
+                </div>
+                {/* Project Heading End */}
+                {/* Project Component Start */}
+                <div>
+                  {projects
+                    .slice(pagesVisited, pagesVisited + itemsPerPage)
+                    .map(project => (
+                      // console.log(project),
+                      <ProjectItem
+                        key={project.id}
+                        project={project}
+                        // deleteproject={deleteproject}
+                        // editproject={editproject}
+                        startDate={project.date_start}
+                        toggleIsCompleted={toggleIsCompleted}
+                        endDate={project.date_end}
+                      />
+                    ))}
+                </div>
+                {/* Project Component End */}
+              </div>
+            </div>
+            {/* Projects End */}
+          </div >
+          <div className='flex justify-center items-center'>
+            {Projects.length > itemsPerPage + 1 &&
+              <ReactPaginate
+                previousLabel={"previous"}
+                nextLabel={"next"}
+                breakLabel={"..."}
+                pageCount={pageCount}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={3}
+                onPageChange={changePage}
+                containerClassName={"inline-flex -space-x-px text-sm justify-content-center items-center mt-4 mb-4"}
+                pageLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-blue-100 hover:text-blue-700 focus:bg-blue-100 focus:text-blue-700"}
+                previousLinkClassName={"flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-blue-100 hover:text-blue-700"}
+                nextClassName={"page-item"}
+                nextLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-blue-100 hover:text-blue-700"}
+                breakLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-blue-100 hover:text-blue-700 "}
+
+              />}
           </div>
-          {/* Projects End */}
-        </div>
-
-        <div className='flex justify-center items-center'>
-          {tasks.length > itemsPerPage + 1 &&
-            <ReactPaginate
-              previousLabel={"previous"}
-              nextLabel={"next"}
-              breakLabel={"..."}
-              pageCount={pageCount}
-              marginPagesDisplayed={2}
-              pageRangeDisplayed={3}
-              onPageChange={changePage}
-              containerClassName={"inline-flex -space-x-px text-sm justify-content-center items-center mt-4 mb-4"}
-              pageLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-blue-100 hover:text-blue-700 focus:bg-blue-100 focus:text-blue-700"}
-              previousLinkClassName={"flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-blue-100 hover:text-blue-700"}
-              nextClassName={"page-item"}
-              nextLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-blue-100 hover:text-blue-700"}
-              breakLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-blue-100 hover:text-blue-700 "}
-            />}
-        </div>
+        </div >
       </div>
-
-    </div>
+    </div >
   )
 }
 

@@ -18,6 +18,34 @@ const getProjects = async (req, res, next) => {
   res.json({projects: projects.map(project => project.toObject({ getters: true }))});
 };
 
+const getProjectsCompletedCount = async (req, res, next) => {
+  let projectsCount;
+  try {
+    projectsCount = await Project.countDocuments({isCompleted: true});
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching completed projects count failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+  res.json({count: projectsCount});
+};
+
+const getProjectsOngoingCount = async (req, res, next) => {
+  let projectsCount;
+  try {
+    projectsCount = await Project.countDocuments({isCompleted: false});
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching ongoinf projects count failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+  res.json({count: projectsCount});
+};
+
 const createProject = async (req, res, next) => {
   try {
     const errors = validationResult(req);
@@ -154,6 +182,8 @@ const deleteProject = async (req, res, next) => {
 
 module.exports = {
   getProjects,
+  getProjectsCompletedCount,
+  getProjectsOngoingCount,
   createProject,
   updateProjectInfo,
   deleteProject

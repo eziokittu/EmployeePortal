@@ -46,55 +46,17 @@ function App() {
         {token ? (
           <>
           <Sidebar />
-          {/* {!isEmployee && !isAdmin && (
-            <div>
-              <div>
-                <Routes>
-                  <Route exact path="/dashboard" element={<Dashboard />} />
-                  <Route exact path="/employee" element={<Employee />} />
-                  <Route exact path="/projects" element={<Projects />} />
-                  <Route exact path="/termination" element={<Termination />} />
-                  <Route exact path="/internships" element={<Internship />} />
-                  <Route exact path="/jobs" element={<Jobs />} />
-                  <Route exact path="/chat" element={<Chat />} />
-                  <Route exact path="/activity" element={<Activity />} />
-                  <Route exact path="/settings" element={<Settings />} />
-                </Routes>
-              </div>
-            </div>
+          {!isEmployee && !isAdmin && (
+            <Routes>
+              <Route exact path="/" element={<Dashboard />} />
+              <Route exact path="/dashboard" element={<Dashboard />} />
+              <Route exact path="/internships" element={<Internship />} />
+              <Route exact path="/jobs" element={<Jobs />} />
+              <Route exact path="/chat" element={<Chat />} />
+              <Route exact path="/settings" element={<Settings />} />
+            </Routes>
           )}
           {isEmployee && !isAdmin && (
-            <div>
-              <div>
-                <Routes>
-                  <Route exact path="/auth" element={<Auth />} />
-                  <Route exact path="/dashboard" element={<Dashboard />} />
-                  <Route exact path="/edit/:uid" element={<EditDetails />} />
-                  <Route exact path="/internships" element={<Internships />} />
-                  <Route exact path="/jobs" element={<Jobs />} />
-                  <Route exact path="/projects" element={<Projects />} />
-                  <Route exact path="/terminations" element={<Terminations />} />
-                  <Route exact path="/leaves" element={<Leaves />} />
-                </Routes>
-              </div>
-            </div>
-          )}
-          {isAdmin && (
-            <div>
-              <div>
-                <Routes>
-                  <Route exact path="/auth" element={<Auth />} />
-                  <Route exact path="/dashboard" element={<Dashboard />} />
-                  <Route exact path="/employees" element={<Employees />} />
-                  <Route exact path="/internships" element={<Internships />} />
-                  <Route exact path="/jobs" element={<Jobs />} />
-                  <Route exact path="/projects" element={<Projects />} />
-                  <Route exact path="/terminations" element={<Terminations />} />
-                  <Route exact path="/leaves" element={<Leaves />} />
-                </Routes>
-              </div>
-            </div>
-          )} */}
             <Routes>
               <Route exact path="/" element={<Dashboard />} />
               <Route exact path="/dashboard" element={<Dashboard />} />
@@ -107,6 +69,22 @@ function App() {
               <Route exact path="/activity" element={<Activity />} />
               <Route exact path="/settings" element={<Settings />} />
             </Routes>
+          )}
+          {isAdmin && (
+            <Routes>
+              <Route exact path="/" element={<Dashboard />} />
+              <Route exact path="/dashboard" element={<Dashboard />} />
+              <Route exact path="/employee" element={<Employee />} />
+              <Route exact path="/projects" element={<Projects />} />
+              <Route exact path="/termination" element={<Termination />} />
+              <Route exact path="/internships" element={<Internship />} />
+              <Route exact path="/jobs" element={<Jobs />} />
+              <Route exact path="/chat" element={<Chat />} />
+              <Route exact path="/activity" element={<Activity />} />
+              <Route exact path="/settings" element={<Settings />} />
+            </Routes>
+          )}
+            
           </>
         ) : (
           // Default routes
