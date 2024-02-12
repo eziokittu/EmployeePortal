@@ -19,7 +19,7 @@ const Projects = () => {
     const fetchProjects = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/projects/`
+          `${import.meta.env.VITE_BACKEND_URL}/projects/`
         );
         setProjects(responseData.projects);
       } catch (err) {
@@ -31,7 +31,7 @@ const Projects = () => {
     const fetchCompletedProjectsCount = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/projects/completed`
+          import.meta.env.VITE_BACKEND_URL+`/projects/completed`
         );
         setCompletedProjects(responseData.count);
       } catch (err) {
@@ -43,7 +43,7 @@ const Projects = () => {
     const fetchOngoingProjectsCount = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/projects/ongoing`
+          `${import.meta.env.VITE_BACKEND_URL}/projects/ongoing`
         );
         setOngoingProjects(responseData.count);
       } catch (err) {
@@ -67,7 +67,7 @@ const Projects = () => {
     event.preventDefault();
 		try {
 			const responseData = await sendRequest(
-				'http://localhost:5000/api/projects/',
+				`${import.meta.env.VITE_BACKEND_URL}/projects/`,
 				'POST',
 				JSON.stringify({
 					title: text,

@@ -23,9 +23,10 @@ const Signup = () => {
 
 		// console.log(inputEmail, inputPassword, inputFirstname, inputLastname);
 
+		console.log(import.meta.env.VITE_BACKEND_URL);
 		try {
 			const responseData = await sendRequest(
-				'http://localhost:5000/api/users/signup',
+				import.meta.env.VITE_BACKEND_URL+`/users/signup`,
 				'POST',
 				JSON.stringify({
 					email: inputEmail,

@@ -16,7 +16,7 @@ const Termination = () => {
   const fetchAllTerminations = async event => {
 		try {
 			const responseData = await sendRequest(
-        `http://localhost:5000/api/terminations/get/all?page=${page}`
+        import.meta.env.VITE_BACKEND_URL+`/terminations/get/all?page=${page}`
       );
       setLoadedAllTerminations(responseData.terminations);
       setPageCount(responseData.terminations.length)
@@ -27,7 +27,7 @@ const Termination = () => {
   const fetchAllTerminationsCount = async () => {
     try {
       const responseData = await sendRequest(
-        `http://localhost:5000/api/terminations/get/all/count`
+        import.meta.env.VITE_BACKEND_URL+`/terminations/get/all/count`
       );
       // setTerminationCount(responseData.count);
       setPageCount(Math.ceil(responseData.count / terminationsDisplayedPerPage))
@@ -42,7 +42,7 @@ const Termination = () => {
   const fetchApprovedTerminations = async event => {
 		try {
 			const responseData = await sendRequest(
-        `http://localhost:5000/api/terminations/get/approved?page=${page}`
+        import.meta.env.VITE_BACKEND_URL+`/terminations/get/approved?page=${page}`
       );
       setLoadedApprovedTerminations(responseData.terminations);
       setPageCount(responseData.terminations.length)
@@ -53,7 +53,7 @@ const Termination = () => {
   const fetchApprovedTerminationsCount = async () => {
     try {
       const responseData = await sendRequest(
-        `http://localhost:5000/api/terminations/get/approved/count`
+        import.meta.env.VITE_BACKEND_URL+`/terminations/get/approved/count`
       );
       // setTerminationCount(responseData.count);
       setPageCount(Math.ceil(responseData.count / terminationsDisplayedPerPage))
@@ -67,7 +67,7 @@ const Termination = () => {
   const fetchAppliedTerminations = async event => {
 		try {
 			const responseData = await sendRequest(
-        `http://localhost:5000/api/terminations/get/applied?page=${page}`
+        import.meta.env.VITE_BACKEND_URL+`/terminations/get/applied?page=${page}`
       );
       setLoadedAppliedTerminations(responseData.terminations);
       setPageCount(Math.ceil(responseData.terminations.length / terminationsDisplayedPerPage));
@@ -78,7 +78,7 @@ const Termination = () => {
   const fetchAppliedTerminationsCount = async () => {
     try {
       const responseData = await sendRequest(
-        `http://localhost:5000/api/terminations/get/applied/count`
+        import.meta.env.VITE_BACKEND_URL+`/terminations/get/applied/count`
       );
       // setTerminationCount(responseData.count);
       setPageCount(Math.ceil(responseData.count / terminationsDisplayedPerPage))

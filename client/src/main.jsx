@@ -22,8 +22,6 @@ import Settings from './components/Dashboard/Settings.jsx'
 import { AuthContext } from './components/Backend/context/auth-context.js'
 import { useAuth } from './components/Backend/hooks/auth-hook.js'
 
-// const { token, login, logout, userId, isEmployee, isAdmin, userName } = useAuth();
-
 function App() {
   const { token, login, logout, userId, isEmployee, isAdmin, userName } = useAuth();
 

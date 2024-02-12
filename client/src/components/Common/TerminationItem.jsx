@@ -10,7 +10,7 @@ function TerminationItem({item}) {
     const fetchEmployee = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/users/emp/${item.employee.toString()}`
+          `${import.meta.env.VITE_BACKEND_URL}/users/emp/${item.employee.toString()}`
         );
         setUserData(responseData.employee);
       } catch (err) {
@@ -25,7 +25,7 @@ function TerminationItem({item}) {
 		event.preventDefault();
 		try {
 			const responseData = await sendRequest(
-				'http://localhost:5000/api/terminations/approve',
+				import.meta.env.VITE_BACKEND_URL+`/terminations/approve`,
 				'PATCH',
 				JSON.stringify({
 					terminationId: item.id,
@@ -58,7 +58,7 @@ function TerminationItem({item}) {
         {/* Profile image */}
         <img 
           className="w-12 h-12 rounded-xl bg-gray-200 mt-5 ml-5 mr-3" 
-          src={"http://localhost:5000/"+userData.image}
+          src={import.meta.env.VITE_ASSETS_URL+`userData.image`}
           alt={userData.firstname}
         >
         </img>

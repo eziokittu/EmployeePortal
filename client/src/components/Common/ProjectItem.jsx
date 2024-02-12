@@ -8,7 +8,7 @@ const ProjectItem = ({ project, deleteproject, editproject, toggleIsCompleted })
 		event.preventDefault();
 		try {
 			const responseData = await sendRequest(
-				'http://localhost:5000/api/projects/',
+				import.meta.env.VITE_BACKEND_URL+`/projects/`,
 				'DELETE',
 				JSON.stringify({
 					projectId: project.id

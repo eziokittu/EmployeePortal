@@ -17,7 +17,7 @@ const Settings = () => {
     event.preventDefault();
     try {
       const responseData = await sendRequest(
-        'http://localhost:5000/api/users/edit/info',
+        import.meta.env.VITE_BACKEND_URL+`/users/edit/info`,
         'PATCH',
         JSON.stringify({
 					email: inputEmail,
@@ -82,7 +82,7 @@ const Settings = () => {
       formData.append('image', inputImage);
       formData.append('email', inputEmail); // Hard coded value
       const responseData = await sendRequest(
-        'http://localhost:5000/api/users/edit/image',
+        import.meta.env.VITE_BACKEND_URL+`/users/edit/image`,
         'PATCH',
         formData
       );

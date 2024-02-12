@@ -15,7 +15,7 @@ const Employee = () => {
     const fetchEmployeeCount = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/users/empcount`
+          import.meta.env.VITE_BACKEND_URL+`/users/empcount`
         );
         setEmployeeCount(responseData.employeeCount);
         setPageCount(Math.ceil(responseData.employeeCount / employeesDisplayedPerPage))
@@ -38,7 +38,7 @@ const Employee = () => {
     const fetchEmployees = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/users/emp?page=${page}`
+          import.meta.env.VITE_BACKEND_URL+`/users/emp?page=${page}`
         );
         setLoadedEmployees(responseData.employees);
       } catch (err) {
@@ -69,7 +69,7 @@ const Employee = () => {
 									username={employee.userName}
 									email={employee.email}
 									projects={employee.projects_complete}
-									empImg={"http://localhost:5000/"+employee.image}
+									empImg={import.meta.env.VITE_ASSETS_URL+`/`+employee.image}
 								/>
 							</div>
 						);
