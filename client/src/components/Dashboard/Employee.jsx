@@ -64,10 +64,11 @@ const Employee = () => {
 							<div key={employee.id}>
 								<EmployeeCard 
 									name={employee.firstname +' '+ employee.lastname} 
-									date="21 February, 2020" 
-									role="Product Designer" 
+									date={employee.date.split('T')[0]} 
+									role={employee.role}
 									username={employee.userName}
 									email={employee.email}
+									projects={employee.projects_complete}
 									empImg={"http://localhost:5000/"+employee.image}
 								/>
 							</div>

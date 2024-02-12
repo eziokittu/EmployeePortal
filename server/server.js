@@ -60,19 +60,22 @@ app.use((error, req, res, next) => {
 
 // community server
 // const uriDB = 'mongodb://localhost:27017/rnpsoft_employee_portal_test'; 
-const uriDB = 'mongodb://localhost:27017/test2'; 
+// const uriDB = 'mongodb://localhost:27017/test2'; 
 
 // MongoDB ATLAS
 // const uriDB = process.env.MONGO_URI; 
 
 mongoose
-  .connect(uriDB, {
+  .connect(
+    // uriDB, 
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.nmjiwwv.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`,
+    {
     useNewUrlParser: true,
     useUnifiedTopology: true
   })
   .then(() =>{
-    app.listen(process.env.PORT);
-    console.log("LOG - Server running on port", process.env.PORT);
+    app.listen(5000);
+    console.log("LOG - Server running on port", 5000);
   })
   .catch(err => {
     console.log(err);

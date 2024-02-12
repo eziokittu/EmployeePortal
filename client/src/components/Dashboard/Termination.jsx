@@ -24,6 +24,18 @@ const Termination = () => {
 			console.log('ERROR fetching all terminations');
 		}  
   };
+  const fetchAllTerminationsCount = async () => {
+    try {
+      const responseData = await sendRequest(
+        `http://localhost:5000/api/terminations/get/all/count`
+      );
+      // setTerminationCount(responseData.count);
+      setPageCount(Math.ceil(responseData.count / terminationsDisplayedPerPage))
+      console.log("DEBUG--",pageCount);
+    } catch (err) {
+      console.log("Error in fetching employee count: "+err);
+    }
+  };
 
   // Function to fetch Approved terminations from the mongoDB database
   const [loadedApprovedTerminations, setLoadedApprovedTerminations] = useState();
@@ -36,19 +48,18 @@ const Termination = () => {
       setPageCount(responseData.terminations.length)
 		} catch (err) {
 			console.log('ERROR fetching approved terminations');
-		}  
-    const fetchApprovedTerminationsCount = async () => {
-      try {
-        const responseData = await sendRequest(
-          `http://localhost:5000/api/terminations/get/approved/count`
-        );
-        setTerminationCount(responseData.count);
-        setPageCount(Math.ceil(responseData.count / terminationsDisplayedPerPage))
-      } catch (err) {
-        console.log("Error in fetching approved termination count: "+err);
-      }
-    };
-    fetchApprovedTerminationsCount();
+		}
+  };
+  const fetchApprovedTerminationsCount = async () => {
+    try {
+      const responseData = await sendRequest(
+        `http://localhost:5000/api/terminations/get/approved/count`
+      );
+      // setTerminationCount(responseData.count);
+      setPageCount(Math.ceil(responseData.count / terminationsDisplayedPerPage))
+    } catch (err) {
+      console.log("Error in fetching approved termination count: "+err);
+    }
   };
   
   // Function to fetch Applied terminations from the mongoDB database
@@ -63,19 +74,18 @@ const Termination = () => {
 		} catch (err) {
 			console.log('ERROR fetching applied terminations');
 		}  
-    const fetchAppliedTerminationsCount = async () => {
-      try {
-        const responseData = await sendRequest(
-          `http://localhost:5000/api/terminations/get/applied/count`
-        );
-        setTerminationCount(responseData.count);
-        setPageCount(Math.ceil(responseData.count / terminationsDisplayedPerPage))
-      } catch (err) {
-        console.log("Error in fetching applied termination count: "+err);
-      }
-    };
-    fetchAppliedTerminationsCount();
   }; 
+  const fetchAppliedTerminationsCount = async () => {
+    try {
+      const responseData = await sendRequest(
+        `http://localhost:5000/api/terminations/get/applied/count`
+      );
+      // setTerminationCount(responseData.count);
+      setPageCount(Math.ceil(responseData.count / terminationsDisplayedPerPage))
+    } catch (err) {
+      console.log("Error in fetching applied termination count: "+err);
+    }
+  };
 
   // handling the pagination
   const [pageCount, setPageCount] = useState(0);
@@ -85,35 +95,22 @@ const Termination = () => {
   };
 
   const terminationsDisplayedPerPage = 2;
-  const [terminationCount, setTerminationCount] = useState(null);
+  // const [terminationCount, setTerminationCount] = useState(null);
   // Initially fetches all the terminations
   useEffect(() => {
-    const fetchAllTerminations = async () => {
-      try {
-        const responseData = await sendRequest(
-          `http://localhost:5000/api/terminations/get/all?page=${page}`
-        );
-        setLoadedAllTerminations(responseData.terminations);
-      } catch (err) {
-        console.log("Error in fetching all terminations: "+err);
-      }
-    };
-
-    const fetchAllTerminationsCount = async () => {
-      try {
-        const responseData = await sendRequest(
-          `http://localhost:5000/api/terminations/get/all/count`
-        );
-        setTerminationCount(responseData.count);
-        setPageCount(Math.ceil(responseData.count / terminationsDisplayedPerPage))
-      } catch (err) {
-        console.log("Error in fetching employee count: "+err);
-      }
-    };
-
-    fetchAllTerminations();
     fetchAllTerminationsCount();
-  }, [sendRequest, page]);
+    fetchAllTerminations();
+  }, [sendRequest, page, chosen!=='all']);
+
+  useEffect(() => {
+    fetchApprovedTerminationsCount();
+    fetchApprovedTerminations();
+  }, [sendRequest, page, chosen!=='approved']);
+
+  useEffect(() => {
+    fetchAppliedTerminationsCount();
+    fetchAppliedTerminations();
+  }, [sendRequest, page, chosen!=='applied']);
 
   return (
     <div className=" h-full">

@@ -1,0 +1,8 @@
+{
+  "env": {
+    "DB_USER": "eziokittu",
+    "DB_PASSWORD": "southpoint19",
+    "DB_NAME": "rnpsoft-employee-portal",
+    "JWT_KEY": "supersecret_dont_share"
+  }
+}

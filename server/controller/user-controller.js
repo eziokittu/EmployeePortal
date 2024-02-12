@@ -133,9 +133,9 @@ const signup = async (req, res, next) => {
     const generatedUserName = uuidv4();
 
     const createdUser = new User({
-      firstname,
-      lastname,
-      email,
+      firstname: firstname,
+      lastname: lastname,
+      email: email,
       password: hashedPassword,
       userName: generatedUserName,
     });
@@ -144,7 +144,7 @@ const signup = async (req, res, next) => {
 
     const token = jwt.sign(
       { userId: createdUser.id, email: createdUser.email },
-      process.env.JWT_SECRET, // Use environment variable for JWT secret
+      process.env.JWT_KEY,
       { expiresIn: '15min' }
     );
 
@@ -208,7 +208,7 @@ const login = async (req, res, next) => {
   try {
     token = jwt.sign(
       { userId: existingUser.id, email: existingUser.email },
-      'supersecret_dont_share',
+      process.env.DB_USER,
       { expiresIn: '1h' }
     );
   } catch (err) {
