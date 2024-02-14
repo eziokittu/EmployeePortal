@@ -7,83 +7,36 @@ const Termination = () => {
   const [chosen, setChosen] = useState('all');
   const handleParagraphClick = (option) => {
     setChosen(option);
+    setPage(0);
   };
 
   const { sendRequest } = useHttpClient();
 
-  // Function to fetch all terminations from the mongoDB database
-  const [loadedAllTerminations, setLoadedAllTerminations] = useState();
-  const fetchAllTerminations = async event => {
-		try {
-			const responseData = await sendRequest(
-        import.meta.env.VITE_BACKEND_URL+`/terminations/get/all?page=${page}`
-      );
-      setLoadedAllTerminations(responseData.terminations);
-      setPageCount(responseData.terminations.length)
-		} catch (err) {
-			console.log('ERROR fetching all terminations');
-		}  
-  };
-  const fetchAllTerminationsCount = async () => {
+  const [loadedTerminations, setLoadedTerminations] = useState();
+  const fetchTerminations = async () => {
     try {
       const responseData = await sendRequest(
-        import.meta.env.VITE_BACKEND_URL+`/terminations/get/all/count`
+        import.meta.env.VITE_BACKEND_URL + `/terminations/get/${chosen}?page=${page}`
       );
-      // setTerminationCount(responseData.count);
-      setPageCount(Math.ceil(responseData.count / terminationsDisplayedPerPage))
-      console.log("DEBUG--",pageCount);
+      if (chosen === 'all' || chosen === 'approved' || chosen === 'applied') {
+        setLoadedTerminations(responseData.terminations);
+      } 
     } catch (err) {
-      console.log("Error in fetching employee count: "+err);
+      console.error(`ERROR fetching ${chosen} terminations`, err);
     }
   };
-
-  // Function to fetch Approved terminations from the mongoDB database
-  const [loadedApprovedTerminations, setLoadedApprovedTerminations] = useState();
-  const fetchApprovedTerminations = async event => {
-		try {
-			const responseData = await sendRequest(
-        import.meta.env.VITE_BACKEND_URL+`/terminations/get/approved?page=${page}`
-      );
-      setLoadedApprovedTerminations(responseData.terminations);
-      setPageCount(responseData.terminations.length)
-		} catch (err) {
-			console.log('ERROR fetching approved terminations');
-		}
-  };
-  const fetchApprovedTerminationsCount = async () => {
+  const [terminationCount, setTerminationCount] = useState(0);
+  const fetchTerminationsCount = async () => {
     try {
-      const responseData = await sendRequest(
-        import.meta.env.VITE_BACKEND_URL+`/terminations/get/approved/count`
-      );
-      // setTerminationCount(responseData.count);
-      setPageCount(Math.ceil(responseData.count / terminationsDisplayedPerPage))
+      if (chosen === 'all' || chosen === 'approved' || chosen === 'applied') {
+        const responseData = await sendRequest(
+          import.meta.env.VITE_BACKEND_URL + `/terminations/get/${chosen}/count`
+        );
+        setTerminationCount(responseData.count);
+        setPageCount(Math.ceil(responseData.count / terminationsDisplayedPerPage));
+      } 
     } catch (err) {
-      console.log("Error in fetching approved termination count: "+err);
-    }
-  };
-  
-  // Function to fetch Applied terminations from the mongoDB database
-  const [loadedAppliedTerminations, setLoadedAppliedTerminations] = useState();
-  const fetchAppliedTerminations = async event => {
-		try {
-			const responseData = await sendRequest(
-        import.meta.env.VITE_BACKEND_URL+`/terminations/get/applied?page=${page}`
-      );
-      setLoadedAppliedTerminations(responseData.terminations);
-      setPageCount(Math.ceil(responseData.terminations.length / terminationsDisplayedPerPage));
-		} catch (err) {
-			console.log('ERROR fetching applied terminations');
-		}  
-  }; 
-  const fetchAppliedTerminationsCount = async () => {
-    try {
-      const responseData = await sendRequest(
-        import.meta.env.VITE_BACKEND_URL+`/terminations/get/applied/count`
-      );
-      // setTerminationCount(responseData.count);
-      setPageCount(Math.ceil(responseData.count / terminationsDisplayedPerPage))
-    } catch (err) {
-      console.log("Error in fetching applied termination count: "+err);
+      console.error(`ERROR fetching ${chosen} terminations count`, err);
     }
   };
 
@@ -98,19 +51,9 @@ const Termination = () => {
   // const [terminationCount, setTerminationCount] = useState(null);
   // Initially fetches all the terminations
   useEffect(() => {
-    fetchAllTerminationsCount();
-    fetchAllTerminations();
-  }, [sendRequest, page, chosen!=='all']);
-
-  useEffect(() => {
-    fetchApprovedTerminationsCount();
-    fetchApprovedTerminations();
-  }, [sendRequest, page, chosen!=='approved']);
-
-  useEffect(() => {
-    fetchAppliedTerminationsCount();
-    fetchAppliedTerminations();
-  }, [sendRequest, page, chosen!=='applied']);
+    fetchTerminationsCount();
+    fetchTerminations();
+  }, [sendRequest, page, chosen]);
 
   return (
     <div className=" h-full">
@@ -129,8 +72,6 @@ const Termination = () => {
             onClick={
               () => {
                 handleParagraphClick("all");
-                fetchAllTerminations();
-                // setPage(0);
               }
             }
           >
@@ -144,23 +85,19 @@ const Termination = () => {
             onClick={
               () => {
                 handleParagraphClick("approved");
-                // setPage(0);
-                fetchApprovedTerminations();
               }
             }
           >
             Approved
           </p>
           <p
-            id="pending"
+            id="applied"
             className={`cursor-pointer mr-4 ${
               chosen === "pending" ? "chosen font-bold" : ""
             }`}
             onClick={
               () => {
-                handleParagraphClick("pending");
-                // setPage(0);
-                fetchAppliedTerminations();
+                handleParagraphClick("applied");
               }
             }
           >
@@ -171,22 +108,8 @@ const Termination = () => {
         {/* Card for Terminations starts */}
 
         <div className="grid grid-cols-2 gap-4 mb-4">
-          {chosen==='all' && loadedAllTerminations && (
-            loadedAllTerminations.map((item)=>(
-              <div key={item.id}>
-                <TerminationItem item={item}/>
-              </div>
-            ))
-          )}
-          {chosen==='pending' && loadedAppliedTerminations && (
-            loadedAppliedTerminations.map((item)=>(
-              <div key={item.id}>
-                <TerminationItem item={item}/>
-              </div>
-            ))
-          )}
-          {chosen==='approved' && loadedApprovedTerminations && (
-            loadedApprovedTerminations.map((item)=>(
+          {loadedTerminations && (
+            loadedTerminations.map((item)=>(
               <div key={item.id}>
                 <TerminationItem item={item}/>
               </div>

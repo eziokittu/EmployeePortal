@@ -1,10 +1,19 @@
 import React, { useContext } from 'react';
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 import { AuthContext } from "../Backend/context/auth-context"
 
 const Header = () => {
 	const auth = useContext(AuthContext);
+	const navigate = useNavigate();
+
+	const userLogout = () => {
+		setTimeout(() => {
+			auth.logout();
+			// window.location.reload(false);
+			navigate('/')
+		}, 1000);
+	}
 
 	return (
 		<header className="sticky top-0" >
@@ -22,7 +31,10 @@ const Header = () => {
 						</>
 						)}
 						{auth.token && (
-							<button onClick={()=>(auth.logout())} className="text-white bg-primary-600 hover:bg-primary-700 focus:ring-2 focus:ring-indigo-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2">Logout</button>
+							<button 
+								onClick={userLogout} 
+								className="text-white bg-primary-600 hover:bg-primary-700 focus:ring-2 focus:ring-indigo-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2"
+							>Logout</button>
 						)}
 					</div>
 				</div>

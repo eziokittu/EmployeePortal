@@ -7,7 +7,7 @@ const userSchema = new Schema({
     lastname: {type: String, required: true },
     email: {type: String, required: true, unique: true },
     password: {type: String, required: true },
-    image: {type: String, required: true, minLength: 4, default: "user.jpg" },
+    image: {type: String, required: true, minLength: 4, default: "defaultUserImage.png" },
     isEmployee: {type: Boolean, required: true, default: false },
     isAdmin: {type: Boolean, required: true, default: false },
     userName: { type: String, required: true, unique: true },

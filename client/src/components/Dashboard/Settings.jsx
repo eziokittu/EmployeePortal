@@ -5,6 +5,7 @@ import { AuthContext } from '../Backend/context/auth-context';
 
 const Settings = () => {
   const { sendRequest } = useHttpClient();
+  const auth = useContext(AuthContext);
 
   // For updating the user information
   const [inputFirstName, setInputFirstName] = useState('');
@@ -17,7 +18,7 @@ const Settings = () => {
     event.preventDefault();
     try {
       const responseData = await sendRequest(
-        import.meta.env.VITE_BACKEND_URL+`/users/edit/info`,
+        import.meta.env.VITE_BACKEND_URL+`/users/edit/info/${auth.userId}`,
         'PATCH',
         JSON.stringify({
 					email: inputEmail,
@@ -82,7 +83,7 @@ const Settings = () => {
       formData.append('image', inputImage);
       formData.append('email', inputEmail); // Hard coded value
       const responseData = await sendRequest(
-        import.meta.env.VITE_BACKEND_URL+`/users/edit/image`,
+        import.meta.env.VITE_BACKEND_URL+`/users/edit/image/${auth.userId}`,
         'PATCH',
         formData
       );

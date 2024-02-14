@@ -33,7 +33,22 @@ router.post('/login', userController.login);
 
 // PATCH: Update user info
 router.patch(
-  '/edit/info',
+  '/edit/password/:uid',
+  [
+    check('oldPassword')
+      .not()
+      .isEmpty()
+      .isLength({ min: 6 }),
+    check('newPassword')
+      .not()
+      .isEmpty()
+      .isLength({ min: 6 })
+  ],
+  userController.updateUserPassword
+);
+// PATCH: Update user info
+router.patch(
+  '/edit/info/:uid',
   [
     check('firstname')
       .not()
@@ -59,14 +74,15 @@ router.patch(
 
 // PATCH: Update user image
 router.patch(
-  '/edit/image',
+  '/edit/imageupdate/:uid',
   fileUpload.single('image'),
-  [
-    check('email')
-      .normalizeEmail()
-      .isEmail()
-  ],
   userController.updateUserImage
+);
+
+// PATCH: Update user image
+router.patch(
+  '/edit/imagedelete/:uid',
+  userController.removeUserImage
 );
 
 // PATCH: Update user to employee
@@ -81,6 +97,18 @@ router.patch(
   '/edit/emptouser',
   [check('userName').not().isEmpty()],
   userController.updateEmployeeAsUser
+);
+
+// DELETE user
+router.delete(
+  '/delete/:uid',
+  [
+    check('password')
+      .not()
+      .isEmpty()
+      // .isLength({ min: 6 })
+  ],
+  userController.deleteUser
 );
 
 module.exports = router;

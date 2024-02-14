@@ -17,7 +17,11 @@ import Internship from './components/Dashboard/Internship.jsx'
 import Jobs from './components/Dashboard/Jobs.jsx'
 import Chat from './components/Dashboard/Chat.jsx'
 import Activity from './components/Dashboard/Activity.jsx'
-import Settings from './components/Dashboard/Settings.jsx'
+// import Settings from './components/Dashboard/Settings.jsx'
+import AccountSetting from './components/Dashboard/AccountSetting.jsx'
+import EditProfile from './components/Dashboard/EditProfile.jsx'
+import ChangePassword from './components/Dashboard/ChangePassword.jsx'
+import DeleteAccount from './components/Dashboard/DeleteAccount.jsx'
 
 import { AuthContext } from './components/Backend/context/auth-context.js'
 import { useAuth } from './components/Backend/hooks/auth-hook.js'
@@ -51,7 +55,11 @@ function App() {
               <Route exact path="/internships" element={<Internship />} />
               <Route exact path="/jobs" element={<Jobs />} />
               <Route exact path="/chat" element={<Chat />} />
-              <Route exact path="/settings" element={<Settings />} />
+              {/* <Route exact path="/settings" element={<Settings />} /> */}
+              <Route exact path="/edit-profile" element={<EditProfile />} />
+              <Route exact path="/account-settings" element={<AccountSetting />} />
+              <Route exact path="/change-password" element={<ChangePassword />} />
+              <Route exact path="/delete-account" element={<DeleteAccount />} />
             </Routes>
           )}
           {isEmployee && !isAdmin && (
@@ -65,7 +73,11 @@ function App() {
               <Route exact path="/jobs" element={<Jobs />} />
               <Route exact path="/chat" element={<Chat />} />
               <Route exact path="/activity" element={<Activity />} />
-              <Route exact path="/settings" element={<Settings />} />
+              {/* <Route exact path="/settings" element={<Settings />} /> */}
+              <Route exact path="/edit-profile" element={<EditProfile />} />
+              <Route exact path="/account-settings" element={<AccountSetting />} />
+              <Route exact path="/change-password" element={<ChangePassword />} />
+              <Route exact path="/delete-account" element={<DeleteAccount />} />
             </Routes>
           )}
           {isAdmin && (
@@ -79,7 +91,6 @@ function App() {
               <Route exact path="/jobs" element={<Jobs />} />
               <Route exact path="/chat" element={<Chat />} />
               <Route exact path="/activity" element={<Activity />} />
-              <Route exact path="/settings" element={<Settings />} />
             </Routes>
           )}
             

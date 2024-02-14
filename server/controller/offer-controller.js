@@ -252,80 +252,34 @@ const createOffer = async (req, res, next) => {
   res.status(201).json({offer: createdOffer});
 };
 
-// const applyOffer = async (req, res, next) => {
-//   const errors = validationResult(req);
-//   if (!errors.isEmpty()) {
-//     return next(
-//       new HttpError('Invalid inputs passed, please check your data.', 422)
-//     );
-//   }
+const applyOffer = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+  
+  const { userId, offerId } = req.body;
+  let existingOffer;
+  try {
+    existingOffer = await Offer.findById(offerId);
+    if (!existingOffer) {
+      throw new Error('Offer not found!');
+    }
+    
+    const userAlreadyApplied = existingOffer.users_applied.includes(userId);
+    if (!userAlreadyApplied) {
+      existingOffer.users_applied.push(userId);
+      await existingOffer.save();
+    }
+  } catch (err) {
+    return next(new HttpError('Error applying offer: ' + err.message, 500));
+  }
 
-//   const { userId, offerId } = req.body;
-// };
+  res.status(201).json({ offer: existingOffer });
+};
 
-// const login = async (req, res, next) => {
-//   const { email, password } = req.body;
-
-//   let existingUser;
-
-//   try {
-//     existingUser = await User.findOne({ email: email });
-//   } catch (err) {
-//     const error = new HttpError(
-//       'Logging in failed, please try again later.',
-//       500
-//     );
-//     return next(error);
-//   }
-
-//   if (!existingUser) {
-//     const error = new HttpError(
-//       'Invalid credentials, could not log you in.',
-//       403
-//     );
-//     return next(error);
-//   }
-
-//   let isValidPassword = false;
-//   try {
-//     isValidPassword = await bcrypt.compare(password, existingUser.password);
-//   } catch (err) {
-//     const error = new HttpError(
-//       'Could not log you in, please check your credentials and try again.',
-//       500
-//     );
-//     return next(error);
-//   }
-
-//   if (!isValidPassword) {
-//     const error = new HttpError(
-//       'Invalid credentials, could not log you in.',
-//       403
-//     );
-//     return next(error);
-//   }
-
-//   let token;
-//   try {
-//     token = jwt.sign(
-//       { userId: existingUser.id, email: existingUser.email },
-//       'supersecret_dont_share',
-//       { expiresIn: '1h' }
-//     );
-//   } catch (err) {
-//     const error = new HttpError(
-//       'Logging in failed, please try again later.',
-//       500
-//     );
-//     return next(error);
-//   }
-
-//   res.json({
-//     userId: existingUser.id,
-//     email: existingUser.email,
-//     token: token
-//   });
-// };
 
 module.exports = {
   getOffer,

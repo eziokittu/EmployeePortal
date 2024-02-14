@@ -239,9 +239,11 @@ const updateUserInfo = async (req, res, next) => {
 
   const { firstname, lastname, userName, email, phone, bio } = req.body;
 
+  const userId = req.params.uid;
+
   try {
     // Find the existing user by email
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findById({ _id: userId });
     if (!existingUser) {
       return next(new HttpError('User not found, update failed.', 404));
     }
@@ -273,17 +275,54 @@ const updateUserInfo = async (req, res, next) => {
   }
 };
 
-const updateUserImage = async (req, res, next) => {
+const updateUserPassword = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(new HttpError('Invalid inputs passed, please check your data.', 422));
   }
 
-  const { email } = req.body;
+  const { oldPassword, newPassword } = req.body;
+  const userId = req.params.uid;
+
+  let existingUser;
+  try {
+    existingUser = await User.findById({ _id: userId });
+    if (!existingUser) {
+      return next(new HttpError('User not found, update failed.', 404));
+    }
+  }
+  catch (error) {
+    return new HttpError("Something went wrong!", 404);
+  }
+
+  let isValidPassword = false;
+  try {
+    isValidPassword = await bcrypt.compare(oldPassword, existingUser.password);
+  } catch (err) {
+    return new HttpError('Some error occured!',500);
+  }
+
+  if (!isValidPassword) {
+    return next(new HttpError('The passwords dont match', 500));
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    existingUser.password = hashedPassword;
+    await existingUser.save();
+    res.status(200).json({ user: existingUser.toObject({ getters: true }) });
+  } catch (err) {
+    // Handle database or server errors
+    return next(new HttpError('Something went wrong[1], could not update user password.', 500));
+  }
+};
+
+const updateUserImage = async (req, res, next) => {
+  const userId = req.params.uid;
 
   try {
     // Find the existing user by email
-    const existingUser = await User.findOne({ email: email });
+    const existingUser = await User.findById({ _id: userId });
     if (!existingUser) {
       return next(new HttpError('User not found, update failed.', 404));
     }
@@ -297,6 +336,31 @@ const updateUserImage = async (req, res, next) => {
     }
 
     // Save the updated user
+    await existingUser.save();
+    
+    res.status(200).json({ user: existingUser.toObject({ getters: true }) });
+  } catch (err) {
+    // Handle database or server errors
+    return next(new HttpError('Something went wrong[1], could not update user image.', 500));
+  }
+};
+
+const removeUserImage = async (req, res, next) => {
+  const userId = req.params.uid;
+
+  try {
+    // Find the existing user by email
+    const existingUser = await User.findById({ _id: userId });
+    if (!existingUser) {
+      return next(new HttpError('User not found, update failed.', 404));
+    }
+
+    const imagePath = existingUser.image;
+    fs.unlink(imagePath, err => {
+      console.log("Successfully deleted the image file for the user");
+    })
+    existingUser.image = process.env.DB_USER_DEFAULT_IMAGE;
+
     await existingUser.save();
     
     res.status(200).json({ user: existingUser.toObject({ getters: true }) });
@@ -358,6 +422,55 @@ const updateEmployeeAsUser = async (req, res, next) => {
   }
 };
 
+// DELETE
+
+const deleteUser = async (req, res, next) => {
+  const userId = req.params.uid;
+
+  let existingUser;
+  try {
+    existingUser = await User.findById({_id: userId});
+  } catch (err) {
+    return new HttpError('Something went wrong, could not find user',500);
+  }
+  // console.log(req);
+  // if (userId !== req.userData.userId) {
+  //   return new HttpError(`You are not allowed to delete this user, ERROR: ${req.userData}`,401);
+  // }
+
+  const imagePath = existingUser.image;
+
+  const password = req.body.password;
+  let isValidPassword = false;
+  try {
+    isValidPassword = await bcrypt.compare(password, existingUser.password);
+  } catch (err) {
+    return new HttpError('Could not match the passwords',500);
+  }
+
+  if (!isValidPassword) {
+    return new HttpError('Could not delete Account! Passwords do not match',500);
+  }
+  // console.log("GG");
+  try {
+    await User.deleteOne(existingUser);
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not delete user.',
+      500
+    );
+    return next(error);
+  }
+
+  if (imagePath !== process.env.DB_USER_DEFAULT_IMAGE){
+    fs.unlink(imagePath, err => {
+      console.log("Successfully deleted the image file for the user");
+    })
+  };
+
+  res.status(200).json({ message: 'Deleted user.' });
+};
+
 module.exports = {
   getEmployeeCount,
   getEmployees,
@@ -367,7 +480,10 @@ module.exports = {
 	signup,
 	login,
   updateUserInfo,
+  updateUserPassword,
   updateUserImage,
+  removeUserImage,
   updateEmployeeAsUser,
-  updateUserAsEmployee
+  updateUserAsEmployee,
+  deleteUser
 };

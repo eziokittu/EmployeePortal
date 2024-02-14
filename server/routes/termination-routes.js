@@ -16,7 +16,7 @@ router.get('/get/approved/count', terminationController.getApprovedTerminationsC
 
 // POST
 
-// Apply Termiantion
+// Apply Termination
 router.post(
   '/apply',
   // [
