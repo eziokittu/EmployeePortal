@@ -5,35 +5,37 @@ const HttpError = require('../models/http-error');
 const Offer = require('../models/offer');
 const User = require('../models/user');
 
-const getOffers = async (req, res, next) => {
-  const page = req.query.page || 0;
-  const offersPerPage = 2;
-  // const { type } = req.body;
+// GET
 
-  let allOffers;
-  try {
-    allOffers = await Offer
-      // .find({type: type})
-      .find()
-      .skip(page * offersPerPage)
-      .limit(offersPerPage);
-  } catch (err) {
-    const error = new HttpError(
-      'Fetching offers failed, please try again later.',
-      500
-    );
-    return next(error);
-  }
+// const getOffers = async (req, res, next) => {
+//   const page = req.query.page || 0;
+//   const offersPerPage = 2;
+//   // const { type } = req.body;
 
-  if (!allOffers || allOffers.length === 0) {
-    return next(new HttpError('No offers found.', 404));
-  }
+//   let allOffers;
+//   try {
+//     allOffers = await Offer
+//       // .find({type: type})
+//       .find()
+//       .skip(page * offersPerPage)
+//       .limit(offersPerPage);
+//   } catch (err) {
+//     const error = new HttpError(
+//       'Fetching offers failed, please try again later.',
+//       500
+//     );
+//     return next(error);
+//   }
 
-  res.json({
-    offers: allOffers.map((offer) => offer.toObject({ getters: true })),
-  });
-  console.log("DEBUG -- Offer-Controller - Fetching offers successful!");
-};
+//   if (!allOffers || allOffers.length === 0) {
+//     return next(new HttpError('No offers found.', 404));
+//   }
+
+//   res.json({
+//     offers: allOffers.map((offer) => offer.toObject({ getters: true })),
+//   });
+//   console.log("DEBUG -- Offer-Controller - Fetching offers successful!");
+// };
 
 const getInternships = async (req, res, next) => {
   const page = req.query.page || 0;
@@ -42,7 +44,7 @@ const getInternships = async (req, res, next) => {
   let allOffers;
   try {
     allOffers = await Offer
-      .find({type: 'Internship'})
+      .find({type: 'internship'})
       .skip(page * internshipsPerPage)
       .limit(internshipsPerPage);
   } catch (err) {
@@ -58,9 +60,9 @@ const getInternships = async (req, res, next) => {
   }
 
   res.json({
-    offers: allOffers.map((offer) => offer.toObject({ getters: true })),
+    internships: allOffers.map((offer) => offer.toObject({ getters: true })),
   });
-  console.log("DEBUG -- Offer-Controller - Fetching internships successful!");
+  // console.log("DEBUG -- Offer-Controller - Fetching internships successful!");
 };
 
 const getJobs = async (req, res, next) => {
@@ -70,7 +72,7 @@ const getJobs = async (req, res, next) => {
   let allOffers;
   try {
     allOffers = await Offer
-      .find({type: 'Job'})
+      .find({type: 'job'})
       .skip(page * jobsPerPage)
       .limit(jobsPerPage);
   } catch (err) {
@@ -86,9 +88,9 @@ const getJobs = async (req, res, next) => {
   }
 
   res.json({
-    offers: allOffers.map((offer) => offer.toObject({ getters: true })),
+    jobs: allOffers.map((offer) => offer.toObject({ getters: true })),
   });
-  console.log("DEBUG -- Offer-Controller - Fetching internships successful!");
+  // console.log("DEBUG -- Offer-Controller - Fetching internships successful!");
 };
 
 const getOffer = async (req, res, next) => {
@@ -124,7 +126,7 @@ const getOfferCount = async (req, res, next) => {
   }
 
   res.json({ offerCount });
-  console.log("DEBUG -- Offer-Controller - Fetching offer count successful!");
+  // console.log("DEBUG -- Offer-Controller - Fetching offer count successful!");
 };
 
 const getInternshipCount = async (req, res, next) => {
@@ -132,7 +134,7 @@ const getInternshipCount = async (req, res, next) => {
   const { type } = req.body;
   try {
     // offerCount = await Offer.countDocuments();
-    offerCount = await Offer.countDocuments({ type: 'Internship' });
+    offerCount = await Offer.countDocuments({ type: 'internship' });
   } catch (err) {
     const error = new HttpError(
       'Fetching job count failed, please try again later.',
@@ -141,15 +143,15 @@ const getInternshipCount = async (req, res, next) => {
     return next(error);
   }
 
-  res.json({ offerCount });
-  console.log("DEBUG -- Offer-Controller - Fetching internships count successful!");
+  res.json({ count: offerCount });
+  // console.log("DEBUG -- Offer-Controller - Fetching internships count successful!");
 };
 
 const getJobCount = async (req, res, next) => {
   let offerCount;
   try {
     // offerCount = await Offer.countDocuments();
-    offerCount = await Offer.countDocuments({ type: 'Job' });
+    offerCount = await Offer.countDocuments({ type: 'job' });
   } catch (err) {
     const error = new HttpError(
       'Fetching job count failed, please try again later.',
@@ -158,70 +160,11 @@ const getJobCount = async (req, res, next) => {
     return next(error);
   }
 
-  res.json({ offerCount });
-  console.log("DEBUG -- Offer-Controller - Fetching job count successful!");
+  res.json({ count: offerCount });
+  // console.log("DEBUG -- Offer-Controller - Fetching job count successful!");
 };
 
-// const getEmployeeCount = async (req, res, next) => {
-//   let employeeCount;
-//   try {
-//     employeeCount = await User.countDocuments({ isEmployee: true });
-//   } catch (err) {
-//     const error = new HttpError(
-//       'Fetching employee count failed, please try again later.',
-//       500
-//     );
-//     return next(error);
-//   }
-
-//   res.json({ employeeCount });
-//   console.log("DEBUG -- Employee-Controller - Fetching employee count successful!");
-// };
-
-// const getEmployees = async (req, res, next) => {
-//   const page = req.query.page || 0;
-//   const employeesPerPage = 2;
-
-//   let allEmployees;
-//   try {
-//     allEmployees = await User
-//       .find({ isEmployee: true })  // Adjust the query to filter by isEmployee
-//       .skip(page * employeesPerPage)
-//       .limit(employeesPerPage);
-//   } catch (err) {
-//     const error = new HttpError(
-//       'Fetching Employees failed, please try again later.',
-//       500
-//     );
-//     return next(error);
-//   }
-
-//   if (!allEmployees || allEmployees.length === 0) {
-//     return next(new HttpError('No employees found.', 404));
-//   }
-
-//   res.json({
-//     employees: allEmployees.map((emp) => emp.toObject({ getters: true })),
-//   });
-//   console.log("DEBUG -- Employee-Controller - Fetching employees successful!");
-// };
-
-// Utility Function to generate user id in format
-// const generateFormattedUserId = (date, userNumber) => {
-//   const year = date.getFullYear().toString().slice(2);
-//   const month = padNumber(date.getMonth() + 1);
-//   const day = padNumber(date.getDate());
-//   // const hours = padNumber(date.getHours());
-//   // const minutes = padNumber(date.getMinutes());
-
-//   // atmost 99999 unique userIDs possible in 1 hour span XD (a lot though)
-//   return `${year}${month}${day}${padNumber(userNumber, 5)}`;
-// };
-
-// Utility function
-// const padNumber = (num, length = 2) => {
-//   return num.toString().padStart(length, '0');
-// };
+// POST
 
 const createOffer = async (req, res, next) => {
   const errors = validationResult(req);
@@ -252,6 +195,68 @@ const createOffer = async (req, res, next) => {
   res.status(201).json({offer: createdOffer});
 };
 
+const createInternshipOffer = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+
+  const { stipend, heading, link } = req.body;
+
+  const createdOffer = new Offer({
+    type: 'internship',
+    stipend: stipend,
+    heading: heading,
+    link: link
+  });
+
+  try {
+    await createdOffer.save();
+  } catch (err) {
+    const error = new HttpError(
+      'Creating new Offer failed, please try again.',
+      500
+    );
+    return next(error);
+  }
+
+  res.status(201).json({offer: createdOffer});
+};
+
+const createJobOffer = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+
+  const { ctc, heading, link } = req.body;
+
+  const createdOffer = new Offer({
+    type: 'job',
+    ctc: ctc,
+    heading: heading,
+    link: link
+  });
+
+  try {
+    await createdOffer.save();
+  } catch (err) {
+    const error = new HttpError(
+      'Creating new Offer failed, please try again.',
+      500
+    );
+    return next(error);
+  }
+
+  res.status(201).json({offer: createdOffer});
+};
+
+// PATCH
+
 const applyOffer = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -267,6 +272,11 @@ const applyOffer = async (req, res, next) => {
     if (!existingOffer) {
       throw new Error('Offer not found!');
     }
+
+    existingUser = await User.findById(userId);
+    if (!existingUser) {
+      throw new Error('user not found!');
+    }
     
     const userAlreadyApplied = existingOffer.users_applied.includes(userId);
     if (!userAlreadyApplied) {
@@ -280,15 +290,47 @@ const applyOffer = async (req, res, next) => {
   res.status(201).json({ offer: existingOffer });
 };
 
+// DELETE
+
+const deleteOffer = async (req, res, next) => {  
+  const offerId = req.params.oid;
+  let existingOffer;
+  try {
+    existingOffer = await Offer.findById({_id: offerId});
+    console.log("working1");
+    if (!existingOffer) {
+      return new HttpError('Offer not found!', 404);
+    }
+    console.log("working2");
+  }
+  catch (error) {
+    return new HttpError('Some error occured while finding an offer', 500);
+  }
+  console.log("working3");
+  try {
+    await Offer.deleteOne(existingOffer);
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not delete offer.',
+      500
+    );
+    return next(error);
+  }
+
+  res.status(201).json({ message: 'Deleted offer.' });
+};
 
 module.exports = {
   getOffer,
-  getOffers,
+  // getOffers,
   getInternships,
   getJobs,
   getOfferCount,
   getInternshipCount,
   getJobCount,
-  createOffer
-  // applyOffer
+  createOffer,
+  createInternshipOffer,
+  createJobOffer,
+  deleteOffer,
+  applyOffer
 };

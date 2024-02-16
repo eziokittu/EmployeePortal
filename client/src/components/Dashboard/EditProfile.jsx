@@ -61,17 +61,13 @@ const EditProfile = () => {
 
   const pickedHandler = event => {
     let pickedFile;
-    let fileIsValid = isValid;
     if (event.target.files && event.target.files.length === 1) {
       pickedFile = event.target.files[0];
       setFile(pickedFile);
       setIsValid(true);
-      fileIsValid = true;
     } else {
       setIsValid(false);
-      fileIsValid = false;
     }
-    // props.onInput(props.id, pickedFile, fileIsValid);
     setInputImage(pickedFile);
   };
 

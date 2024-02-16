@@ -356,9 +356,11 @@ const removeUserImage = async (req, res, next) => {
     }
 
     const imagePath = existingUser.image;
-    fs.unlink(imagePath, err => {
-      console.log("Successfully deleted the image file for the user");
-    })
+    if (imagePath !== process.env.DB_USER_DEFAULT_IMAGE){
+      fs.unlink(imagePath, err => {
+        console.log("Successfully deleted the image file for the user with ID:", userId);
+      })
+    }
     existingUser.image = process.env.DB_USER_DEFAULT_IMAGE;
 
     await existingUser.save();

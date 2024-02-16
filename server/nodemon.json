@@ -4,6 +4,6 @@
     "DB_PASSWORD": "southpoint19",
     "DB_NAME": "rnpsoft-employee-portal",
     "JWT_KEY": "supersecret_dont_share",
-    "DB_USER_DEFAULT_IMAGE": "defaultUserImage.png"
+    "DB_USER_DEFAULT_IMAGE": "uploads/images/defaultUserImage.png"
   }
 }

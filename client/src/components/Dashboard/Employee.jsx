@@ -69,7 +69,7 @@ const Employee = () => {
 									username={employee.userName}
 									email={employee.email}
 									projects={employee.projects_complete}
-									empImg={import.meta.env.VITE_ASSETS_URL+`/`+employee.image}
+									empImg={employee.image}
 								/>
 							</div>
 						);

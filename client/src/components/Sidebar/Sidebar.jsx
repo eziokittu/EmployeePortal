@@ -36,7 +36,7 @@ const Sidebar = () => {
             {/* Dashboard Start */}
 
             {/* Employee Start */}
-            {(auth.isEmployee || auth.isAdmin) && (<li>
+            {(auth.isAdmin) && (<li>
               <Link
                 to="/employee"
                 className="flex items-center p-2 text-white rounded-lg  hover:bg-primary-600 hover:rounded-3xl group focus:bg-primary-600 focus:rounded-3xl group"

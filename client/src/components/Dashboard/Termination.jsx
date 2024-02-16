@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
+import TerminationItem from "../Common/TerminationItem";
 import ReactPaginate from "react-paginate";
 import {useHttpClient} from '../Backend/hooks/http-hook';
-import TerminationItem from "../Common/TerminationItem";
 
 const Termination = () => {
   const [chosen, setChosen] = useState('all');
