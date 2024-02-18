@@ -7,10 +7,20 @@ const fileUpload = require('../middlewares/file-upload');
 const router = express.Router();
 
 router.get('/', userController.getUsers);
-router.get('/user/:uid', userController.getUser);
+router.get('/user/id/:uid', userController.getUserById);
+router.get('/user/email/:email', userController.getUserByEmail);
+router.get('/user/username/:username', userController.getUserByUsername);
+
 router.get('/emp', userController.getEmployees);
-router.get('/emp/:uid', userController.getEmployee);
+router.get('/emp/id/:uid', userController.getEmployeeById);
+router.get('/emp/email/:email', userController.getEmployeeByEmail);
+router.get('/emp/username/:username', userController.getEmployeeByUsername);
 router.get('/empcount', userController.getEmployeeCount);
+
+router.get('/terminations', userController.getAllTerminations);
+router.get('/terminationcount', userController.getAllTerminationsCount);
+router.get('/terminationstatus/id/:uid', userController.getTerminationStatusById);
+router.get('/terminationstatus/email/:email', userController.getTerminationStatusByEmail);
 
 router.post(
   '/signup',
@@ -97,6 +107,28 @@ router.patch(
   '/edit/emptouser',
   [check('userName').not().isEmpty()],
   userController.updateEmployeeAsUser
+);
+
+// PATCH: Terminate an employee by email
+router.patch(
+  '/edit/terminate',
+  [
+    check('email')
+      .normalizeEmail()
+      .isEmail(),
+  ],
+  userController.terminateEmployeeByEmail
+);
+
+// PATCH: Un terminate an employee by email
+router.patch(
+  '/edit/unterminate',
+  [
+    check('email')
+      .normalizeEmail()
+      .isEmail(),
+  ],
+  userController.unterminateEmployeeByEmail
 );
 
 // DELETE user

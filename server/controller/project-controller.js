@@ -46,6 +46,8 @@ const getProjectsOngoingCount = async (req, res, next) => {
   res.json({count: projectsCount});
 };
 
+// POST
+
 const createProject = async (req, res, next) => {
   try {
     const errors = validationResult(req);
@@ -74,6 +76,8 @@ const createProject = async (req, res, next) => {
     return next(new HttpError('Creating project failed!, please try again later.', 500));
   }
 }
+
+// PATCH
 
 // updates project, req.params provides the id
 const updateProjectInfo = async (req, res, next) => {
@@ -107,6 +111,8 @@ const updateProjectInfo = async (req, res, next) => {
     return next(new HttpError('Creating project failed!, please try again later.', 500));
   }
 }
+
+// DELETE
 
 const deleteProject = async (req, res, next) => {
   // console.log(req.params.pid);

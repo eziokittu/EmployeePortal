@@ -12,8 +12,6 @@ const app = express();
 const userRoutes = require('./routes/user-routes');
 const projectRoutes = require('./routes/project-routes');
 const offerRoutes = require('./routes/offer-routes');
-const terminationRoutes = require('./routes/termination-routes');
-const leaveRoutes = require('./routes/leave-routes');
 
 const HttpError = require('./models/http-error');
 
@@ -36,8 +34,6 @@ app.use((req, res, next) => {
 app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/offers', offerRoutes);
-app.use('/api/leaves', leaveRoutes);
-app.use('/api/terminations', terminationRoutes);
 
 app.use((req, res, next) => {
   const error = new HttpError('Could not find this route. ['+req.body.url+']', 404);
