@@ -23,7 +23,7 @@ const Signup = () => {
 
 		// console.log(inputEmail, inputPassword, inputFirstname, inputLastname);
 
-		console.log(import.meta.env.VITE_BACKEND_URL);
+		// console.log(import.meta.env.VITE_BACKEND_URL);
 		try {
 			const responseData = await sendRequest(
 				import.meta.env.VITE_BACKEND_URL+`/users/signup`,
@@ -38,8 +38,23 @@ const Signup = () => {
 					'Content-Type': 'application/json'
 				}
 			);
+			auth.login(
+				responseData.userId, 
+				responseData.token, 
+				responseData.isEmployee, 
+				responseData.isAdmin,
 
-			auth.login(responseData.userId, responseData.token, responseData.isEmployee, responseData.isAdmin);
+				responseData.userName, 
+				responseData.firstname, 
+				responseData.lastname, 
+				responseData.email, 
+				responseData.phone, 
+				responseData.bio, 
+				responseData.role,
+				responseData.image,
+
+				false
+			);
 			console.log('Sign in successful!');
 			navigate('/dashboard');
 		} catch (err) {

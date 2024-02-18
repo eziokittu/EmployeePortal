@@ -141,7 +141,7 @@ const signup = async (req, res, next) => {
     });
 
     await createdUser.save();
-
+    console.log("DEBUG3");
     const token = jwt.sign(
       { userId: createdUser.id, email: createdUser.email },
       process.env.JWT_KEY,
@@ -155,7 +155,16 @@ const signup = async (req, res, next) => {
       token: token,
       isEmployee: createdUser.isEmployee,
       isAdmin: createdUser.isAdmin,
+
+      firstname: createdUser.firstname,
+      lastname: createdUser.lastname,
+      email: createdUser.email,
+      bio: createdUser.bio,
+      role: createdUser.role,
+      phone: createdUser.phone,
+      image: createdUser.image
     });
+    console.log(firstname);
   } catch (err) {
     console.error(err); // Log the error for debugging
     return next(new HttpError('Signing up failed, please try again later.', 500));
@@ -219,13 +228,21 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
-  res.json({
+  res.status(201).json({
     userId: existingUser.id,
     userName: existingUser.userName,
     email: existingUser.email,
     token: token,
     isEmployee: existingUser.isEmployee,
-    isAdmin: existingUser.isAdmin
+    isAdmin: existingUser.isAdmin,
+
+    firstname: existingUser.firstname,
+    lastname: existingUser.lastname,
+    email: existingUser.email,
+    bio: existingUser.bio,
+    role: existingUser.role,
+    phone: existingUser.phone,
+    image: existingUser.image
   });
 };
 

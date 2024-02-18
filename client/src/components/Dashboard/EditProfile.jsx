@@ -9,12 +9,14 @@ const EditProfile = () => {
   const auth = useContext(AuthContext);
 
   // For updating the user information
-  const [inputFirstName, setInputFirstName] = useState('');
-  const [inputLastName, setInputLastName] = useState('');
-  const [inputUserName, setInputUserName] = useState('');
-  const [inputPhone, setInputPhone] = useState('');
-  const [inputEmail, setInputEmail] = useState('');
-  const [inputBio, setInputBio] = useState('');
+  const [inputFirstName, setInputFirstName] = useState(auth.firstname);
+  const [inputLastName, setInputLastName] = useState(auth.lastname);
+  const [inputUserName, setInputUserName] = useState(auth.userName);
+  const [inputPhone, setInputPhone] = useState(auth.phone);
+  const [inputEmail, setInputEmail] = useState(auth.email);
+  const [inputBio, setInputBio] = useState(auth.bio);
+
+	// console.log(auth.firstname);
 
   const userInfoUpdateHandler = async event => {
     event.preventDefault();
@@ -148,6 +150,7 @@ const EditProfile = () => {
 									onChange={(event) => setInputLastName(event.target.value)}
 									type="text"
 									id="settings_lname"
+									placeholder={inputLastName}
 									className="block w-full pl-10 h-10 mt-1 bg-blue-100 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 								/>
 								<svg
@@ -162,6 +165,7 @@ const EditProfile = () => {
 								onChange={(event) => setInputPhone(event.target.value)}
 								type="text"
 								id="settings_phone"
+								placeholder={inputPhone}
 								className="block w-full h-10 mt-1 bg-blue-100 pl-10 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 							/>
 							<svg
@@ -176,6 +180,7 @@ const EditProfile = () => {
 								onChange={(event) => setInputEmail(event.target.value)}
 								type="email"
 								id="settings_email"
+								placeholder={inputEmail}
 								className="block w-full h-10 mt-1 pl-10 bg-blue-100 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 							/>
 							<svg
@@ -189,6 +194,7 @@ const EditProfile = () => {
 								onChange={(event) => setInputUserName(event.target.value)}
 								type="username"
 								id="settings_username"
+								placeholder={inputUserName}
 								className="block w-full h-10 mt-1 pl-10 bg-blue-100 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 							/>
 							<svg
@@ -202,6 +208,7 @@ const EditProfile = () => {
 								onChange={(event) => setInputBio(event.target.value)}
 								id="settings_bio"
 								rows="6"
+								placeholder={inputBio}
 								className="block p-2 w-full mt-1 bg-blue-100 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 							></textarea>
 						</div>

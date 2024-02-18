@@ -24,7 +24,23 @@ const Login = () => {
 					'Content-Type': 'application/json'
 				}
 			);
-			auth.login(responseData.userId, responseData.token, responseData.isEmployee, responseData.isAdmin, false);
+			await auth.login(
+				responseData.userId, 
+				responseData.token, 
+				responseData.isEmployee, 
+				responseData.isAdmin, 
+				responseData.userName, 
+
+				responseData.firstname, 
+				responseData.lastname, 
+				responseData.email, 
+				responseData.phone, 
+				responseData.bio, 
+				responseData.role,
+				responseData.image,
+				
+				false
+			);
 			console.log('Login successful!');
 			navigate('/dashboard');
 		} catch (err) {

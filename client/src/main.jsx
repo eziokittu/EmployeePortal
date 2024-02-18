@@ -28,7 +28,22 @@ import { AuthContext } from './components/Backend/context/auth-context.js'
 import { useAuth } from './components/Backend/hooks/auth-hook.js'
 
 function App() {
-  const { token, login, logout, userId, isEmployee, isAdmin, userName } = useAuth();
+  const { 
+    token, 
+    login, 
+    logout, 
+    userId, 
+    isEmployee, 
+    isAdmin, 
+    userName,
+    firstname,
+    lastname,
+    email,
+    phone,
+    bio,
+    role,
+    image
+  } = useAuth();
 
   return (
     <AuthContext.Provider
@@ -39,6 +54,15 @@ function App() {
         userName: userName,
         isEmployee: isEmployee,
         isAdmin: isAdmin,
+
+        firstname: firstname,
+        lastname: lastname,
+        email: email,
+        phone: phone,
+        bio: bio,
+        role: role,
+        image: image,
+
         login: login,
         logout: logout
       }}

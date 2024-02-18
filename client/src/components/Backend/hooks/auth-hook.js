@@ -9,11 +9,46 @@ export const useAuth = () => {
   const [tokenExpirationDate, setTokenExpirationDate] = useState();
   const [userId, setUserId] = useState(false);
 
-  const login = useCallback((uid, token, isEmployee, isAdmin, expirationDate) => {
+  const [userName, setUserName] = useState("");
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [bio, setBio] = useState("");
+  const [role, setRole] = useState("");
+  const [image, setImage] = useState(null);
+
+  const login = useCallback((
+      uid, 
+      token, 
+      isEmployee, 
+      isAdmin, 
+
+      userName, 
+      firstname, 
+      lastname, 
+      email, 
+      phone, 
+      bio, 
+      role,
+      image,
+
+      expirationDate
+    ) => {
     setToken(token);
     setIsEmployee(isEmployee);
     setIsAdmin(isAdmin);
     setUserId(uid);
+
+    setUserName(userName);
+    setFirstname(firstname);
+    setLastname(lastname);
+    setEmail(email);
+    setPhone(phone);
+    setBio(bio);
+    setRole(role);
+    setImage(image);
+
     const tokenExpirationDate =
       expirationDate || new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 2);
     setTokenExpirationDate(tokenExpirationDate);
@@ -24,6 +59,16 @@ export const useAuth = () => {
         token: token,
         isEmployee: isEmployee,
         isAdmin: isAdmin,
+
+        userName: userName,
+        firstname: firstname,
+        lastname: lastname,
+        email: email,
+        phone: phone,
+        bio: bio,
+        role: role,
+        image: image,
+
         expiration: tokenExpirationDate.toISOString()
       })
     );
@@ -35,6 +80,16 @@ export const useAuth = () => {
     setUserId(null);
     setIsEmployee(false);
     setIsAdmin(false);
+
+    setUserName(null);
+    setFirstname(null);
+    setLastname(null);
+    setEmail(null);
+    setPhone(null);
+    setBio(null);
+    setRole(null);
+    setImage(null);
+
     localStorage.removeItem('userData');
   }, []);
 
@@ -54,9 +109,40 @@ export const useAuth = () => {
       storedData.token &&
       new Date(storedData.expiration) > new Date()
     ) {
-      login(storedData.userId, storedData.token, storedData.isEmployee, storedData.isAdmin, new Date(storedData.expiration));
+      login(
+        storedData.userId, 
+        storedData.token, 
+        storedData.isEmployee, 
+        storedData.isAdmin, 
+
+        storedData.userName, 
+        storedData.firstname, 
+        storedData.lastname, 
+        storedData.email, 
+        storedData.phone, 
+        storedData.bio, 
+        storedData.role, 
+        storedData.image, 
+
+        new Date(storedData.expiration));
     }
   }, [login]);
 
-  return { token, login, logout, userId, isEmployee, isAdmin };
+  return { 
+    token, 
+    login, 
+    logout, 
+    userId, 
+    isEmployee, 
+    isAdmin,
+
+    userName,
+    firstname,
+    lastname,
+    email,
+    phone,
+    bio,
+    role,
+    image,
+  };
 };
