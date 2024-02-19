@@ -15,7 +15,7 @@ import Projects from './components/Dashboard/Projects.jsx'
 import Termination from './components/Dashboard/Termination.jsx'
 import Internship from './components/Dashboard/Internship.jsx'
 import Jobs from './components/Dashboard/Jobs.jsx'
-import Chat from './components/Dashboard/Chat.jsx'
+import ContactForm from './components/Dashboard/ContactForm.jsx'
 import Activity from './components/Dashboard/Activity.jsx'
 // import Settings from './components/Dashboard/Settings.jsx'
 import AccountSetting from './components/Dashboard/AccountSetting.jsx'
@@ -80,7 +80,7 @@ function App() {
               <Route exact path="/dashboard" element={<Dashboard />} />
               <Route exact path="/internships" element={<Internship />} />
               <Route exact path="/jobs" element={<Jobs />} />
-              <Route exact path="/chat" element={<Chat />} />
+              <Route exact path="/contact" element={<ContactForm />} />
               {/* <Route exact path="/settings" element={<Settings />} /> */}
               <Route exact path="/edit-profile" element={<EditProfile />} />
               <Route exact path="/account-settings" element={<AccountSetting />} />
@@ -97,8 +97,7 @@ function App() {
               <Route exact path="/termination" element={<Termination />} />
               <Route exact path="/internships" element={<Internship />} />
               <Route exact path="/jobs" element={<Jobs />} />
-              <Route exact path="/chat" element={<Chat />} />
-              <Route exact path="/activity" element={<Activity />} />
+              <Route exact path="/contact" element={<ContactForm />} />
               {/* <Route exact path="/settings" element={<Settings />} /> */}
               <Route exact path="/edit-profile" element={<EditProfile />} />
               <Route exact path="/account-settings" element={<AccountSetting />} />
@@ -116,8 +115,7 @@ function App() {
               <Route exact path="/termination" element={<Termination />} />
               <Route exact path="/internships" element={<Internship />} />
               <Route exact path="/jobs" element={<Jobs />} />
-              <Route exact path="/chat" element={<Chat />} />
-              <Route exact path="/activity" element={<Activity />} />
+              <Route exact path="/contact" element={<ContactForm />} />
             </Routes>
           )}
             
