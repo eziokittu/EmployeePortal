@@ -10,9 +10,14 @@ const User = require('../models/user');
 // GET
 
 const getUsers = async (req, res, next) => {
+  const page = req.query.page || 0;
+  const usersPerPage = 10;
   let users;
   try {
-    users = await User.find({}, '-password');
+    users = await User
+      .find({}, '-password')
+      .skip(page * usersPerPage)
+      .limit(usersPerPage);
   } catch (err) {
     const error = new HttpError(
       'Fetching users failed, please try again later.',
@@ -29,7 +34,7 @@ const getUser = async (req, res, next) => {
   let user;
   try {
     // user = await User.find();
-    user = await User.findOne({userName: userName});
+    user = await User.findOne({userName: userName}, '-password');
     // console.log('DEBUG -- user-controller.js -- 2: '+user.name);
   } catch (err) {
     const error = new HttpError(
@@ -39,6 +44,64 @@ const getUser = async (req, res, next) => {
     return next(error);
   }
   res.json({user: user});
+};
+
+const getUserById = async (req, res, next) => {
+  const userId = req.params['uid'];
+  // console.log(userId);
+  let employee;
+  try {
+    employee = await User.findById({ _id: userId }, '-password')
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching Employee failed, please try again later.',
+      500
+    );
+    // console.log(error);
+    return next(error);
+  }
+
+  // if (employee.isEmployee == false){
+  //   const error = new HttpError(
+  //     'User is not an employee.',
+  //     422
+  //   );
+  //   return next(error);
+  // }
+
+  res.json({employee: employee});
+};
+
+const getUserByEmail = async (req, res, next) => {
+  const email = req.params['email'];
+  let employee;
+  try {
+    employee = await User.find({ email: email }, '-password')
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching Employee failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
+  res.json({employee: employee});
+};
+
+const getUserByUsername = async (req, res, next) => {
+  const username = req.params['username'];
+  let employee;
+  try {
+    employee = await User.find({ userName: username }, '-password')
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching Employee failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
+  res.json({employee: employee});
 };
 
 const getEmployeeCount = async (req, res, next) => {
@@ -64,7 +127,7 @@ const getEmployees = async (req, res, next) => {
   let allEmployees;
   try {
     allEmployees = await User
-      .find({ isEmployee: true })  // Adjust the query to filter by isEmployee
+      .find({ isEmployee: true }, '-password')  // Adjust the query to filter by isEmployee
       .skip(page * employeesPerPage)
       .limit(employeesPerPage);
   } catch (err) {
@@ -85,12 +148,12 @@ const getEmployees = async (req, res, next) => {
   // console.log("DEBUG -- Employee-Controller - Fetching employees successful!");
 };
 
-const getEmployee = async (req, res, next) => {
+const getEmployeeById = async (req, res, next) => {
   const userId = req.params['uid'];
   // console.log(userId);
   let employee;
   try {
-    employee = await User.findById({ _id: userId })
+    employee = await User.findById({ _id: userId, isEmployee: true }, '-password')
   } catch (err) {
     const error = new HttpError(
       'Fetching Employee failed, please try again later.',
@@ -109,6 +172,110 @@ const getEmployee = async (req, res, next) => {
   // }
 
   res.json({employee: employee});
+};
+
+const getEmployeeByEmail = async (req, res, next) => {
+  const email = req.params['email'];
+  let employee;
+  try {
+    employee = await User.find({ email: email, isEmployee: true }, '-password')
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching Employee failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
+  res.json({employee: employee});
+};
+
+const getEmployeeByUsername = async (req, res, next) => {
+  const username = req.params['username'];
+  let employee;
+  try {
+    employee = await User.find({ userName: username, isEmployee: true }, '-password')
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching Employee failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
+  res.json({employee: employee});
+};
+
+const getAllTerminations = async (req, res, next) => {
+  const page = req.query.page || 0;
+  const terminationsPerPage = 2;
+
+  let terminations;
+  try {
+    terminations = await User
+      .find({status_termination: false})
+      .skip(page * terminationsPerPage)
+      .limit(terminationsPerPage);
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching terminations failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
+  if (!terminations || terminations.length === 0) {
+    return next(new HttpError('No terminations found.', 404));
+  }
+
+  res.json({terminations: terminations.map(termination => termination.toObject({ getters: true }))});
+};
+
+const getAllTerminationsCount = async (req, res, next) => {
+  let terminationCount;
+  try {
+    terminationCount = await User.find({status_termination: false}).countDocuments();
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching termination count failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
+  res.json({count: terminationCount });
+};
+
+const getTerminationStatusById = async (req, res, next) => {
+  const userId = req.params.uid;
+
+  let existingUser;
+  try {
+    existingUser = await User.findById(userId);
+    if (!existingUser) {
+      return res.status(404).json({ message: "The user does not exist with this ID" });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: "Something went wrong!" });
+  }
+
+  res.status(200).json({ status: existingUser.status_termination });
+};
+
+const getTerminationStatusByEmail = async (req, res, next) => {
+  const email = req.params.email;
+
+  let existingUser;
+  try {
+    existingUser = await User.findOne({email: email, isEmployee: true});
+    if (!existingUser) {
+      return next(new HttpError('Employee does not exist with this email', 422));
+    }
+  } catch (error) {
+    return res.status(500).json({ message: "Something went wrong!" });
+  }
+
+  res.status(200).json({ status: existingUser.status_termination });
 };
 
 // POST
@@ -441,6 +608,53 @@ const updateEmployeeAsUser = async (req, res, next) => {
   }
 };
 
+const terminateEmployeeByEmail = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).send('Invalid inputs passed, please check your data.');
+  }
+
+  const { email } = req.body;
+
+  try {
+    const existingUser = await User.findOne({ email: email, isEmployee: true });
+    if (!existingUser) {
+      return res.status(500).send("Could not find Employee with this email!");
+    }
+
+    existingUser.status_termination = false;
+    await existingUser.save();
+
+    res.status(201).send(`Employee with email: ${email} has been terminated!`);
+  } catch (error) {
+    return res.status(500).send("Could not terminate employee");
+  }
+}
+
+const unterminateEmployeeByEmail = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).send('Invalid inputs passed, please check your data.');
+  }
+
+  const { email } = req.body;
+
+  try {
+    const existingUser = await User.findOne({ email: email, isEmployee: true });
+    if (!existingUser) {
+      return res.status(500).send("Could not find Employee with this email!");
+    }
+
+    // Set status_termination back to true to un-terminate the employee
+    existingUser.status_termination = true;
+    await existingUser.save();
+
+    res.status(200).send(`Employee with email: ${email} has been reinstated!`);
+  } catch (error) {
+    return res.status(500).send("Could not reinstate employee");
+  }
+}
+
 // DELETE
 
 const deleteUser = async (req, res, next) => {
@@ -493,16 +707,33 @@ const deleteUser = async (req, res, next) => {
 module.exports = {
   getEmployeeCount,
   getEmployees,
-  getEmployee,
+  getEmployeeById,
+  getEmployeeByEmail,
+  getEmployeeByUsername,
+  
+  getAllTerminations,
+  getAllTerminationsCount,
+  getTerminationStatusById,
+  getTerminationStatusByEmail,
+
 	getUsers,
   getUser,
+  getUserById,
+  getUserByEmail,
+  getUserByUsername,
+
 	signup,
 	login,
+
   updateUserInfo,
   updateUserPassword,
   updateUserImage,
   removeUserImage,
   updateEmployeeAsUser,
   updateUserAsEmployee,
+
+  terminateEmployeeByEmail,
+  unterminateEmployeeByEmail,
+  
   deleteUser
 };

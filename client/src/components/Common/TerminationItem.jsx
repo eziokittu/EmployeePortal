@@ -10,7 +10,7 @@ function TerminationItem({item}) {
     const fetchEmployee = async () => {
       try {
         const responseData = await sendRequest(
-          `${import.meta.env.VITE_BACKEND_URL}/users/emp/${item.employee.toString()}`
+          `${import.meta.env.VITE_BACKEND_URL}/users/emp/id/${item.employee.toString()}`
         );
         setUserData(responseData.employee);
       } catch (err) {

@@ -44,6 +44,14 @@ const Internship = ( {isAdmin} ) => {
     fetchInternships();
   }, [sendRequest, page]);
 
+  if (!loadedInternships || !internshipCount){
+    return (
+      <>
+       <p>Loading Internships!</p>
+      </>
+    )
+  }
+
   return (
     <div className="p-4 sm:ml-64 bg-blue-50">
       {/* Heading starts */}

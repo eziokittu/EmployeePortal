@@ -1,13 +1,15 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import Card from '../Common/Card'
 import ticketsOpen from '../../assets/ticketsOpen.png'
 import ticketsClosed from '../../assets/ticketsClosed.png'
 import ProjectItem from '../Common/ProjectItem'
 import ReactPaginate from 'react-paginate'
 import { useHttpClient } from '../Backend/hooks/http-hook';
+import { AuthContext } from '../Backend/context/auth-context';
 
 const Projects = () => {
   const { sendRequest } = useHttpClient();
+  const auth = useContext(AuthContext);
 
   // getting all the projects from database
   const [projects, setProjects] = useState([]);
@@ -223,7 +225,8 @@ const Projects = () => {
                       <h2 className='w-30 mr-10'>Start</h2>
                       <h2 className='w-30 mr-10 '>Deadline</h2>
                     </div>
-                    <h2 className=' w-32'>Actions</h2>
+                    
+                    {auth.isAdmin && (<h2 className=' w-32'>Actions</h2>)}
                   </div>
                 </div>
                 {/* Project Heading End */}
