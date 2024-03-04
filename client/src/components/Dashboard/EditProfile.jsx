@@ -18,6 +18,7 @@ const EditProfile = () => {
 
 	// console.log(auth.firstname);
 
+	// Function to update user details
   const userInfoUpdateHandler = async event => {
     event.preventDefault();
     try {
@@ -36,6 +37,21 @@ const EditProfile = () => {
 					'Content-Type': 'application/json'
 				}
       );
+			console.log("DEBUG 1");
+			setTimeout(() => {
+				window.location.reload(false);
+			}, 2500);
+			console.log("DEBUG 2");
+			await auth.updateUser(
+        inputUserName,
+        inputFirstName,
+        inputLastName,
+        inputEmail,
+        inputPhone,
+        inputBio,
+				false
+      );
+			console.log("DEBUG 3");
       console.log("User details updated successfully!");
     } catch (err) {
       console.log('ERROR updating user details!');
@@ -50,6 +66,7 @@ const EditProfile = () => {
 
   const filePickerRef = useRef();
 
+	// Checks for change in file
   useEffect(() => {
     if (!file) {
       return;
@@ -76,6 +93,8 @@ const EditProfile = () => {
   const pickImageHandler = () => {
     filePickerRef.current.click();
   };
+
+	// Function to update current user image
   const userImageUpdateHandler = async event => {
     event.preventDefault();
     try {

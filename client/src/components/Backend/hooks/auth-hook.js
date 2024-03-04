@@ -50,7 +50,7 @@ export const useAuth = () => {
     setImage(image);
 
     const tokenExpirationDate =
-      expirationDate || new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 2);
+      expirationDate || new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 2); // 2 days
     setTokenExpirationDate(tokenExpirationDate);
     localStorage.setItem(
       'userData',
@@ -92,6 +92,33 @@ export const useAuth = () => {
 
     localStorage.removeItem('userData');
   }, []);
+
+  const updateUser = useCallback((_userName, _firstname, _lastname, _email, _phone, _bio) => {
+    // Update state variables
+    setUserName(_userName);
+    setFirstname(_firstname);
+    setLastname(_lastname);
+    setEmail(_email);
+    setPhone(_phone);
+    setBio(_bio);
+  
+    // Update localStorage
+    const storedData = JSON.parse(localStorage.getItem('userData'));
+    if (storedData) {
+      localStorage.setItem(
+        'userData',
+        JSON.stringify({
+          ...storedData,
+          userName: _userName,
+          firstname: _firstname,
+          lastname: _lastname,
+          email: _email,
+          phone: _phone,
+          bio: _bio
+        })
+      );
+    }
+  }, []);  
 
   useEffect(() => {
     if (token && tokenExpirationDate) {
@@ -144,5 +171,7 @@ export const useAuth = () => {
     bio,
     role,
     image,
+
+    updateUser, // add updateUser to the returned object
   };
 };

@@ -42,7 +42,8 @@ function App() {
     phone,
     bio,
     role,
-    image
+    image,
+    updateUser
   } = useAuth();
 
   return (
@@ -64,7 +65,8 @@ function App() {
         image: image,
 
         login: login,
-        logout: logout
+        logout: logout,
+        updateUser: updateUser
       }}
     >
       <BrowserRouter>
