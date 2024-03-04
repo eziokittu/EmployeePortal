@@ -93,7 +93,7 @@ export const useAuth = () => {
     localStorage.removeItem('userData');
   }, []);
 
-  const updateUser = useCallback((_userName, _firstname, _lastname, _email, _phone, _bio) => {
+  const updateUser = useCallback((_userName, _firstname, _lastname, _email, _phone, _bio, _role, _image) => {
     // Update state variables
     setUserName(_userName);
     setFirstname(_firstname);
@@ -101,6 +101,8 @@ export const useAuth = () => {
     setEmail(_email);
     setPhone(_phone);
     setBio(_bio);
+    setRole(_role);
+    setImage(_image);
   
     // Update localStorage
     const storedData = JSON.parse(localStorage.getItem('userData'));
@@ -114,7 +116,9 @@ export const useAuth = () => {
           lastname: _lastname,
           email: _email,
           phone: _phone,
-          bio: _bio
+          bio: _bio,
+          role: _role,
+          image: _image
         })
       );
     }

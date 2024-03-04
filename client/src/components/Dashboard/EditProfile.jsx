@@ -49,6 +49,8 @@ const EditProfile = () => {
         inputEmail,
         inputPhone,
         inputBio,
+				auth.role,
+				auth.image,
 				false
       );
 			console.log("DEBUG 3");
@@ -60,23 +62,28 @@ const EditProfile = () => {
 
   // For updating the image
   const [file, setFile] = useState();
-  const [previewUrl, setPreviewUrl] = useState();
+  const [previewUrl, setPreviewUrl] = useState(auth.image);
   const [isValid, setIsValid] = useState(false);
-  const [inputImage, setInputImage] = useState(null);
+  const [inputImage, setInputImage] = useState(auth.image);
 
   const filePickerRef = useRef();
 
-	// Checks for change in file
+	// Function to update the preview image when the file changes
   useEffect(() => {
+    // console.log('File:', file);
+    // console.log('Auth Image:', auth.image);
     if (!file) {
-      return;
+        setPreviewUrl(auth.image); // Reset to default image if no file is selected
+        return;
     }
+
     const fileReader = new FileReader();
     fileReader.onload = () => {
-      setPreviewUrl(fileReader.result);
+        // console.log('FileReader Result:', fileReader.result);
+        setPreviewUrl(fileReader.result); // Update previewUrl with the new image data URL
     };
     fileReader.readAsDataURL(file);
-  }, [file]);
+	}, [file]);
 
   const pickedHandler = event => {
     let pickedFile;
@@ -106,10 +113,19 @@ const EditProfile = () => {
         formData
       );
 			setTimeout(() => {
-				// navigate('/')
 				window.location.reload(false);
 			}, 1500);
-      console.log("User image updated successfully!");
+			await auth.updateUser(
+        auth.userName,
+        auth.firstname,
+        auth.lastname,
+        auth.email,
+        auth.phone,
+        auth.bio,
+				auth.role,
+				responseData.user.image
+      );
+      console.log("User image updated successfully!",inputImage);
     } catch (err) {
       console.log('ERROR updating user image!');
     }
@@ -129,6 +145,21 @@ const EditProfile = () => {
 				// navigate('/')
 				window.location.reload(false);
 			}, 1500);
+			console.log("DEBUG 1");
+			await auth.updateUser(
+        auth.userName,
+        auth.firstname,
+        auth.lastname,
+        auth.email,
+        auth.phone,
+        auth.bio,
+				auth.role,
+				import.meta.env.VITE_USER_DEFAULT_IMAGE_PATH
+			);
+			console.log("DEBUG 2");
+			setPreviewUrl(import.meta.env.VITE_USER_DEFAULT_IMAGE);
+			console.log("DEBUG 3");
+			console.log(import.meta.env.VITE_USER_DEFAULT_IMAGE);
     } catch (err) {
       console.log('ERROR deleting user image!');
     }
@@ -145,6 +176,8 @@ const EditProfile = () => {
 					</div>
 				</div>
 				<div className="p-4 bg-gray-50">
+
+					{/* Edit Details section */}
 					<div className="p-4 rounded-lg dark:border-gray-700">
 						{/* Full Name */}
 						<div className="flex mb-4">
@@ -248,7 +281,7 @@ const EditProfile = () => {
 						</div>
 					</div>
 
-					{/* Photo change area */}
+					{/* Edit Photo section */}
 					<div className="p-4 border-2 mt-6 border-gray-200 rounded-lg dark:border-gray-700">
 						{/* Heading */}
 						<h1>Your photo</h1>
@@ -256,7 +289,17 @@ const EditProfile = () => {
 						{/* Image preview */}
 						<div className="mt-4 flex flex-row">
 							<div className="w-12 h-12 rounded-full object-cover bg-gray-100 text-sm" >
-								{previewUrl && <img src={previewUrl} alt="Preview" />}
+								{/* {previewUrl && <img src={import.meta.env.VITE_ASSETS_URL+'/'+previewUrl} alt="Preview" />} */}
+								{previewUrl && 
+									<img
+										src={
+											file
+												? previewUrl // If a new image is selected, use the data URL directly
+												: `${import.meta.env.VITE_ASSETS_URL}/${previewUrl}` // If updating, use the existing URL
+										}
+										alt="Preview"
+									/>}
+								{/* {previewUrl && <img src={previewUrl} alt="Preview" />} */}
 								{!previewUrl && <img src={profileImg} alt="default" />}
 							</div>
 							<div>
@@ -268,11 +311,6 @@ const EditProfile = () => {
 											onClick={userImageRemoveHandler}
 											className=" text-black px-2 py-1 rounded-full  "
 										>Remove Existing Image</button>
-										{/* <button 
-											type='button'
-											onClick={userImageUpdateHandler}
-											className=" text-black px-2 py-1 rounded-full "
-										>Update</button> */}
 									</div>
 								</div>
 							</div>
@@ -310,9 +348,7 @@ const EditProfile = () => {
 						</div>
 
 					</div>
-					
 				</div>
-
 			</div>
 		</div>
 	)

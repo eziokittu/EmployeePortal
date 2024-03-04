@@ -14,7 +14,7 @@ export const AuthContext = createContext({
   phone: "",
   bio: "",
   role: "",
-  image: null,
+  image: "",
   
   login: () => {},
   logout: () => {},
