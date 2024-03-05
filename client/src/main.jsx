@@ -22,7 +22,7 @@ import AccountSetting from './components/Dashboard/AccountSetting.jsx'
 import EditProfile from './components/Dashboard/EditProfile.jsx'
 import ChangePassword from './components/Dashboard/ChangePassword.jsx'
 import DeleteAccount from './components/Dashboard/DeleteAccount.jsx'
-import NotFound from './components/Dashboard/NotFound.jsx'
+import Error from './components/Error/Error.jsx';
 
 import { AuthContext } from './components/Backend/context/auth-context.js'
 import { useAuth } from './components/Backend/hooks/auth-hook.js'
@@ -77,7 +77,7 @@ function App() {
           <Sidebar />
           {!isEmployee && !isAdmin && (
             <Routes>
-              <Route path="*" element={<NotFound />} />
+              <Route path="*" element={<Error />} />
               <Route exact path="/" element={<Dashboard />} />
               <Route exact path="/dashboard" element={<Dashboard />} />
               <Route exact path="/internships" element={<Internship />} />
@@ -92,7 +92,7 @@ function App() {
           )}
           {isEmployee && !isAdmin && (
             <Routes>
-              <Route path="*" element={<NotFound />} />
+              <Route path="*" element={<Error />} />
               <Route exact path="/" element={<Dashboard />} />
               <Route exact path="/dashboard" element={<Dashboard />} />
               <Route exact path="/projects" element={<Projects />} />
@@ -109,7 +109,7 @@ function App() {
           )}
           {isAdmin && (
             <Routes>
-              <Route path="*" element={<NotFound />} />
+              <Route path="*" element={<Error />} />
               <Route exact path="/" element={<Dashboard />} />
               <Route exact path="/dashboard" element={<Dashboard />} />
               <Route exact path="/employee" element={<Employee />} />
@@ -125,6 +125,7 @@ function App() {
         ) : (
           // Default routes
           <Routes>
+            <Route path="*" element={<Error />} />
             <Route exact path="/" element={<Login />} />
             <Route exact path="signup" element={<Signup />} />
           </Routes>
