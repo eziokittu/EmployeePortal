@@ -1,13 +1,18 @@
 import error from '../../assets/error.png'
 import { Link } from 'react-router-dom'
 
-const Error = () => {
+const Error = ({text}) => {
     return (
         <div className="sm:ml-64 text-center bg-[#e9f5fe] py-[30px] flex justify-center items-center flex-col ">
 
             <div>
                 <h1 className='font-bold text-[80px]'>Oops!</h1>
-                <p className=' text-[32px]'>You are lost</p>
+                {text ? (
+                    <p className=' text-[32px]'>{text}</p>
+                ) : (
+                    <p className=' text-[32px]'>You are lost</p>
+                )}
+                
             </div>
 
 

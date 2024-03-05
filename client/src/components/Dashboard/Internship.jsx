@@ -67,7 +67,7 @@ const Internship = ( {isAdmin} ) => {
 
       {/* Open Internship positions section starts*/}
         <div className="mr-5">
-          <div className="bg-white mt-10 rounded-lg flex justify-between">
+          <div className="bg-white mt-14 rounded-lg flex justify-between">
             <p className="font-semibold p-1 pl-3">Open</p>
             <svg
               className="pt-1 pr-2 cursor-pointer"

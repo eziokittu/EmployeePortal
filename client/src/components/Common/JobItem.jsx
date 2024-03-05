@@ -1,10 +1,12 @@
 import React, { useContext } from "react";
+import { useNavigate } from 'react-router-dom';
 import { useHttpClient } from "../Backend/hooks/http-hook";
 import { AuthContext } from '../Backend/context/auth-context';
 
 const JobItem=({id, stipend, ctc, position,date, isInternship})=>{
   const auth = useContext(AuthContext);
   const { sendRequest } = useHttpClient();
+  const navigate = useNavigate();
 
   const applyOffer = async event => {
     event.preventDefault();
@@ -106,7 +108,7 @@ const JobItem=({id, stipend, ctc, position,date, isInternship})=>{
         ) : (
           <button 
             className="bg-violet-700 p-2 pl-5 pr-5 rounded-lg text-white mb-4"
-            onClick={applyOffer}
+            onClick={()=>{navigate('/apply/'+id)}}
           >Apply</button>
         )}
       </div>

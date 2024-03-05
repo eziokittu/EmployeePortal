@@ -31,10 +31,24 @@ const Header = () => {
 						)}
 						{auth.token && !auth.isAdmin && (
 							<>
+								{/* Image */}
+								<button 
+									onClick={()=> {navigate('/account-settings')}}
+								>
+									<img 
+										className='max-w-10 h-10 rounded-lg border-2 border-gray-800 hover:border-gray-400 mr-2'
+										src={`${import.meta.env.VITE_ASSETS_URL}/${auth.image}`}
+										alt='Profile'
+									/>
+								</button>
+
+								{/* Name */}
 								<button 
 									onClick={()=> {navigate('/account-settings')}} 
-									className="text-white hover:underline underline-offset-2 decoration-white focus:ring-2 focus:ring-indigo-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2"
+									className="text-white hover:underline underline-offset-2 decoration-gray-200 focus:ring-2 focus:ring-gray-400 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2"
 								>{auth.firstname} {auth.lastname}</button>
+
+								{/* Logout button */}
 								<button 
 									onClick={userLogout} 
 									className="text-white bg-primary-600 hover:bg-primary-700 focus:ring-2 focus:ring-indigo-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2"

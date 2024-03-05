@@ -3,25 +3,26 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter, RouterProvider, createBrowserRouter, Routes, Route } from 'react-router-dom'
 // import App from './App.jsx'
 import './index.css'
-import Header from "./components/Header/Header"
-import Footer from "./components/Footer/Footer"
-import Login from './components/Login/Login.jsx'
-import Signup from './components/Signin/Signup.jsx'
-import Layout from './Layout.jsx'
-import Sidebar from './components/Sidebar/Sidebar.jsx'
-import Dashboard from './components/Dashboard/Dashboard.jsx'
-import Employee from './components/Dashboard/Employee.jsx'
-import Projects from './components/Dashboard/Projects.jsx'
-import Termination from './components/Dashboard/Termination.jsx'
-import Internship from './components/Dashboard/Internship.jsx'
-import Jobs from './components/Dashboard/Jobs.jsx'
-import ContactForm from './components/Dashboard/ContactForm.jsx'
-import Activity from './components/Dashboard/Activity.jsx'
-// import Settings from './components/Dashboard/Settings.jsx'
-import AccountSetting from './components/Dashboard/AccountSetting.jsx'
-import EditProfile from './components/Dashboard/EditProfile.jsx'
-import ChangePassword from './components/Dashboard/ChangePassword.jsx'
-import DeleteAccount from './components/Dashboard/DeleteAccount.jsx'
+import Header from "./components/Header/Header";
+import Footer from "./components/Footer/Footer";
+import Login from './components/Login/Login.jsx';
+import Signup from './components/Signin/Signup.jsx';
+import Layout from './Layout.jsx';
+import Sidebar from './components/Sidebar/Sidebar.jsx';
+import Dashboard from './components/Dashboard/Dashboard.jsx';
+import Employee from './components/Dashboard/Employee.jsx';
+import Projects from './components/Dashboard/Projects.jsx';
+import Termination from './components/Dashboard/Termination.jsx';
+import Internship from './components/Dashboard/Internship.jsx';
+import Jobs from './components/Dashboard/Jobs.jsx';
+import ContactForm from './components/Dashboard/ContactForm.jsx';
+import Activity from './components/Dashboard/Activity.jsx';
+// import Settings from './components/Dashboard/Settings.jsx';
+import AccountSetting from './components/Dashboard/AccountSetting.jsx';
+import EditProfile from './components/Dashboard/EditProfile.jsx';
+import ChangePassword from './components/Dashboard/ChangePassword.jsx';
+import DeleteAccount from './components/Dashboard/DeleteAccount.jsx';
+import Applynow from './components/Dashboard/Applynow.jsx';
 import Error from './components/Error/Error.jsx';
 
 import { AuthContext } from './components/Backend/context/auth-context.js'
@@ -72,24 +73,27 @@ function App() {
       <BrowserRouter>
         <Header />
         <div>
+        {/* If Authorized user */}
         {token ? (
           <>
           <Sidebar />
+          {/* Default USER */}
           {!isEmployee && !isAdmin && (
             <Routes>
               <Route path="*" element={<Error />} />
               <Route exact path="/" element={<Dashboard />} />
               <Route exact path="/dashboard" element={<Dashboard />} />
+              <Route exact path="/apply/:oid" element={<Applynow />} />
               <Route exact path="/internships" element={<Internship />} />
               <Route exact path="/jobs" element={<Jobs />} />
               <Route exact path="/contact" element={<ContactForm />} />
-              {/* <Route exact path="/settings" element={<Settings />} /> */}
               <Route exact path="/edit-profile" element={<EditProfile />} />
               <Route exact path="/account-settings" element={<AccountSetting />} />
               <Route exact path="/change-password" element={<ChangePassword />} />
               <Route exact path="/delete-account" element={<DeleteAccount />} />
             </Routes>
           )}
+          {/* Employee as USER */}
           {isEmployee && !isAdmin && (
             <Routes>
               <Route path="*" element={<Error />} />
@@ -99,6 +103,7 @@ function App() {
               <Route exact path="/termination" element={<Termination />} />
               <Route exact path="/internships" element={<Internship />} />
               <Route exact path="/jobs" element={<Jobs />} />
+              <Route exact path="/apply/:oid" element={<Applynow />} />
               <Route exact path="/contact" element={<ContactForm />} />
               {/* <Route exact path="/settings" element={<Settings />} /> */}
               <Route exact path="/edit-profile" element={<EditProfile />} />
@@ -107,6 +112,7 @@ function App() {
               <Route exact path="/delete-account" element={<DeleteAccount />} />
             </Routes>
           )}
+          {/* ADMIN as USER */}
           {isAdmin && (
             <Routes>
               <Route path="*" element={<Error />} />
@@ -123,7 +129,7 @@ function App() {
             
           </>
         ) : (
-          // Default routes
+          // If not authorized user
           <Routes>
             <Route path="*" element={<Error />} />
             <Route exact path="/" element={<Login />} />
