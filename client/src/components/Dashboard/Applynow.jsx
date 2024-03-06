@@ -192,7 +192,7 @@ const Applynow = () => {
       </div>
       )}
       {!loadedOffer && (
-        <Error text='The offer ID is invalid'/>
+        <Error text='No Internship/Job Offer exists with this ID'/>
       )}
     </>
   );

@@ -511,6 +511,15 @@ const updateUserImage = async (req, res, next) => {
       return next(new HttpError('User not found, update failed.', 404));
     }
 
+    // Unlinking the user image file
+    const imagePath = existingUser.image;
+    if (imagePath !== process.env.DB_USER_DEFAULT_IMAGE){
+      fs.unlink(imagePath, err => {
+        console.log("Successfully deleted the image file for the user with ID:", userId);
+      })
+    }
+    
+    // Linking the new image
     try {
       existingUser.image = req.file.path;
       // console.log(req.file.path);
@@ -539,14 +548,17 @@ const removeUserImage = async (req, res, next) => {
       return next(new HttpError('User not found, update failed.', 404));
     }
 
+    // Unlinking the user image file
     const imagePath = existingUser.image;
     if (imagePath !== process.env.DB_USER_DEFAULT_IMAGE){
       fs.unlink(imagePath, err => {
         console.log("Successfully deleted the image file for the user with ID:", userId);
       })
     }
+    // Removing the file path from database
     existingUser.image = process.env.DB_USER_DEFAULT_IMAGE;
 
+    // Save the updated user
     await existingUser.save();
     
     res.status(200).json({ user: existingUser.toObject({ getters: true }) });

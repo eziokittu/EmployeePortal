@@ -142,7 +142,7 @@ const Termination = () => {
   if (!auth.isAdmin) {
     return (
       <div className=" h-full">
-        <div className="p-4 ml-64 bg-blue-50">
+        <div className="p-4 ml-64 bg-blue-50 min-h-[500px]">
   
           {/* Heading */}
           <h1 className="font-semibold text-3xl">Termination Status</h1>
@@ -164,7 +164,7 @@ const Termination = () => {
   else {
     return (
       <div className=" h-full">
-        <div className="p-4 ml-64 bg-blue-50">
+        <div className="p-4 ml-64 bg-blue-50 min-h-[500px]">
   
           <h1 className="font-semibold text-3xl">Termination Window</h1>
   
