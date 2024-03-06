@@ -52,6 +52,28 @@ const Applynow = () => {
     }));
   };
 
+  // Method to apply in an offer
+  const applyOffer = async event => {
+    event.preventDefault();
+		// try {
+		// 	const responseData = await sendRequest(
+		// 		import.meta.env.VITE_BACKEND_URL+`/applied/login`,
+		// 		'POST',
+		// 		JSON.stringify({
+		// 			email: inputEmail,
+		// 			password: inputPassword
+		// 		}),
+		// 		{
+		// 			'Content-Type': 'application/json'
+		// 		}
+		// 	);
+		// 	console.log('Offer Apply successful!');
+		// 	navigate('/dashboard');
+		// } catch (err) {
+		// 	console.log('ERROR logging in!');
+		// } 
+  }
+
   return (
     <>
       {/* Apply offer form */}
