@@ -9,7 +9,6 @@ const offerSchema = new Schema({
   ctc: {type: String, default: '-'},
   stipend: {type: String, default: '-'},
   // image: {type: String, required: true, minLength: 4, default: 'image.png' },
-  users_applied: [{ type: mongoose.Types.ObjectId, required: true, ref: 'User' }],
   date_posting: {type: Date, required: true, default: Date.now() },
   date_start: {type: Date, required: true, default: Date.now() },
   date_end: {type: Date, required: true, default: Date.now() },

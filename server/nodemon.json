@@ -4,6 +4,7 @@
     "DB_PASSWORD": "user",
     "DB_NAME": "rnpsoft-employee-portal",
     "JWT_KEY": "supersecret_dont_share",
-    "DB_USER_DEFAULT_IMAGE": "uploads/images/defaultUserImage.png"
+    "DB_USER_DEFAULT_IMAGE": "uploads/images/defaultUserImage.png",
+    "DB_USER_DEFAULT_RESUME": "uploads/images/defaultResume.pdf"
   }
 }

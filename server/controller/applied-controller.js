@@ -96,169 +96,105 @@ const getAppliedJobCount = async (req, res, next) => {
 
 // POST
 
-const createOffer = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return next(
-      new HttpError('Invalid inputs passed, please check your data.', 422)
-    );
-  }
-
-  const { type, heading, link } = req.body;
-
-  const createdOffer = new Offer({
-    type,
-    heading,
-    link
-  });
-
-  try {
-    await createdOffer.save();
-  } catch (err) {
-    const error = new HttpError(
-      'Creating new Offer failed, please try again.',
-      500
-    );
-    return next(error);
-  }
-
-  res.status(201).json({offer: createdOffer});
-};
-
-const createInternshipOffer = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return next(
-      new HttpError('Invalid inputs passed, please check your data.', 422)
-    );
-  }
-
-  const { stipend, heading, link } = req.body;
-
-  const createdOffer = new Offer({
-    type: 'internship',
-    stipend: stipend,
-    heading: heading,
-    link: link
-  });
-
-  try {
-    await createdOffer.save();
-  } catch (err) {
-    const error = new HttpError(
-      'Creating new Offer failed, please try again.',
-      500
-    );
-    return next(error);
-  }
-
-  res.status(201).json({offer: createdOffer});
-};
-
-const createJobOffer = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return next(
-      new HttpError('Invalid inputs passed, please check your data.', 422)
-    );
-  }
-
-  const { ctc, heading, link } = req.body;
-
-  const createdOffer = new Offer({
-    type: 'job',
-    ctc: ctc,
-    heading: heading,
-    link: link
-  });
-
-  try {
-    await createdOffer.save();
-  } catch (err) {
-    const error = new HttpError(
-      'Creating new Offer failed, please try again.',
-      500
-    );
-    return next(error);
-  }
-
-  res.status(201).json({offer: createdOffer});
-};
-
-// PATCH
-
 const applyOffer = async (req, res, next) => {
+  // Checking if date passed in correct or not
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(
       new HttpError('Invalid inputs passed, please check your data.', 422)
     );
   }
-  
-  const { userId, offerId } = req.body;
-  let existingOffer;
-  try {
-    existingOffer = await Offer.findById(offerId);
-    if (!existingOffer) {
-      throw new Error('Offer not found!');
-    }
 
-    existingUser = await User.findById(userId);
+  const { type, link, oid, uid } = req.body;
+
+  try {
+    existingUser = await User.findById({_id: uid});
     if (!existingUser) {
-      throw new Error('user not found!');
+      return new HttpError('User does not exist', 422);
     }
-    
-    const userAlreadyApplied = existingOffer.users_applied.includes(userId);
-    if (!userAlreadyApplied) {
-      existingOffer.users_applied.push(userId);
-      await existingOffer.save();
-    }
-  } catch (err) {
-    return next(new HttpError('Error applying offer: ' + err.message, 500));
+  } catch (error) {
+    return res.json({message: 'User not in correct format / INVALID'});
   }
 
-  res.status(201).json({ offer: existingOffer });
+  try {
+    existingOffer = await Offer.findById({_id: oid});
+    if (!existingOffer) {
+      return next(new HttpError('Offer does not exist', 422));
+    }
+  } catch (error) {
+    return res.json({message: 'Offer not in correct format / INVALID'});
+  }
+
+  try {
+    const existingApplied = await Applied.findOne({ offer: oid, user: uid });
+    if (existingApplied !== null) {
+      return res.json({ applied: null, message: "User already applied in this offer" })
+    }
+  } catch (error) {
+    console.error(error);
+  }
+
+  if (type!=='job' && type!=='internship'){
+    return res.json({ applied: null, message: "Offer type is INVALID" });
+  }
+
+  const newLink = "https://www.google.com";
+  const updatedLink = link.length < 4 ? newLink : link;
+
+  const createdApplied = new Applied({
+    type: type,
+    link: updatedLink,
+    offer: oid,
+    user: uid
+  });
+
+  try {
+    await createdApplied.save();
+  } catch (err) {
+    const error = new HttpError(
+      'Creating new Applied failed, please try again.',
+      500
+    );
+    return next(error);
+  } 
+
+  res.status(201).json({ applied: createdApplied });
 };
 
 // DELETE
 
-const deleteOffer = async (req, res, next) => {  
-  const offerId = req.params.oid;
-  let existingOffer;
-  try {
-    existingOffer = await Offer.findById({_id: offerId});
-    console.log("working1");
-    if (!existingOffer) {
-      return new HttpError('Offer not found!', 404);
-    }
-    console.log("working2");
-  }
-  catch (error) {
-    return new HttpError('Some error occured while finding an offer', 500);
-  }
-  console.log("working3");
-  try {
-    await Offer.deleteOne(existingOffer);
-  } catch (err) {
-    const error = new HttpError(
-      'Something went wrong, could not delete offer.',
-      500
-    );
-    return next(error);
-  }
+// const deleteOffer = async (req, res, next) => {  
+//   const offerId = req.params.oid;
+//   let existingOffer;
+//   try {
+//     existingOffer = await Offer.findById({_id: offerId});
+//     console.log("working1");
+//     if (!existingOffer) {
+//       return new HttpError('Offer not found!', 404);
+//     }
+//     console.log("working2");
+//   }
+//   catch (error) {
+//     return new HttpError('Some error occured while finding an offer', 500);
+//   }
+//   console.log("working3");
+//   try {
+//     await Offer.deleteOne(existingOffer);
+//   } catch (err) {
+//     const error = new HttpError(
+//       'Something went wrong, could not delete offer.',
+//       500
+//     );
+//     return next(error);
+//   }
 
-  res.status(201).json({ message: 'Deleted offer.' });
-};
+//   res.status(201).json({ message: 'Deleted offer.' });
+// };
 
 module.exports = {
   getAppliedInternship,
   getAppliedJobs,
   getAppliedInternshipCount,
-  getAppliedJobCount
-
-  // createOffer,
-  // createInternshipOffer,
-  // createJobOffer,
-  // deleteOffer,
-  // applyOffer
+  getAppliedJobCount,
+  applyOffer
 };

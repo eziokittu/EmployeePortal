@@ -14,61 +14,10 @@ router.get('/get/count/jobs', appliedController.getAppliedJobCount);
 
 // POST
 
-// router.post(
-//   '/post/offer',
-//   [
-//     check('type')
-//       .not()
-//       .isEmpty(),
-//     check('heading')
-//       .not()
-//       .isEmpty(),
-//     check('link')
-//       .not()
-//       .isEmpty()
-//   ],
-//   offerController.createOffer
-// );
-
-// router.post(
-//   '/post/internship',
-//   [
-//     check('stipend')
-//       .not()
-//       .isEmpty(),
-//     check('heading')
-//       .not()
-//       .isEmpty(),
-//     check('link')
-//       .not()
-//       .isEmpty()
-//   ],
-//   offerController.createInternshipOffer
-// );
-
-// router.post(
-//   '/post/job',
-//   [
-//     check('ctc')
-//       .not()
-//       .isEmpty(),
-//     check('heading')
-//       .not()
-//       .isEmpty(),
-//     check('link')
-//       .not()
-//       .isEmpty()
-//   ],
-//   offerController.createJobOffer
-// );
-
-// PATCH
-
-// router.patch(
-//   '/edit/apply',
-//   [],
-//   offerController.applyOffer
-// )
+router.post(
+  '/post',
+  appliedController.applyOffer
+);
 
 // DELETE
 

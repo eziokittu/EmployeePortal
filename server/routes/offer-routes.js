@@ -66,12 +66,6 @@ router.post(
 
 // PATCH
 
-router.patch(
-  '/edit/apply',
-  [],
-  offerController.applyOffer
-)
-
 // DELETE
 
 router.delete(

@@ -255,41 +255,6 @@ const createJobOffer = async (req, res, next) => {
   res.status(201).json({offer: createdOffer});
 };
 
-// PATCH
-
-const applyOffer = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return next(
-      new HttpError('Invalid inputs passed, please check your data.', 422)
-    );
-  }
-  
-  const { userId, offerId } = req.body;
-  let existingOffer;
-  try {
-    existingOffer = await Offer.findById(offerId);
-    if (!existingOffer) {
-      throw new Error('Offer not found!');
-    }
-
-    existingUser = await User.findById(userId);
-    if (!existingUser) {
-      throw new Error('user not found!');
-    }
-    
-    const userAlreadyApplied = existingOffer.users_applied.includes(userId);
-    if (!userAlreadyApplied) {
-      existingOffer.users_applied.push(userId);
-      await existingOffer.save();
-    }
-  } catch (err) {
-    return next(new HttpError('Error applying offer: ' + err.message, 500));
-  }
-
-  res.status(201).json({ offer: existingOffer });
-};
-
 // DELETE
 
 const deleteOffer = async (req, res, next) => {  
@@ -331,6 +296,5 @@ module.exports = {
   createOffer,
   createInternshipOffer,
   createJobOffer,
-  deleteOffer,
-  applyOffer
+  deleteOffer
 };

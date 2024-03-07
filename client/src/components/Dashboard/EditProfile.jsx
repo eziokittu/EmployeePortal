@@ -97,10 +97,6 @@ const EditProfile = () => {
     setInputImage(pickedFile);
   };
 
-  const pickImageHandler = () => {
-    filePickerRef.current.click();
-  };
-
 	// Function to update current user image
   const userImageUpdateHandler = async event => {
     event.preventDefault();
