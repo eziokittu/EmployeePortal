@@ -124,7 +124,6 @@ function App() {
               <Route exact path="/termination" element={<Termination />} />
               <Route exact path="/internships" element={<Internship />} />
               <Route exact path="/jobs" element={<Jobs />} />
-              <Route exact path="/contact" element={<ContactForm />} />
               <Route exact path="/applications/:aid" element={<Applications />} />
             </Routes>
           )}

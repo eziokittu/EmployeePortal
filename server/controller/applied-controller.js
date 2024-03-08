@@ -94,6 +94,60 @@ const getAppliedJobCount = async (req, res, next) => {
   res.json({ count: appliedCount });
 };
 
+const getAppliedUsersInJob = async (req, res, next) => {
+  const oid = req.params['oid'];
+
+  let existingOffersCount;
+  try {
+    // appliedCount = await Offer.countDocuments();
+    existingOffersCount = await Applied.countDocuments({ offer: oid, type: 'job' });
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching applied offer count failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
+  res.json({ count: existingOffersCount });
+};
+
+const getAppliedUsersInInternship = async (req, res, next) => {
+  const oid = req.params['oid'];
+
+  let existingOffersCount;
+  try {
+    // appliedCount = await Offer.countDocuments();
+    existingOffersCount = await Applied.countDocuments({ offer: oid, type: 'internship' });
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching applied offer count failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
+  res.json({ count: existingOffersCount });
+};
+
+const checkIfUserAppliedOffer = async (req, res, next) => {
+  const oid = req.params['oid'];
+  const uid = req.params['uid'];
+
+  try {
+    const existingOffer = await Applied.findOne({ offer: oid, user: uid });
+
+    res.json({ check: !!existingOffer }); // Convert to boolean using !!
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching applied offer failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+};
+
+
 // POST
 
 const applyOffer = async (req, res, next) => {
@@ -260,6 +314,10 @@ module.exports = {
   getAppliedJobs,
   getAppliedInternshipCount,
   getAppliedJobCount,
+  checkIfUserAppliedOffer,
+
+  getAppliedUsersInJob,
+  getAppliedUsersInInternship,
   
   applyOffer,
   approveOffer

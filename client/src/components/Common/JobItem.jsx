@@ -1,10 +1,42 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../Backend/context/auth-context';
+import { useHttpClient } from '../Backend/hooks/http-hook';
 
 const JobItem=({id, stipend, ctc, position,date, isInternship})=>{
+	const { sendRequest } = useHttpClient();
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
+
+  const [appliedCount, setAppliedCount] = useState();
+  useEffect(() => {
+    const fetchApplied = async () => {
+      try {
+        const responseData = await sendRequest(
+          import.meta.env.VITE_BACKEND_URL+`/applied/get/count/${isInternship?'internship':'job'}/${id}`
+        );
+        setAppliedCount(responseData.count);
+      } catch (err) {
+        console.log("Error in fetching applied count: "+err);
+      }
+    };
+    fetchApplied();
+  }, []);
+
+  const [hasApplied, setHasApplied] = useState(false);
+  useEffect(() => {
+    const fetchApplyStatus = async () => {
+      try {
+        const responseData = await sendRequest(
+          import.meta.env.VITE_BACKEND_URL+`/applied/get/check/${id}/${auth.userId}`
+        );
+        setHasApplied(responseData.check);
+      } catch (err) {
+        console.log("Error in fetching application status: "+err);
+      }
+    };
+    fetchApplyStatus();
+  }, []);
 
   return(
     <>
@@ -56,7 +88,7 @@ const JobItem=({id, stipend, ctc, position,date, isInternship})=>{
       </div>
       <div className="flex justify-between mt-4">
         <div className="flex">
-          <img
+          {/* <img
             src=""
             className="h-12 w-12 rounded-full bg-gray-200 ml-2 -mr-5"
           ></img>
@@ -67,18 +99,31 @@ const JobItem=({id, stipend, ctc, position,date, isInternship})=>{
           <img src="" className="h-12 w-12 rounded-full bg-gray-200"></img>
           <p className="mt-2 ml-3 text-gray-400 font-semibold cursor-pointer">
             +28
-          </p>
+          </p> */}
+          <span>
+            {appliedCount ? (
+              <>Applied : {appliedCount}</>
+            ) : (
+              <>Applied : 0</>
+            )}
+          </span>
         </div>
-        {auth.isAdmin===true ? (
+        {auth.isAdmin===true && (
           <button 
-            className="bg-violet-700 p-2 pl-5 pr-5 rounded-lg text-white mb-4"
+            className="bg-violet-500 hover:bg-violet-800 p-2 pl-5 pr-5 rounded-lg text-white mb-4"
             onClick={()=>{navigate('/applications/'+id)}}
           >View</button>
-        ) : (
+        )}
+        {!auth.isAdmin && !hasApplied && (
           <button 
-            className="bg-violet-700 p-2 pl-5 pr-5 rounded-lg text-white mb-4"
+            className="bg-violet-500 hover:bg-violet-800 p-2 pl-5 pr-5 rounded-lg text-white mb-4"
             onClick={()=>{navigate('/apply/'+id)}}
           >Apply</button>
+        )}
+        {!auth.isAdmin && hasApplied && (
+          <p 
+            className="bg-green-700 p-2 pl-5 pr-5 rounded-lg text-white mb-4"
+          >Already Applied</p>
         )}
       </div>
     </div>

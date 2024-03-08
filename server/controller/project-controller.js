@@ -5,17 +5,30 @@ const User = require('../models/user');
 const Project = require('../models/project');
 
 const getProjects = async (req, res, next) => {
-  let projects;
+  const page = req.query.page || 0;
+  const projectsPerPage = 5;
+
+  let allProjects;
   try {
-    projects = await Project.find();
+    allProjects = await Offer
+      .find()
+      .skip(page * projectsPerPage)
+      .limit(projectsPerPage);
   } catch (err) {
     const error = new HttpError(
-      'Fetching projects failed, please try again later.',
+      'Fetching offers failed, please try again later.',
       500
     );
     return next(error);
   }
-  res.json({projects: projects.map(project => project.toObject({ getters: true }))});
+
+  if (!allProjects || allProjects.length === 0) {
+    return next(new HttpError('No projects found.', 404));
+  }
+
+  res.json({
+    internships: allProjects.map((project) => project.toObject({ getters: true })),
+  });
 };
 
 const getProjectsCompletedCount = async (req, res, next) => {

@@ -173,7 +173,7 @@ const Sidebar = () => {
 
 
             {/* Contact Start */}
-            <li>
+            {(!auth.isAdmin) && (<li>
               <Link
                 to="/contact"
                 className="flex items-center p-2 mt-20 text-white rounded-lg hover:bg-primary-600 hover:rounded-3xl group focus:bg-primary-600 focus:rounded-3xl group"
@@ -190,7 +190,7 @@ const Sidebar = () => {
                 </svg>
                 <span className="ms-3">Contact Us</span>
               </Link>
-            </li>
+            </li>)}
             {/* Contact End */}
 
             {/* Latest Activity Start */}

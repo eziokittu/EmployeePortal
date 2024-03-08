@@ -11,6 +11,9 @@ router.get('/get/internships', appliedController.getAppliedInternship);
 router.get('/get/jobs', appliedController.getAppliedJobs);
 router.get('/get/count/internships', appliedController.getAppliedInternshipCount);
 router.get('/get/count/jobs', appliedController.getAppliedJobCount);
+router.get('/get/count/job/:oid', appliedController.getAppliedUsersInJob);
+router.get('/get/count/internship/:oid', appliedController.getAppliedUsersInInternship);
+router.get('/get/check/:oid/:uid', appliedController.checkIfUserAppliedOffer);
 
 // POST
 
