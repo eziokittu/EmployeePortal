@@ -97,8 +97,10 @@ const getAppliedJobCount = async (req, res, next) => {
 // POST
 
 const applyOffer = async (req, res, next) => {
+  // console.log("Request body: ", req.body);
+
   // Checking if date passed in correct or not
-  const errors = validationResult(req);
+  const errors = validationResult(req.body);
   if (!errors.isEmpty()) {
     return next(
       new HttpError('Invalid inputs passed, please check your data.', 422)
@@ -113,7 +115,7 @@ const applyOffer = async (req, res, next) => {
       return new HttpError('User does not exist', 422);
     }
   } catch (error) {
-    return res.json({message: 'User not in correct format / INVALID'});
+    return res.status(400).json({message: 'User not in correct format / INVALID'});
   }
 
   try {
@@ -122,20 +124,20 @@ const applyOffer = async (req, res, next) => {
       return next(new HttpError('Offer does not exist', 422));
     }
   } catch (error) {
-    return res.json({message: 'Offer not in correct format / INVALID'});
+    return res.status(400).json({message: 'Offer not in correct format / INVALID'});
   }
 
   try {
     const existingApplied = await Applied.findOne({ offer: oid, user: uid });
     if (existingApplied !== null) {
-      return res.json({ applied: null, message: "User already applied in this offer" })
+      return res.status(201).json({ applied: null, message: "User already applied in this offer" })
     }
   } catch (error) {
     console.error(error);
   }
 
   if (type!=='job' && type!=='internship'){
-    return res.json({ applied: null, message: "Offer type is INVALID" });
+    return res.status(400).json({ applied: null, message: "Offer type is INVALID" });
   }
 
   const newLink = "https://www.google.com";
@@ -148,6 +150,14 @@ const applyOffer = async (req, res, next) => {
     user: uid
   });
 
+  // Linking the new resume PDF
+  // try {
+  //   existingUser.resume = req.file.path;
+  // }
+  // catch (err){
+  //   console.log("File path error:\n",err);
+  // }
+
   try {
     await createdApplied.save();
   } catch (err) {
@@ -158,7 +168,7 @@ const applyOffer = async (req, res, next) => {
     return next(error);
   } 
 
-  res.status(201).json({ applied: createdApplied });
+  res.status(200).json({ applied: createdApplied });
 };
 
 // DELETE

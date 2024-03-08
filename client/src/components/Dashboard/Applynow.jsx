@@ -43,6 +43,8 @@ const Applynow = () => {
   const [inputFile, setInputFile] = useState(null);
   const filePickerRef = useRef();
 
+  const [inputLink, setInputLink] = useState('-');
+
   useEffect(() => {
     if (!file) {
       return;
@@ -74,23 +76,44 @@ const Applynow = () => {
   };
 
   // Method to apply in an offer
-  const applyOffer = async event => {
+  const applyOfferHandler = async event => {
     event.preventDefault();
+
+    const formData = new FormData();
+    // formData.append('resume', inputFile);
+    formData.append('link', inputLink);
+    formData.append('type', loadedOffer.type);
+    formData.append('uid', auth.userId);
+    formData.append('oid', oid);
+    
+    console.log("WORKING 1 ");
+    
     try {
-      const formData = new FormData();
-      formData.append('file', inputFile);
-      formData.append('link', link);
-      formData.append('uid', auth.userId);
-      formData.append('oid', oid);
       const responseData = await sendRequest(
-        `${import.meta.env.VITE_BACKEND_URL}/applied/post`,
+        // `${import.meta.env.VITE_BACKEND_URL}/applied/post`,
+        "http://localhost:5000/api/applied/post",
         'POST',
-        formData
+        JSON.stringify({
+					type: loadedOffer.type,
+					link: inputLink,
+					oid: oid,
+					uid: auth.userId,
+				}),
+        // formData,
+				{
+					'Content-Type': 'application/json'
+				}
       );
-      setTimeout(() => {
-        window.location.reload(false);
-      }, 1500);
-      console.log("Successfully applied to the "+ loadedOffer.type+"!");
+      console.log("WORKING 2");
+      // setTimeout(() => {
+      //   window.location.reload(false);
+      // }, 1500);
+      if (!responseData.status){
+        console.log("User could not apply to the "+ loadedOffer.type+"! [Maybe already applied]");
+      }
+      else{
+        console.log("Successfully applied to the "+ loadedOffer.type+"!");
+      }
     } catch (err) {
       console.log("ERROR applying for this "+ loadedOffer.type+"!");
     }
@@ -202,6 +225,7 @@ const Applynow = () => {
                   Portfolio/Website Link (optional)
                 </label>
                 <input
+                  onChange={(event) => setInputLink(event.target.value)}
                   type="text"
                   id="portfolio"
                   name="portfolio"
@@ -241,6 +265,8 @@ const Applynow = () => {
                   type="file"
                   id="resume"
                   name="resume"
+                  ref={filePickerRef}
+                  onChange={pickedHandler}
                   accept=".pdf,.doc,.docx"
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 />
@@ -258,7 +284,8 @@ const Applynow = () => {
                   </button>
                   <button
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline"
-                    type="submit"
+                    type="button"
+                    onClick={applyOfferHandler}
                   >
                     Submit
                   </button>

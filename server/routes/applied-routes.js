@@ -2,7 +2,7 @@ const express = require('express');
 const { check } = require('express-validator');
 
 const appliedController = require('../controller/applied-controller');
-// const fileUpload = require('../middlewares/file-upload');
+const fileUpload = require('../middlewares/file-upload');
 
 const router = express.Router();
 
@@ -16,6 +16,17 @@ router.get('/get/count/jobs', appliedController.getAppliedJobCount);
 
 router.post(
   '/post',
+  [
+    check('type')
+      .not()
+      .isEmpty(),
+    check('link')
+      .not()
+      .isEmpty(),
+    check('oid'),
+    check('uid')
+  ],
+  // fileUpload.single('resume'),
   appliedController.applyOffer
 );
 

@@ -141,7 +141,7 @@ const EditProfile = () => {
 				// navigate('/')
 				window.location.reload(false);
 			}, 1500);
-			console.log("DEBUG 1");
+
 			await auth.updateUser(
         auth.userName,
         auth.firstname,
@@ -152,9 +152,8 @@ const EditProfile = () => {
 				auth.role,
 				import.meta.env.VITE_USER_DEFAULT_IMAGE_PATH
 			);
-			console.log("DEBUG 2");
+
 			setPreviewUrl(import.meta.env.VITE_USER_DEFAULT_IMAGE);
-			console.log("DEBUG 3");
 			console.log(import.meta.env.VITE_USER_DEFAULT_IMAGE);
     } catch (err) {
       console.log('ERROR deleting user image!');
