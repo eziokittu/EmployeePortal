@@ -86,8 +86,6 @@ const Applynow = () => {
     formData.append('uid', auth.userId);
     formData.append('oid', oid);
     
-    console.log("WORKING 1 ");
-    
     try {
       const responseData = await sendRequest(
         // `${import.meta.env.VITE_BACKEND_URL}/applied/post`,
@@ -104,14 +102,13 @@ const Applynow = () => {
 					'Content-Type': 'application/json'
 				}
       );
-      console.log("WORKING 2");
       // setTimeout(() => {
       //   window.location.reload(false);
       // }, 1500);
-      if (!responseData.status){
-        console.log("User could not apply to the "+ loadedOffer.type+"! [Maybe already applied]");
+      if (responseData.ok == 0){
+        console.log("User could not apply to the "+ loadedOffer.type+"! (Already applied)");
       }
-      else{
+      else if (responseData.ok == 1){
         console.log("Successfully applied to the "+ loadedOffer.type+"!");
       }
     } catch (err) {

@@ -115,7 +115,7 @@ const applyOffer = async (req, res, next) => {
       return new HttpError('User does not exist', 422);
     }
   } catch (error) {
-    return res.status(400).json({message: 'User not in correct format / INVALID'});
+    return res.json({ ok: -1, message: 'User not in correct format / INVALID'});
   }
 
   try {
@@ -124,20 +124,20 @@ const applyOffer = async (req, res, next) => {
       return next(new HttpError('Offer does not exist', 422));
     }
   } catch (error) {
-    return res.status(400).json({message: 'Offer not in correct format / INVALID'});
+    return res.json({ ok: -1, message: 'Offer not in correct format / INVALID'});
   }
 
   try {
     const existingApplied = await Applied.findOne({ offer: oid, user: uid });
     if (existingApplied !== null) {
-      return res.status(201).json({ applied: null, message: "User already applied in this offer" })
+      return res.json({ ok: 0, applied: null, message: "User already applied in this offer" })
     }
   } catch (error) {
     console.error(error);
   }
 
   if (type!=='job' && type!=='internship'){
-    return res.status(400).json({ applied: null, message: "Offer type is INVALID" });
+    return res.json({ ok: -1, applied: null, message: "Offer type is INVALID" });
   }
 
   const newLink = "https://www.google.com";
@@ -168,7 +168,7 @@ const applyOffer = async (req, res, next) => {
     return next(error);
   } 
 
-  res.status(200).json({ applied: createdApplied });
+  res.json({ ok: 1, applied: createdApplied });
 };
 
 // DELETE
