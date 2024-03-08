@@ -50,6 +50,8 @@ const Applynow = () => {
       return;
     }
     const fileReader = new FileReader();
+    fileReader.onload = () => {
+    };
     fileReader.readAsDataURL(file);
   }, [file]);
 
@@ -80,7 +82,8 @@ const Applynow = () => {
     event.preventDefault();
 
     const formData = new FormData();
-    // formData.append('resume', inputFile);
+    // formData.append('resume', inputFile===null ? null : inputFile);
+    formData.append('resume', inputFile);
     formData.append('link', inputLink);
     formData.append('type', loadedOffer.type);
     formData.append('uid', auth.userId);
@@ -88,19 +91,9 @@ const Applynow = () => {
     
     try {
       const responseData = await sendRequest(
-        // `${import.meta.env.VITE_BACKEND_URL}/applied/post`,
-        "http://localhost:5000/api/applied/post",
+        `${import.meta.env.VITE_BACKEND_URL}/applied/post`,
         'POST',
-        JSON.stringify({
-					type: loadedOffer.type,
-					link: inputLink,
-					oid: oid,
-					uid: auth.userId,
-				}),
-        // formData,
-				{
-					'Content-Type': 'application/json'
-				}
+        formData
       );
       // setTimeout(() => {
       //   window.location.reload(false);

@@ -151,12 +151,12 @@ const applyOffer = async (req, res, next) => {
   });
 
   // Linking the new resume PDF
-  // try {
-  //   existingUser.resume = req.file.path;
-  // }
-  // catch (err){
-  //   console.log("File path error:\n",err);
-  // }
+  try {
+    createdApplied.resume = req.file.path;
+  }
+  catch (err){
+    console.log("File path error:\n",err);
+  }
 
   try {
     await createdApplied.save();
@@ -169,6 +169,60 @@ const applyOffer = async (req, res, next) => {
   } 
 
   res.json({ ok: 1, applied: createdApplied });
+};
+
+// PATCH
+
+const approveOffer = async (req, res, next) => {
+  // Checking if date passed in correct or not
+  const errors = validationResult(req.body);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+
+  const { oid, uid } = req.body;
+
+  try {
+    existingUser = await User.findById({_id: uid});
+    if (!existingUser) {
+      return new HttpError('User does not exist', 422);
+    }
+  } catch (error) {
+    return res.json({ ok: -1, message: 'User not in correct format / INVALID'});
+  }
+
+  try {
+    existingOffer = await Offer.findById({_id: oid});
+    if (!existingOffer) {
+      return next(new HttpError('Offer does not exist', 422));
+    }
+  } catch (error) {
+    return res.json({ ok: -1, message: 'Offer not in correct format / INVALID'});
+  }
+
+  let existingApplied;
+  try {
+    existingApplied = await Applied.findOne({ offer: oid, user: uid });
+    if (existingApplied !== null) {
+      existingApplied.isApproved = true;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+
+  try {
+    await existingApplied.save();
+  } catch (err) {
+    const error = new HttpError(
+      'Creating new Applied failed, please try again.',
+      500
+    );
+    return next(error);
+  } 
+
+  res.json({ ok: 1, applied: existingApplied });
 };
 
 // DELETE
@@ -206,5 +260,7 @@ module.exports = {
   getAppliedJobs,
   getAppliedInternshipCount,
   getAppliedJobCount,
-  applyOffer
+  
+  applyOffer,
+  approveOffer
 };

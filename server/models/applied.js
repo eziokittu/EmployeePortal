@@ -9,6 +9,7 @@ const appliedSchema = new Schema({
   offer: { type: mongoose.Types.ObjectId, required: true, ref: 'Offer' },
   user: { type: mongoose.Types.ObjectId, required: true, ref: 'User' },
   date_applied: {type: Date, required: true, default: Date.now() },
+  isApproved: {type: Boolean, required: true, default: false },
 });
 
 appliedSchema.plugin(uniqueValidator);

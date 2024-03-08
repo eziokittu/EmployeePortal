@@ -1,41 +1,10 @@
 import React, { useContext } from "react";
 import { useNavigate } from 'react-router-dom';
-import { useHttpClient } from "../Backend/hooks/http-hook";
 import { AuthContext } from '../Backend/context/auth-context';
 
 const JobItem=({id, stipend, ctc, position,date, isInternship})=>{
   const auth = useContext(AuthContext);
-  const { sendRequest } = useHttpClient();
   const navigate = useNavigate();
-
-  const applyOffer = async event => {
-    event.preventDefault();
-    try {
-			const responseData = await sendRequest(
-				import.meta.env.VITE_BACKEND_URL+`/offers/edit/apply`,
-				'PATCH',
-				JSON.stringify({
-					userId: auth.userID,
-					offerId: id
-				}),
-				{
-					'Content-Type': 'application/json'
-				}
-			);
-			console.log('offer apply successful!');
-
-      // Refreshes the page
-      // setTimeout(() => {
-      //   window.location.reload(false);
-      // }, 700);
-		} catch (err) {
-			console.log('ERROR applying offer!');
-		} 
-  }
-
-  const viewOffer = async event => {
-    console.log("The admin can view details for the offer!");
-  }
 
   return(
     <>
@@ -103,7 +72,7 @@ const JobItem=({id, stipend, ctc, position,date, isInternship})=>{
         {auth.isAdmin===true ? (
           <button 
             className="bg-violet-700 p-2 pl-5 pr-5 rounded-lg text-white mb-4"
-            onClick={viewOffer}
+            onClick={()=>{navigate('/applications/'+id)}}
           >View</button>
         ) : (
           <button 

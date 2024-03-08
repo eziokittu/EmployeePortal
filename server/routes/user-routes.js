@@ -2,7 +2,7 @@ const express = require('express');
 const { check } = require('express-validator');
 
 const userController = require('../controller/user-controller');
-const fileUpload = require('../middlewares/file-upload');
+const imageUpload = require('../middlewares/image-upload');
 
 const router = express.Router();
 
@@ -85,7 +85,7 @@ router.patch(
 // PATCH: Update user image
 router.patch(
   '/edit/imageupdate/:uid',
-  fileUpload.single('image'),
+  imageUpload.single('image'),
   userController.updateUserImage
 );
 

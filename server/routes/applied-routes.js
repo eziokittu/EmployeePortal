@@ -2,7 +2,7 @@ const express = require('express');
 const { check } = require('express-validator');
 
 const appliedController = require('../controller/applied-controller');
-const fileUpload = require('../middlewares/file-upload');
+const resumeUpload = require('../middlewares/resume-upload');
 
 const router = express.Router();
 
@@ -26,8 +26,20 @@ router.post(
     check('oid'),
     check('uid')
   ],
-  // fileUpload.single('resume'),
+  resumeUpload.single('resume'),
   appliedController.applyOffer
+);
+
+// PATCH
+
+router.patch(
+  '/patch',
+  [
+    
+    check('oid'),
+    check('uid')
+  ],
+  appliedController.approveOffer
 );
 
 // DELETE

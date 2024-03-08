@@ -15,16 +15,16 @@ function makeFileName() {
 }
 
 const MIME_TYPE_MAP = {
-  'image/png': 'png',
-  'image/jpeg': 'jpeg',
-  'image/jpg': 'jpg'
+  'application/pdf': 'pdf',
+  'application/msword': 'doc',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx'
 };
 
-const fileUpload = multer({
+const resumeUpload = multer({
   limits: 500000,
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, 'uploads/images');
+      cb(null, 'uploads/resume');
     },
     filename: (req, file, cb) => {
       const ext = MIME_TYPE_MAP[file.mimetype];
@@ -39,4 +39,4 @@ const fileUpload = multer({
   }
 });
 
-module.exports = fileUpload;
+module.exports = resumeUpload;
