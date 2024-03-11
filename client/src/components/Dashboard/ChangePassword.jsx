@@ -65,10 +65,14 @@ const ChangePassword = () => {
 					<div>
 						<h1 className=' text-4xl font-bold mt-20'>Change Password</h1>
 						<p className='my-4'>Update your account's password</p>
-						<div>
+
+						<form
+							onSubmit={userPasswordChangeHandler}
+						>
 							{/* Current Password */}
 							<div className="relative w-full container mx-auto">
 								<input 
+									id='old-password'
 									type="text" 
 									placeholder="Enter current password" 
 									className="w-full px-4 py-2 text-base border border-gray-300 rounded-xl outline-none focus:ring-blue-500 focus:border-blue-500 focus:ring-1"
@@ -79,6 +83,7 @@ const ChangePassword = () => {
 							{/* New Password Field */}
 							<div className="relative w-full container mx-auto my-5">
 								<input 
+									id='new-password'
 									type={isPasswordVisible ? "text" : "password"} 
 									placeholder="Enter new password" 
 									className="w-full px-4 py-2 text-base border border-gray-300 rounded-xl outline-none focus:ring-blue-500 focus:border-blue-500 focus:ring-1"
@@ -127,6 +132,7 @@ const ChangePassword = () => {
 							</div>
 							<div className="relative w-full container mx-auto">
 								<input 
+									id='retype-password'
 									type={isPasswordVisible2 ? "text" : "password"} 
 									placeholder="Password" 
 									className="w-full px-4 py-2 text-base border border-gray-300 rounded-xl outline-none focus:ring-blue-500 focus:border-blue-500 focus:ring-1"
@@ -176,17 +182,19 @@ const ChangePassword = () => {
 							{/* Buttons */}
 							<div className='flex justify-center items-center py-4 mb-20'>
 								<button 
+									id='cancel-button'
 									type="reset" 
 									onClick={()=>{console.log("Cancel button clicked!");}}
 									className="w-full border-2 border-transparent text-white bg-primary-600 hover:bg-white hover:text-primary-600 hover:border-primary-600 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-xl text-sm px-5 py-2.5 text-center mr-3"
 								>Cancel</button>
 								<button 
+									id='submit-button'
 									type="submit" 
-									onClick={userPasswordChangeHandler}
+									// onClick={userPasswordChangeHandler}
 									className="w-full border-2 border-transparent text-white bg-primary-600 hover:bg-white hover:text-primary-600 hover:border-primary-600 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-xl text-sm px-5 py-2.5 text-center"
 								>Save</button>
 							</div>
-						</div>
+						</form>
 					</div>
 				</div>
 			</div>

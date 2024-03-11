@@ -40,7 +40,7 @@ router.post(
 // PATCH
 
 router.patch(
-  '/patch',
+  '/patch/approve',
   [
     
     check('oid'),

@@ -561,6 +561,7 @@ const removeUserImage = async (req, res, next) => {
 };
 
 const updateUserAsEmployee = async (req, res, next) => {
+  // console.log(req.body);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(
@@ -568,18 +569,18 @@ const updateUserAsEmployee = async (req, res, next) => {
     );
   }
 
-  const { userName } = req.body;
+  const { userId } = req.body;
 
   let existingUser;
   try {
-    existingUser = await User.findOne({ userName: userName });
+    existingUser = await User.findById({_id: userId});
     existingUser.isEmployee = true;
     await existingUser.save();
       
-    res.status(200).json({ user: existingUser.toObject({ getters: true }) });
+    res.status(200).json({ok:1,  user: existingUser.toObject({ getters: true }) });
   } catch (err) {
     const error = new HttpError(
-      'UserName does not exist, please try again later.',
+      'userId does not exist, please try again later.',
       500
     );
     return next(error);
@@ -594,18 +595,18 @@ const updateEmployeeAsUser = async (req, res, next) => {
     );
   }
 
-  const { userName } = req.body;
+  const { userId } = req.body;
 
   let existingUser;
   try {
-    existingUser = await User.findOne({ userName: userName });
+    existingUser = await User.find({ _id: userId });
     existingUser.isEmployee = false;
     await existingUser.save();
       
-    res.status(200).json({ user: existingUser.toObject({ getters: true }) });
+    res.status(200).json({ok: 1, user: existingUser.toObject({ getters: true }) });
   } catch (err) {
     const error = new HttpError(
-      'UserName does not exist, please try again later.',
+      'UserId does not exist, please try again later.',
       500
     );
     return next(error);

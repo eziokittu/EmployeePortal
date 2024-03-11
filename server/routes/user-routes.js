@@ -97,15 +97,15 @@ router.patch(
 
 // PATCH: Update user to employee
 router.patch(
-  '/edit/usertoemp',
-  [check('userName').not().isEmpty()],
+  '/edit/usertoemp/',
+  [check('userId').not().isEmpty()],
   userController.updateUserAsEmployee
 );
 
 // PATCH: Update Employee to user
 router.patch(
-  '/edit/emptouser',
-  [check('userName').not().isEmpty()],
+  '/edit/emptouser/',
+  [check('userId').not().isEmpty()],
   userController.updateEmployeeAsUser
 );
 

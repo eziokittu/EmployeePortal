@@ -67,8 +67,11 @@ function Applications() {
     <div className="p-4 sm:ml-64">
 
       {/* Heading */}
-      {pageCount>0 ? (<div>View Applications</div>) : (<div>No applications</div>)}
-      
+      {pageCount>0 ? (
+        <div className='text-2xl font-bold text-center mb-8'>View Applications</div>
+      ) : (
+        <div className='text-4xl font-bold text-center'>No applications found!</div>
+      )}
 
       {/* Content */}
       <div className='flex flex-col text-center'>

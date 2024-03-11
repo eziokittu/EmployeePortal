@@ -310,6 +310,7 @@ const applyOffer = async (req, res, next) => {
 
 const approveOffer = async (req, res, next) => {
   // Checking if date passed in correct or not
+  console.log(req.body);
   const errors = validationResult(req.body);
   if (!errors.isEmpty()) {
     return next(
