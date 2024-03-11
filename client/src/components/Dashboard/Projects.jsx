@@ -11,58 +11,88 @@ const Projects = () => {
   const { sendRequest } = useHttpClient();
   const auth = useContext(AuthContext);
 
+  // handling the pagination
+  const projectsDisplayedPerPage = 5;
+  const [projectsCount, setProjectsCount] = useState(0);
+  const [pageCount, setPageCount] = useState(0);
+  const [page, setPage] = useState(0);
+  const handlePageClick = (num) => {
+    setPage(num);
+  };
+
   // getting all the projects from database
   const [projects, setProjects] = useState([]);
   const [completedProjects, setCompletedProjects] = useState();
   const [ongoingProjects, setOngoingProjects] = useState();
   useEffect(() => {
+    // Function to fetch the project count
+    const fetchProjectCount = async () => {
+      try {
+        const responseData = await sendRequest(
+          `${import.meta.env.VITE_BACKEND_URL}/projects/count`
+        );
+        if (responseData.ok===1){
+          setProjectsCount(responseData.count);
+          setPageCount(Math.ceil(responseData.count / projectsDisplayedPerPage))
+        }
+        else {
+          console.log("No projects found!");
+        }
+      } catch (err) {
+        console.log("Error in fetching projects: "+err);
+      }
+    };
 
-    // Function to fetch all the products
+    // Function to fetch all the projects
     const fetchProjects = async () => {
       try {
         const responseData = await sendRequest(
-          `${import.meta.env.VITE_BACKEND_URL}/projects/?page=${page}`
+          `${import.meta.env.VITE_BACKEND_URL}/projects?page=${page}`
         );
-        setProjects(responseData.projects);
+        if (responseData.ok===1){
+          setProjects(responseData.projects);
+        }
+        else {
+          console.log("No projects found!");
+        }
       } catch (err) {
         console.log("Error in fetching projects: "+err);
       }
     };
 
     // Function to fetch the count of completed projects
-    const fetchCompletedProjectsCount = async () => {
-      try {
-        const responseData = await sendRequest(
-          import.meta.env.VITE_BACKEND_URL+`/projects/completed`
-        );
-        setCompletedProjects(responseData.count);
-      } catch (err) {
-        console.log("Error in fetching completed projects count: "+err);
-      }
-    }
+    // const fetchCompletedProjectsCount = async () => {
+    //   try {
+    //     const responseData = await sendRequest(
+    //       import.meta.env.VITE_BACKEND_URL+`/projects/completed`
+    //     );
+    //     setCompletedProjects(responseData.count);
+    //   } catch (err) {
+    //     console.log("Error in fetching completed projects count: "+err);
+    //   }
+    // }
 
     // Function to fetch the count of Ongoing projects
-    const fetchOngoingProjectsCount = async () => {
-      try {
-        const responseData = await sendRequest(
-          `${import.meta.env.VITE_BACKEND_URL}/projects/ongoing`
-        );
-        setOngoingProjects(responseData.count);
-      } catch (err) {
-        console.log("Error in fetching ongoing projects count: "+err);
-      }
-    }
+    // const fetchOngoingProjectsCount = async () => {
+    //   try {
+    //     const responseData = await sendRequest(
+    //       `${import.meta.env.VITE_BACKEND_URL}/projects/ongoing`
+    //     );
+    //     setOngoingProjects(responseData.count);
+    //   } catch (err) {
+    //     console.log("Error in fetching ongoing projects count: "+err);
+    //   }
+    // }
 
+    fetchProjectCount();
     fetchProjects();
-    fetchCompletedProjectsCount();
-    fetchOngoingProjectsCount();
-  }, []);
+    // fetchCompletedProjectsCount();
+    // fetchOngoingProjectsCount();
+  }, [page]);
 
   const [text, setText] = useState('');
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
-  const [pageNumber, setPageNumber] = useState(0);
-  const [inputProjectName, setInputProjectName] = useState('');
 
   // function to add a new project
   const projectAddHandler = async event => {
@@ -100,14 +130,6 @@ const Projects = () => {
         return project;
       }
     }));
-  }
-
-  //Pagination
-  const itemsPerPage = 5;
-  const pagesVisited = pageNumber * itemsPerPage;
-  const pageCount = Math.ceil(Projects.length / itemsPerPage);
-  const changePage = ({ selected }) => {
-    setPageNumber(selected);
   }
 
   return (
@@ -187,7 +209,7 @@ const Projects = () => {
                 {/* Project Component Start */}
                 <div>
                   {projects
-                    .slice(pagesVisited, pagesVisited + itemsPerPage)
+                    // .slice(pagesVisited, pagesVisited + itemsPerPage)
                     .map(project => (
                       // console.log(project),
                       <ProjectItem
@@ -208,23 +230,23 @@ const Projects = () => {
           </div >
 
           {/* Pagination */}
-          <div className='flex justify-center items-center'>
+          <div className='flex justify-center items-center'>    
             <ReactPaginate
-                previousLabel={"previous"}
-                nextLabel={"next"}
-                breakLabel={"..."}
-                pageCount={pageCount}
-                marginPagesDisplayed={2}
-                pageRangeDisplayed={3}
-                onPageChange={changePage}
-                containerClassName={"inline-flex -space-x-px text-sm justify-content-center items-center mt-4 mb-4"}
-                pageLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-blue-100 hover:text-blue-700 focus:bg-blue-100 focus:text-blue-700"}
-                previousLinkClassName={"flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-blue-100 hover:text-blue-700"}
-                nextClassName={"page-item"}
-                nextLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-blue-100 hover:text-blue-700"}
-                breakLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-blue-100 hover:text-blue-700 "}
-              />
-          </div>
+              previousLabel={"previous"}
+              nextLabel={"next"}
+              breakLabel={"..."}
+              pageCount={pageCount}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={3}
+              onPageChange={(selected) => handlePageClick(selected.selected)}
+              containerClassName={"inline-flex -space-x-px text-sm justify-content-center items-center mt-4 mb-4"}
+              pageLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-blue-100 hover:text-blue-700 focus:bg-blue-100 focus:text-blue-700"}
+              previousLinkClassName={"flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-blue-100 hover:text-blue-700"}
+              nextClassName={"page-item"}
+              nextLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-blue-100 hover:text-blue-700"}
+              breakLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-blue-100 hover:text-blue-700 "}
+            />
+      </div>
         </div >
       </div>
     </div >

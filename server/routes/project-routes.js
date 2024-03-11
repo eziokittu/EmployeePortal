@@ -6,6 +6,7 @@ const projectController = require('../controller/project-controller');
 const router = express.Router();
 
 router.get('/', projectController.getProjects);
+router.get('/count', projectController.getProjectCount);
 router.get('/completed', projectController.getProjectsCompletedCount);
 router.get('/ongoing', projectController.getProjectsOngoingCount);
 

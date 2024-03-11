@@ -10,7 +10,7 @@ const getProjects = async (req, res, next) => {
 
   let allProjects;
   try {
-    allProjects = await Offer
+    allProjects = await Project
       .find()
       .skip(page * projectsPerPage)
       .limit(projectsPerPage);
@@ -20,14 +20,51 @@ const getProjects = async (req, res, next) => {
       500
     );
     return next(error);
+    // res.json({
+    //   ok: -1,
+    //   message: "Error in fetching projects",
+    // });
   }
 
   if (!allProjects || allProjects.length === 0) {
-    return next(new HttpError('No projects found.', 404));
+    res.json({
+      ok: -1,
+      message: "No projects found!",
+    });
   }
 
   res.json({
-    internships: allProjects.map((project) => project.toObject({ getters: true })),
+    ok: 1,
+    projects: allProjects.map((project) => project.toObject({ getters: true })),
+  });
+};
+
+const getProjectCount = async (req, res, next) => {
+  let projectCount = 0;
+  try {
+    projectCount = await Project.countDocuments();
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching project count failed, please try again later.',
+      500
+    );
+    return next(error);
+    // res.json({
+    //   ok: -1,
+    //   message: "Error in fetching projects",
+    // });
+  }
+
+  if (!projectCount || projectCount === 0) {
+    res.json({
+      ok: -1,
+      message: "No projects found!",
+    });
+  }
+
+  res.json({
+    ok: 1,
+    count: projectCount,
   });
 };
 
@@ -201,6 +238,7 @@ const deleteProject = async (req, res, next) => {
 
 module.exports = {
   getProjects,
+  getProjectCount,
   getProjectsCompletedCount,
   getProjectsOngoingCount,
   createProject,
