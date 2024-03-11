@@ -147,6 +147,87 @@ const checkIfUserAppliedOffer = async (req, res, next) => {
   }
 };
 
+const getAppliedWithOfferId= async (req, res, next) => {
+  const oid = req.params['oid'];
+
+  // Checking if the offer id is valid
+  let existingOffer;
+  try {
+    existingOffer = await Offer.findById({_id: oid});
+    if (!existingOffer) {
+      return res.json({ ok: -1, message: 'Some error occured in fetching applied'});
+      // return next(new HttpError('Offer does not exist', 422));
+    }
+  } catch (error) {
+    return res.json({ ok: -1, message: 'Offer not in correct format / INVALID'});
+  }
+
+  const page = req.query.page || 0;
+  const applicationsPerPage = 3;
+
+  // Getting all the applied with the same Offer ID
+  let allApplied;
+  try {
+    allApplied = await Applied
+      .find({offer: oid})
+      .skip(page * applicationsPerPage)
+      .limit(applicationsPerPage);
+    if (!allApplied) {
+      return res.json({ ok: -1, message: 'No one applied to this offer'});
+    }
+  } catch (error) {
+    return res.json({ ok: -1, message: 'Some error occured in fetching applied'});
+  }
+
+  // If no applications exist for this offer
+  if (!allApplied || allApplied.length === 0) {
+    return res.json({ ok: -1, message: 'No applications found'});
+    // return next(new HttpError('No applications found.', 404));
+  }
+
+  // get if this is a job or not
+  let isJob = true;
+  if (allApplied[0].type !== 'job'){
+    isJob = false;
+  }
+
+  // sending the response
+  res.json({
+    ok: 1,
+    isJob: isJob,
+    applied: allApplied.map((a) => a.toObject({ getters: true })),
+  });
+};
+
+const getAppliedCountWithOfferId= async (req, res, next) => {
+  const oid = req.params['oid'];
+
+  // Checking if the offer id is valid
+  let existingOffer;
+  try {
+    existingOffer = await Offer.findById({_id: oid});
+    if (!existingOffer) {
+      return next(new HttpError('Offer does not exist', 422));
+    }
+  } catch (error) {
+    return res.json({ ok: -1, message: 'Offer not in correct format / INVALID'});
+  }
+
+  // Getting the application count for this offer
+  let appliedCount;
+  try {
+    appliedCount = await Applied.countDocuments({ offer: oid });
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching applied users count failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
+  res.json({ ok:1, count: appliedCount });
+};
+
 
 // POST
 
@@ -318,6 +399,9 @@ module.exports = {
 
   getAppliedUsersInJob,
   getAppliedUsersInInternship,
+  
+  getAppliedWithOfferId,
+  getAppliedCountWithOfferId,
   
   applyOffer,
   approveOffer

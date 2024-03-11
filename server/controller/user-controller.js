@@ -43,15 +43,15 @@ const getUser = async (req, res, next) => {
     );
     return next(error);
   }
-  res.json({user: user});
+  res.json({ok:1, user: user});
 };
 
 const getUserById = async (req, res, next) => {
   const userId = req.params['uid'];
   // console.log(userId);
-  let employee;
+  let user;
   try {
-    employee = await User.findById({ _id: userId }, '-password')
+    user = await User.findById({ _id: userId }, '-password')
   } catch (err) {
     const error = new HttpError(
       'Fetching Employee failed, please try again later.',
@@ -61,15 +61,7 @@ const getUserById = async (req, res, next) => {
     return next(error);
   }
 
-  // if (employee.isEmployee == false){
-  //   const error = new HttpError(
-  //     'User is not an employee.',
-  //     422
-  //   );
-  //   return next(error);
-  // }
-
-  res.json({employee: employee});
+  res.json({ok:1, user: user});
 };
 
 const getUserByEmail = async (req, res, next) => {
