@@ -40,12 +40,18 @@ router.post(
 // PATCH
 
 router.patch(
-  '/patch/approve',
+  '/patch/approve/offer',
   [
     
     check('oid'),
     check('uid')
   ],
+  appliedController.approveOffer
+);
+
+router.patch(
+  '/patch/approve/offers',
+  [],
   appliedController.approveOffer
 );
 

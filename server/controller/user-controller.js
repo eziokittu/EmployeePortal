@@ -101,14 +101,11 @@ const getEmployeeCount = async (req, res, next) => {
   try {
     employeeCount = await User.countDocuments({ isEmployee: true });
   } catch (err) {
-    const error = new HttpError(
-      'Fetching employee count failed, please try again later.',
-      500
-    );
-    return next(error);
+    res.json({ ok:-1, message:"No Employees found" });
+    return;
   }
 
-  res.json({ employeeCount });
+  res.json({ ok:1, count: employeeCount });
   // console.log("DEBUG -- Employee-Controller - Fetching employee count successful!");
 };
 
@@ -131,10 +128,15 @@ const getEmployees = async (req, res, next) => {
   }
 
   if (!allEmployees || allEmployees.length === 0) {
-    return next(new HttpError('No employees found.', 404));
+    res.json({
+      ok: -1,
+      message: "No employees found.",
+    });
+    return;
   }
 
   res.json({
+    ok: 1,
     employees: allEmployees.map((emp) => emp.toObject({ getters: true })),
   });
   // console.log("DEBUG -- Employee-Controller - Fetching employees successful!");
