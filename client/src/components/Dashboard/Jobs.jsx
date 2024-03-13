@@ -1,10 +1,12 @@
-import React,{useState,useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import JobItem from "../Common/JobItem";
 import ReactPaginate from "react-paginate";
-import {useHttpClient} from '../Backend/hooks/http-hook';
+import { useHttpClient } from '../Backend/hooks/http-hook';
+import { AuthContext } from '../Backend/context/auth-context';
 
 const Jobs = () => {
   const { sendRequest } = useHttpClient();
+  const auth = useContext(AuthContext);
 
   const jobsDisplayedPerPage = 2;
 
@@ -87,12 +89,13 @@ const Jobs = () => {
               <div key={item.id}>
                 <JobItem
                   id={item.id}
-                  position={item.heading}
+                  heading={item.heading}
                   employee_salary={item.stipend}
                   date={item.date_posted}
                   ctc={item.ctc}
                   // isAdmin = {isAdmin}
                   isInternship = {false}
+                  userIsAdmin = {auth.isAdmin}
                 />
               </div>
             );

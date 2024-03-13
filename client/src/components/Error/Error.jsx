@@ -1,9 +1,9 @@
 import error from '../../assets/error.png'
 import { Link } from 'react-router-dom'
 
-const Error = ({text}) => {
+const Error = ({text, isFullPage}) => {
     return (
-        <div className="sm:ml-64 text-center bg-[#e9f5fe] py-[30px] flex justify-center items-center flex-col ">
+        <div className={`${isFullPage===true ? '' : 'sm:ml-64'}  text-center bg-[#e9f5fe] py-[30px] flex justify-center items-center flex-col `}>
 
             <div>
                 <h1 className='font-bold text-[80px]'>Oops!</h1>

@@ -130,6 +130,42 @@ const getAppliedUsersInInternship = async (req, res, next) => {
   res.json({ count: existingOffersCount });
 };
 
+const getApprovedUsersInJob = async (req, res, next) => {
+  const oid = req.params['oid'];
+
+  let existingOffersCount;
+  try {
+    // appliedCount = await Offer.countDocuments();
+    existingOffersCount = await Applied.countDocuments({ offer: oid, type: 'job', isApproved: true });
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching applied offer count failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
+  res.json({ count: existingOffersCount });
+};
+
+const getApprovedUsersInInternship = async (req, res, next) => {
+  const oid = req.params['oid'];
+
+  let existingOffersCount;
+  try {
+    // appliedCount = await Offer.countDocuments();
+    existingOffersCount = await Applied.countDocuments({ offer: oid, type: 'internship', isApproved: true });
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching applied offer count failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
+  res.json({ count: existingOffersCount });
+};
+
 const checkIfUserAppliedOffer = async (req, res, next) => {
   const oid = req.params['oid'];
   const uid = req.params['uid'];
@@ -310,7 +346,7 @@ const applyOffer = async (req, res, next) => {
 
 const approveOffer = async (req, res, next) => {
   // Checking if date passed in correct or not
-  console.log(req.body);
+  // console.log(req.body);
   const errors = validationResult(req.body);
   if (!errors.isEmpty()) {
     return next(
@@ -362,7 +398,7 @@ const approveOffer = async (req, res, next) => {
 };
 
 const approveOffers = async (req, res, next) => {
-  // Checking if date passed in correct or not
+  // Checking if data passed in correct or not
   console.log(req.body);
   const errors = validationResult(req.body);
   if (!errors.isEmpty()) {
@@ -371,48 +407,56 @@ const approveOffers = async (req, res, next) => {
     );
   }
 
-  const { oid, uid } = req.body;
+  const { alluid, oid } = req.body; // 'alluid' is now an array of user IDs
 
+  // Check if the offer exists
+  let existingOffer;
   try {
-    existingUser = await User.findById({_id: uid});
-    if (!existingUser) {
-      return new HttpError('User does not exist', 422);
-    }
-  } catch (error) {
-    return res.json({ ok: -1, message: 'User not in correct format / INVALID'});
-  }
-
-  try {
-    existingOffer = await Offer.findById({_id: oid});
+    existingOffer = await Offer.findById({ _id: oid });
     if (!existingOffer) {
       return next(new HttpError('Offer does not exist', 422));
     }
   } catch (error) {
-    return res.json({ ok: -1, message: 'Offer not in correct format / INVALID'});
+    return res.json({ ok: -1, message: 'Offer not in correct format / INVALID' });
   }
 
-  let existingApplied;
-  try {
-    existingApplied = await Applied.findOne({ offer: oid, user: uid });
-    if (existingApplied !== null) {
-      existingApplied.isApproved = true;
+  // Iterate over all user IDs and approve the offer for each
+  let approvedApplications = [];
+  for (let uid of alluid) {
+    let existingUser, existingApplied;
+    try {
+      existingUser = await User.findById({ _id: uid });
+      if (!existingUser) {
+        continue; // Skip this user if they do not exist
+      }
+    } catch (error) {
+      // Log the error but do not stop processing the rest of the user IDs
+      console.error('Error finding user with ID:', uid, error);
+      continue;
     }
-  } catch (error) {
-    console.error(error);
+
+    try {
+      existingApplied = await Applied.findOne({ offer: oid, user: uid });
+      if (existingApplied !== null) {
+        existingApplied.isApproved = true;
+        await existingApplied.save();
+        approvedApplications.push(existingApplied); // Add to the approved applications list
+      }
+    } catch (error) {
+      console.error('Error approving application for user with ID:', uid, error);
+      // Log the error but continue processing other user IDs
+    }
   }
 
-  try {
-    await existingApplied.save();
-  } catch (err) {
-    const error = new HttpError(
-      'Creating new Applied failed, please try again.',
-      500
-    );
-    return next(error);
-  } 
-
-  res.json({ ok: 1, applied: existingApplied });
+  // Respond with all the approved applications
+  if (approvedApplications.length > 0) {
+    res.json({ ok: 1, applied: approvedApplications });
+  } else {
+    // If no applications were approved, send a different response
+    res.json({ ok: 0, message: 'No applications were approved.' });
+  }
 };
+
 
 // DELETE
 
@@ -452,7 +496,9 @@ module.exports = {
   checkIfUserAppliedOffer,
 
   getAppliedUsersInJob,
+  getApprovedUsersInJob,
   getAppliedUsersInInternship,
+  getApprovedUsersInInternship,
   
   getAppliedWithOfferId,
   getAppliedCountWithOfferId,

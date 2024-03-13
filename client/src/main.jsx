@@ -15,6 +15,7 @@ import Projects from './components/Dashboard/Projects.jsx';
 import Termination from './components/Dashboard/Termination.jsx';
 import Internship from './components/Dashboard/Internship.jsx';
 import Jobs from './components/Dashboard/Jobs.jsx';
+import EditJob from './components/Dashboard/EditJob.jsx';
 import ContactForm from './components/Dashboard/ContactForm.jsx';
 import Activity from './components/Dashboard/Activity.jsx';
 // import Settings from './components/Dashboard/Settings.jsx';
@@ -81,7 +82,7 @@ function App() {
           {/* Default USER */}
           {!isEmployee && !isAdmin && (
             <Routes>
-              <Route path="*" element={<Error />} />
+              <Route path="*" element={<Error isFullPage={false} />} />
               <Route exact path="/" element={<Dashboard />} />
               <Route exact path="/dashboard" element={<Dashboard />} />
               <Route exact path="/apply/:oid" element={<Applynow />} />
@@ -97,7 +98,7 @@ function App() {
           {/* Employee as USER */}
           {isEmployee && !isAdmin && (
             <Routes>
-              <Route path="*" element={<Error />} />
+              <Route path="*" element={<Error isFullPage={false} />} />
               <Route exact path="/" element={<Dashboard />} />
               <Route exact path="/dashboard" element={<Dashboard />} />
               <Route exact path="/projects" element={<Projects />} />
@@ -116,7 +117,7 @@ function App() {
           {/* ADMIN as USER */}
           {isAdmin && (
             <Routes>
-              <Route path="*" element={<Error />} />
+              <Route path="*" element={<Error isFullPage={false} />} />
               <Route exact path="/" element={<Dashboard />} />
               <Route exact path="/dashboard" element={<Dashboard />} />
               <Route exact path="/employee" element={<Employee />} />
@@ -124,6 +125,7 @@ function App() {
               <Route exact path="/termination" element={<Termination />} />
               <Route exact path="/internships" element={<Internship />} />
               <Route exact path="/jobs" element={<Jobs />} />
+              <Route exact path="/editoffer/:oid" element={<EditJob />} />
               <Route exact path="/applications/:oid" element={<Applications />} />
             </Routes>
           )}
@@ -132,7 +134,7 @@ function App() {
         ) : (
           // If not authorized user
           <Routes>
-            <Route path="*" element={<Error />} />
+            <Route path="*" element={<Error isFullPage={true} />} />
             <Route exact path="/" element={<Login />} />
             <Route exact path="signup" element={<Signup />} />
           </Routes>

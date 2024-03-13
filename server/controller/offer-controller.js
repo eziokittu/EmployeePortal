@@ -269,6 +269,8 @@ const createJobOffer = async (req, res, next) => {
   res.status(201).json({offer: createdOffer});
 };
 
+// PATCH
+
 // DELETE
 
 const deleteOffer = async (req, res, next) => {  
