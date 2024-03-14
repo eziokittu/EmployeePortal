@@ -207,7 +207,7 @@ const getAllTerminations = async (req, res, next) => {
   let terminations;
   try {
     terminations = await User
-      .find({status_termination: false})
+      .find({isTerminated: false})
       .skip(page * terminationsPerPage)
       .limit(terminationsPerPage);
   } catch (err) {
@@ -228,7 +228,7 @@ const getAllTerminations = async (req, res, next) => {
 const getAllTerminationsCount = async (req, res, next) => {
   let terminationCount;
   try {
-    terminationCount = await User.find({status_termination: false}).countDocuments();
+    terminationCount = await User.find({isTerminated: false}).countDocuments();
   } catch (err) {
     const error = new HttpError(
       'Fetching termination count failed, please try again later.',
@@ -253,7 +253,7 @@ const getTerminationStatusById = async (req, res, next) => {
     return res.status(500).json({ message: "Something went wrong!" });
   }
 
-  res.status(200).json({ status: existingUser.status_termination });
+  res.status(200).json({ status: existingUser.isTerminated });
 };
 
 const getTerminationStatusByEmail = async (req, res, next) => {
@@ -269,7 +269,7 @@ const getTerminationStatusByEmail = async (req, res, next) => {
     return res.status(500).json({ message: "Something went wrong!" });
   }
 
-  res.status(200).json({ status: existingUser.status_termination });
+  res.status(200).json({ status: existingUser.isTerminated });
 };
 
 // POST
@@ -629,7 +629,7 @@ const terminateEmployeeByEmail = async (req, res, next) => {
       return res.status(500).send("Could not find Employee with this email!");
     }
 
-    existingUser.status_termination = false;
+    existingUser.isTerminated = false;
     await existingUser.save();
 
     res.status(201).send(`Employee with email: ${email} has been terminated!`);
@@ -652,8 +652,8 @@ const unterminateEmployeeByEmail = async (req, res, next) => {
       return res.status(500).send("Could not find Employee with this email!");
     }
 
-    // Set status_termination back to true to un-terminate the employee
-    existingUser.status_termination = true;
+    // Set isTerminated back to true to un-terminate the employee
+    existingUser.isTerminated = true;
     await existingUser.save();
 
     res.status(200).send(`Employee with email: ${email} has been reinstated!`);

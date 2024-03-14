@@ -113,7 +113,7 @@ const Applynow = () => {
     <>
       {/* Apply offer form */}
       {loadedOffer && (
-      <div className="p-4 sm:ml-64 bg-blue-50 ">
+      <div className="p-4 sm:ml-64 bg-blue-50 min-h-[500px]">
         <div className="m-5 p-5 bg-white w-8/9 flex justify-center">
           <div className="m-5 p-5 bg-white w-2/3">
 

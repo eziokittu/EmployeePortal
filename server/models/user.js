@@ -14,14 +14,14 @@ const userSchema = new Schema({
     phone: {type: String, required: true, default: '91XXXXXXXX' },
     bio: {type: String, required: true, default: '-' },
 
-    role: { type: String, required: true, default: "Software Engineer" },
+    certificates: [{type: String, minLength: 4 }],
+    role: { type: String, default: "Software Engineer" },
     projects: [{ type: mongoose.Types.ObjectId, required: true, ref: 'Project' }],
     projects_complete: {type: Number, required: true, default: 0},
     projects_ongoing: {type: Number, required: true, default: 0},
     tenure: {type: String, required: true, default: "1 year" },
     date: {type: Date, required: true, default: Date.now() },
-    status_termination: {type: Boolean, required: true, default: true },
-    applied_leave: {type: Boolean, default: false }
+    isTerminated: {type: Boolean, required: true, default: true }
 });
 
 userSchema.plugin(uniqueValidator);

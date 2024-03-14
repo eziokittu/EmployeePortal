@@ -1,4 +1,6 @@
 require('dotenv').config()
+const User = require('./models/user'); // Assuming you have a User model defined
+const bcrypt = require('bcryptjs');
 
 // libraries
 const express = require('express');
@@ -60,8 +62,8 @@ app.use((error, req, res, next) => {
 // const uriDB = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.nmjiwwv.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`; 
 
 // MongoDB Community Server
-const uriDB = 'mongodb://127.0.0.1:27017/rnpsoft_employee_portal'; 
-// const uriDB = 'mongodb://127.0.0.1:27017/rnpsoft_employee_portal2'; 
+// const uriDB = 'mongodb://127.0.0.1:27017/rnpsoft_employee_portal'; 
+const uriDB = 'mongodb://127.0.0.1:27017/rnpsoft_employee_portal2'; 
 
 mongoose
   .connect(
@@ -70,9 +72,39 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true
   })
-  .then(() =>{
-    app.listen(5000);
-    console.log("LOG - Server running on port", 5000);
+  // .then(() =>{
+  //   app.listen(5000);
+  //   console.log("LOG - Server running on port", 5000);
+  // })
+  .then(async () => {
+    console.log("LOG - MongoDB connected successfully");
+
+    // Check if admin user exists
+    const adminUser = await User.findOne({ email: process.env.DB_ADMIN_EMAIL });
+    if (!adminUser) {
+      // If admin user doesn't exist, create it
+      const hashedPassword = await bcrypt.hash(process.env.DB_ADMIN_PASSWORD, 12);
+      await User.create({ 
+        email: process.env.DB_ADMIN_EMAIL,
+        password: hashedPassword,
+        firstname: process.env.DB_ADMIN_FIRSTNAME,
+        lastname: process.env.DB_ADMIN_LASTNAME,
+        userName: process.env.DB_ADMIN_USERNAME,
+        isAdmin: true,
+        isEmployee: false,
+        role: "ADMIN",
+        tenure: "permanent",
+        isTerminated: false
+      });
+      console.log("LOG - Admin user created successfully");
+    } else {
+      console.log("LOG - Admin user already exists");
+    }
+
+    // Start the server
+    app.listen(5000, () => {
+      console.log("LOG - Server running on port 5000");
+    });
   })
   .catch(err => {
     console.log(err);

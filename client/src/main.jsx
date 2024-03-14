@@ -17,6 +17,7 @@ import Internship from './components/Dashboard/Internship.jsx';
 import Jobs from './components/Dashboard/Jobs.jsx';
 import EditJob from './components/Dashboard/EditJob.jsx';
 import ContactForm from './components/Dashboard/ContactForm.jsx';
+import Certificates from './components/Dashboard/Certificates.jsx';
 import Activity from './components/Dashboard/Activity.jsx';
 // import Settings from './components/Dashboard/Settings.jsx';
 import AccountSetting from './components/Dashboard/AccountSetting.jsx';
@@ -107,6 +108,7 @@ function App() {
               <Route exact path="/jobs" element={<Jobs />} />
               <Route exact path="/apply/:oid" element={<Applynow />} />
               <Route exact path="/contact" element={<ContactForm />} />
+              <Route exact path="/certificates" element={<Certificates />} />
               {/* <Route exact path="/settings" element={<Settings />} /> */}
               <Route exact path="/edit-profile" element={<EditProfile />} />
               <Route exact path="/account-settings" element={<AccountSetting />} />
@@ -127,6 +129,7 @@ function App() {
               <Route exact path="/jobs" element={<Jobs />} />
               <Route exact path="/editoffer/:oid" element={<EditJob />} />
               <Route exact path="/applications/:oid" element={<Applications />} />
+              <Route exact path="/certificates" element={<Certificates />} />
             </Routes>
           )}
             
