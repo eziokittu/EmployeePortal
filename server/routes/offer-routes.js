@@ -66,6 +66,18 @@ router.post(
 
 // PATCH
 
+router.patch(
+  '/patch/job/:oid',
+  [],
+  offerController.editJobOffer
+);
+
+router.patch(
+  '/patch/internship/:oid',
+  [],
+  offerController.editInternshipOffer
+);
+
 // DELETE
 
 router.delete(

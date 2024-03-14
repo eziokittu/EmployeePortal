@@ -255,6 +255,78 @@ const createJobOffer = async (req, res, next) => {
   res.status(201).json({offer: createdOffer});
 };
 
+// PATCH
+
+const editJobOffer = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+
+  const  {ctc, heading, link} = req.body;
+  const offerId = req.params.oid;
+
+  let existingOffer;
+  try {
+    existingOffer = await Offer.findById({_id: offerId});
+    // console.log("working1");
+    if (!existingOffer) {
+      return new HttpError('Offer not found!', 404);
+    }
+    // console.log("working2");
+  }
+  catch (error) {
+    return new HttpError('Some error occured while finding an offer', 500);
+  }
+
+  try {
+    existingOffer.ctc = ctc;
+    existingOffer.heading = heading;
+    existingOffer.link = link;
+    await existingOffer.save();
+    res.status(200).json({ok:1, offer: existingOffer.toObject({ getters: true }) })
+  } catch (err) {
+    res.json({ok:-1, message: "Some error occured"});
+  }
+}
+
+const editInternshipOffer = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+
+  const  {stipend, heading, link} = req.body;
+  const offerId = req.params.oid;
+
+  let existingOffer;
+  try {
+    existingOffer = await Offer.findById({_id: offerId});
+    // console.log("working1");
+    if (!existingOffer) {
+      return new HttpError('Offer not found!', 404);
+    }
+    // console.log("working2");
+  }
+  catch (error) {
+    return new HttpError('Some error occured while finding an offer', 500);
+  }
+
+  try {
+    existingOffer.stipend = stipend;
+    existingOffer.heading = heading;
+    existingOffer.link = link;
+    await existingOffer.save();
+    res.status(200).json({ok:1, offer: existingOffer.toObject({ getters: true }) })
+  } catch (err) {
+    res.json({ok:-1, message: "Some error occured"});
+  }
+}
+
 // DELETE
 
 const deleteOffer = async (req, res, next) => {  
@@ -293,8 +365,13 @@ module.exports = {
   getOfferCount,
   getInternshipCount,
   getJobCount,
+
   createOffer,
   createInternshipOffer,
   createJobOffer,
+
+  editInternshipOffer,
+  editJobOffer,
+
   deleteOffer
 };
