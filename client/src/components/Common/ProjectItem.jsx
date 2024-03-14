@@ -33,7 +33,7 @@ const ProjectItem = ({ project, deleteproject, editproject, toggleIsCompleted })
 
 	function handleChange() {
 		toggleIsCompleted(project.id);
-}
+	}	
 
 	return (
 		<div className="flex justify-between items-center mb-2 px-3">

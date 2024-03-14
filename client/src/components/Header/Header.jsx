@@ -18,10 +18,13 @@ const Header = () => {
 	return (
 		<header className="sticky top-0 z-10" >
 			<nav className="bg-primary-900 border-gray-200 px-6 py-2.5">
-				<div className="flex flex-wrap justify-between items-center mx-auto">
-					<a href="https://rnpsoft.com" className="flex items-center">
-						<img className="w-100 h-8 " src="https://framerusercontent.com/images/xLOBENWTydKgd9jy7VGqXoMKkww.png" alt="rnpsoft Logo" />
-					</a>
+				<div className="flex flex-wrap justify-between items-center mx-auto overflow-hidden">
+					<Link to="/">
+						<div className='flex items-center'>
+							<img className="w-100 h-8 " src="https://framerusercontent.com/images/xLOBENWTydKgd9jy7VGqXoMKkww.png" alt="rnpsoft Logo" />
+						</div>
+					</Link>
+					<Link to='/'><div className='text-white text-xl'>Employee Portal</div></Link>
 					<div className="flex items-center lg:order-2">
 						{!auth.token && (
 						<>

@@ -31,6 +31,7 @@ const getProjects = async (req, res, next) => {
       ok: -1,
       message: "No projects found!",
     });
+    return;
   }
 
   res.json({
@@ -60,6 +61,7 @@ const getProjectCount = async (req, res, next) => {
       ok: -1,
       message: "No projects found!",
     });
+    return;
   }
 
   res.json({

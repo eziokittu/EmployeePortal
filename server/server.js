@@ -61,6 +61,7 @@ app.use((error, req, res, next) => {
 
 // MongoDB Community Server
 const uriDB = 'mongodb://127.0.0.1:27017/rnpsoft_employee_portal'; 
+// const uriDB = 'mongodb://127.0.0.1:27017/rnpsoft_employee_portal2'; 
 
 mongoose
   .connect(

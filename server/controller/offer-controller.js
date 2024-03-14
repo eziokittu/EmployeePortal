@@ -56,10 +56,15 @@ const getInternships = async (req, res, next) => {
   }
 
   if (!allOffers || allOffers.length === 0) {
-    return next(new HttpError('No internships found.', 404));
+    res.json({
+      ok: -1,
+      message: 'No internships found!',
+    });
+    return;
   }
 
   res.json({
+    ok: 1,
     internships: allOffers.map((offer) => offer.toObject({ getters: true })),
   });
   // console.log("DEBUG -- Offer-Controller - Fetching internships successful!");
@@ -84,10 +89,15 @@ const getJobs = async (req, res, next) => {
   }
 
   if (!allOffers || allOffers.length === 0) {
-    return next(new HttpError('No internships found.', 404));
+    res.json({
+      ok: -1,
+      message: 'No jobs found!',
+    });
+    return;
   }
 
   res.json({
+    ok: 1,
     jobs: allOffers.map((offer) => offer.toObject({ getters: true })),
   });
   // console.log("DEBUG -- Offer-Controller - Fetching internships successful!");
@@ -136,14 +146,16 @@ const getInternshipCount = async (req, res, next) => {
     // offerCount = await Offer.countDocuments();
     offerCount = await Offer.countDocuments({ type: 'internship' });
   } catch (err) {
-    const error = new HttpError(
-      'Fetching job count failed, please try again later.',
-      500
-    );
-    return next(error);
+    // const error = new HttpError(
+    //   'Fetching job count failed, please try again later.',
+    //   500
+    // );
+    // return next(error);
+    res.json({ ok:-1, message: 'No internships! count=0' });
+    return
   }
 
-  res.json({ count: offerCount });
+  res.json({ ok:1, count: offerCount });
   // console.log("DEBUG -- Offer-Controller - Fetching internships count successful!");
 };
 
@@ -153,14 +165,16 @@ const getJobCount = async (req, res, next) => {
     // offerCount = await Offer.countDocuments();
     offerCount = await Offer.countDocuments({ type: 'job' });
   } catch (err) {
-    const error = new HttpError(
-      'Fetching job count failed, please try again later.',
-      500
-    );
-    return next(error);
+    // const error = new HttpError(
+    //   'Fetching job count failed, please try again later.',
+    //   500
+    // );
+    // return next(error);
+    res.json({ ok:-1, message: 'No jobs! count=0' });
+    return
   }
 
-  res.json({ count: offerCount });
+  res.json({ ok:1, count: offerCount });
   // console.log("DEBUG -- Offer-Controller - Fetching job count successful!");
 };
 

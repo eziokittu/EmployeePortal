@@ -1,10 +1,12 @@
-import React,{useState,useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import JobItem from "../Common/JobItem";
 import ReactPaginate from "react-paginate";
-import {useHttpClient} from '../Backend/hooks/http-hook';
+import { useHttpClient } from '../Backend/hooks/http-hook';
+import { AuthContext } from '../Backend/context/auth-context';
 
-const Internship = ( {isAdmin} ) => {
+const Internship = () => {
   const { sendRequest } = useHttpClient();
+  const auth = useContext(AuthContext);
 
   const internshipsDisplayedPerPage = 2;
 
@@ -14,7 +16,12 @@ const Internship = ( {isAdmin} ) => {
       const responseData = await sendRequest(
         import.meta.env.VITE_BACKEND_URL + `/offers/get/internships?page=${page}`
       );
-      setLoadedInternships(responseData.internships);
+      if (responseData && responseData.ok===1){
+        setLoadedInternships(responseData.internships);
+      }
+      else{
+        console.log(responseData.message);
+      }
     } catch (err) {
       console.error(`ERROR fetching internships`, err);
     }
@@ -25,8 +32,13 @@ const Internship = ( {isAdmin} ) => {
       const responseData = await sendRequest(
         import.meta.env.VITE_BACKEND_URL + `/offers/get/internshipcount`
       );
-      setInternshipCount(responseData.count);
-      setPageCount(Math.ceil(responseData.count / internshipsDisplayedPerPage));
+      if (responseData && responseData.ok===1){
+        setInternshipCount(responseData.count);
+        setPageCount(Math.ceil(responseData.count / internshipsDisplayedPerPage));
+      }
+      else{
+        console.log(responseData.message);
+      }
     } catch (err) {
       console.error(`ERROR fetching internship count`, err);
     }
@@ -44,20 +56,12 @@ const Internship = ( {isAdmin} ) => {
     fetchInternships();
   }, [sendRequest, page]);
 
-  if (!loadedInternships || !internshipCount){
-    return (
-      <>
-       <p>Loading Internships!</p>
-      </>
-    )
-  }
-
   return (
     <div className="p-4 sm:ml-64 bg-blue-50">
       {/* Heading starts */}
 
       <div className="bg-white rounded-lg flex justify-between">
-        <h1 className="p-4 text-2xl font-bold">{`Internship Opportunity (${internshipCount})`}</h1>
+        <h1 className="p-4 text-2xl font-bold">{`Internship Opportunities (${internshipCount})`}</h1>
         <p className="text-gray-400  text-4xl pr-6">...</p>
       </div>
 
@@ -85,11 +89,11 @@ const Internship = ( {isAdmin} ) => {
               <div key={item.id}>
                 <JobItem
                   id={item.id}
-                  position={item.heading}
+                  heading={item.heading}
                   employee_salary={item.stipend}
                   date={item.date_posted}
                   stipend={item.stipend}
-                  // isAdmin = {isAdmin}
+                  userIsAdmin = {auth.isAdmin}
                   isInternship = {true}
                 />
               </div>

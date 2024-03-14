@@ -1,10 +1,12 @@
-import React,{useState,useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import JobItem from "../Common/JobItem";
 import ReactPaginate from "react-paginate";
-import {useHttpClient} from '../Backend/hooks/http-hook';
+import { useHttpClient } from '../Backend/hooks/http-hook';
+import { AuthContext } from '../Backend/context/auth-context';
 
-const Jobs = ( {isAdmin} ) => {
+const Jobs = () => {
   const { sendRequest } = useHttpClient();
+  const auth = useContext(AuthContext);
 
   const jobsDisplayedPerPage = 2;
 
@@ -14,7 +16,12 @@ const Jobs = ( {isAdmin} ) => {
       const responseData = await sendRequest(
         import.meta.env.VITE_BACKEND_URL + `/offers/get/jobs?page=${page}`
       );
-      setLoadedJobs(responseData.jobs);
+      if (responseData.ok===1){
+        setLoadedJobs(responseData.jobs);
+      }
+      else{
+        console.log(responseData.message);
+      }
     } catch (err) {
       console.error(`ERROR fetching Jobs`, err);
     }
@@ -25,8 +32,13 @@ const Jobs = ( {isAdmin} ) => {
       const responseData = await sendRequest(
         import.meta.env.VITE_BACKEND_URL + `/offers/get/jobcount`
       );
-      setJobCount(responseData.count);
-      setPageCount(Math.ceil(responseData.count / jobsDisplayedPerPage));
+      if (responseData.ok===1){
+        setJobCount(responseData.count);
+        setPageCount(Math.ceil(responseData.count / jobsDisplayedPerPage));
+      }
+      else{
+        console.log(responseData.message);
+      }
     } catch (err) {
       console.error(`ERROR fetching Job count`, err);
     }
@@ -49,7 +61,7 @@ const Jobs = ( {isAdmin} ) => {
       {/* Heading starts */}
 
       <div className="bg-white rounded-lg flex justify-between">
-        <h1 className="p-4 text-2xl font-bold">{`Job Opportunity (${jobCount})`}</h1>
+        <h1 className="p-4 text-2xl font-bold">{`Job Opportunities (${jobCount})`}</h1>
         <p className="text-gray-400  text-4xl pr-6">...</p>
       </div>
 
@@ -77,12 +89,13 @@ const Jobs = ( {isAdmin} ) => {
               <div key={item.id}>
                 <JobItem
                   id={item.id}
-                  position={item.heading}
+                  heading={item.heading}
                   employee_salary={item.stipend}
                   date={item.date_posted}
                   ctc={item.ctc}
                   // isAdmin = {isAdmin}
                   isInternship = {false}
+                  userIsAdmin = {auth.isAdmin}
                 />
               </div>
             );
