@@ -257,7 +257,7 @@ const Applynow = () => {
                   name="resume"
                   ref={filePickerRef}
                   onChange={pickedHandler}
-                  accept=".pdf,.doc,.docx"
+                  accept=".pdf"
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 />
                 <span className="text-gray-400">PDF or word format</span>

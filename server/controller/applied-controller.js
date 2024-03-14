@@ -6,6 +6,9 @@ const Offer = require('../models/offer');
 const User = require('../models/user');
 const Applied = require('../models/applied');
 
+// Some data
+const domains = ["WEBDEV", "APPDEV", "ML/AI", "UI/UX", "TEAMLEAD", "CYBERSECURITY", "GRAPHICSDESIGN", "VIDEOEDITOR", "MARKETING", "DIGITALMARKETING"];
+
 // GET
 
 const getAppliedInternship = async (req, res, next) => {

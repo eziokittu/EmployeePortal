@@ -302,7 +302,6 @@ const signup = async (req, res, next) => {
     });
 
     await createdUser.save();
-    console.log("DEBUG3");
     const token = jwt.sign(
       { userId: createdUser.id, email: createdUser.email },
       process.env.JWT_KEY,
@@ -691,7 +690,7 @@ const deleteUser = async (req, res, next) => {
   if (!isValidPassword) {
     return new HttpError('Could not delete Account! Passwords do not match',500);
   }
-  // console.log("GG");
+
   try {
     await User.deleteOne(existingUser);
   } catch (err) {

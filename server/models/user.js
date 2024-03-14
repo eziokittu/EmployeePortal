@@ -14,6 +14,8 @@ const userSchema = new Schema({
     phone: {type: String, required: true, default: '91XXXXXXXX' },
     bio: {type: String, required: true, default: '-' },
 
+    ref: {type: String, required:true, default: "-"}, // RNPW/2024-25/WEB123DEV
+    rating: {type: Number, required: true, default: 0 },
     certificates: [{type: String, minLength: 4 }],
     role: { type: String, default: "Software Engineer" },
     projects: [{ type: mongoose.Types.ObjectId, required: true, ref: 'Project' }],

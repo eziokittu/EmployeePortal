@@ -15,6 +15,7 @@ const userRoutes = require('./routes/user-routes');
 const projectRoutes = require('./routes/project-routes');
 const offerRoutes = require('./routes/offer-routes');
 const appliedRoutes = require('./routes/applied-routes');
+const domainRoutes = require('./routes/domain-routes');
 
 const HttpError = require('./models/http-error');
 
@@ -22,6 +23,8 @@ app.use(bodyParser.json());
 
 app.use('/uploads/images', express.static(path.join('uploads', 'images')));
 app.use('/uploads/resume', express.static(path.join('uploads', 'resume')));
+app.use('/uploads/certificates', express.static(path.join('uploads', 'certificates')));
+app.use('/uploads/srs', express.static(path.join('uploads', 'srs')));
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -39,6 +42,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/offers', offerRoutes);
 app.use('/api/applied', appliedRoutes);
+app.use('/api/domains', domainRoutes);
 
 app.use((req, res, next) => {
   const error = new HttpError('Could not find this route. ['+req.body.url+']', 404);

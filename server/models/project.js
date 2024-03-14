@@ -4,9 +4,9 @@ const Schema = mongoose.Schema;
 
 const projectSchema = new Schema({
   title: {type: String, required: true, default: "Project Title" },
-  // description: {type: String, required: true, default: "-" },
+  description: {type: String, required: true, default: "-" },
   review: {type: String, required: true, default: "-" },
-  // images: [{type: String, required: true, minLength: 2 }],
+  srs: [{type: String, required: true, minLength: 4 }],
   isCompleted: {type: Boolean, required: true, default: false},
   employees: [{ type: mongoose.Types.ObjectId, required: true, ref: 'User' }],
   date_start: {
@@ -14,7 +14,7 @@ const projectSchema = new Schema({
     required: true,
     default: Date.now()
   },
-  date_end: {type: Date, required: true, default: Date.now() + 1000*60*60*24*30 }
+  date_end: {type: Date, required: true, default: Date.now() + 1000*60*60*24*90 } // 90 days date end
 });
 
 projectSchema.plugin(uniqueValidator);
