@@ -8,6 +8,7 @@
     "DB_USER_DEFAULT_IMAGE": "uploads/images/defaultUserImage.png",
     "DB_USER_DEFAULT_CERTIFICATE": "uploads/images/defaultCertificate.pdf",
     "DB_USER_DEFAULT_RESUME": "uploads/resume/defaultResume.pdf",
+    "DB_USER_DEFAULT_SRS": "uploads/resume/defaultSrs.pdf",
 
     "DB_ADMIN_EMAIL": "admin@gmail.com",
     "DB_ADMIN_PASSWORD": "passme",
