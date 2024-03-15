@@ -156,7 +156,7 @@ const createOffer = async (req, res, next) => {
 
   let existingDomain;
   try {
-    existingDomain = Domain.findOne({name: domain});
+    existingDomain = await Domain.findOne({name: domain});
     if (domain!=='-' && !existingDomain){
       return res.json({ok:-1, message: "Domain does not exist!"});
     }
@@ -192,7 +192,7 @@ const createInternshipOffer = async (req, res, next) => {
 
   let existingDomain;
   try {
-    existingDomain = Domain.findOne({name: domain});
+    existingDomain = await Domain.findOne({name: domain});
     if (domain!=='-' && !existingDomain){
       return res.json({ok:-1, message: "Domain does not exist!"});
     }
@@ -229,7 +229,7 @@ const createJobOffer = async (req, res, next) => {
 
   let existingDomain;
   try {
-    existingDomain = Domain.findOne({name: domain});
+    existingDomain = await Domain.findOne({name: domain});
     if (domain!=='-' && !existingDomain){
       return res.json({ok:-1, message: "Domain does not exist!"});
     }
@@ -241,7 +241,7 @@ const createJobOffer = async (req, res, next) => {
   try {
     createdOffer = new Offer({
       type: 'job',
-      domain: domain,
+      domain: existingDomain,
       ctc: ctc,
       heading: heading,
       link: link

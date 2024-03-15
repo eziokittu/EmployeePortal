@@ -102,7 +102,7 @@ function Others() {
         {/* Heading Section */}
         <div className="flex items-center justify-center flex-row text-center h-24 rounded ">
           <div>
-            <h1 className=' text-2xl font-bold'>All Existing Domains</h1>
+            <h1 className=' text-2xl font-bold'>All Existing Domains / Roles</h1>
           </div>
         </div>
 
@@ -132,7 +132,7 @@ function Others() {
         {/* Add Domain Heading Section */}
         <div className="flex items-center justify-center flex-row text-center h-24 rounded ">
           <div>
-            <h1 className=' text-2xl font-bold'>Add Domain</h1>
+            <h1 className=' text-2xl font-bold'>Add Domain / Role</h1>
             <p className='mt-4'>Add the unique domain names for assigning to employees, offers</p>
           </div>
         </div>

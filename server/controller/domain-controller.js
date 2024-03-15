@@ -28,6 +28,26 @@ const getDomains = async (req, res, next) => {
   res.json({ok:1, count:1, message: "Successfully Fetched all domains", domains: allDomains});
 };
 
+const getDomain = async (req, res, next) => {
+  const domainId = req.params.domainId;
+
+  let existingDomains;
+  try {
+    existingDomains = await Domain.findOne({_id: domainId});
+    if (!existingDomains) {
+      res.json({
+        ok: 1,
+        message: 'Domain not found!',
+      });
+      return;
+    }
+  } catch (err) {
+    res.json({ok:-1, message: "Fetching domain failed!"});
+  }
+
+  res.json({ok:1, message: "Successfully Fetched the domain", domain: existingDomains});
+};
+
 // POST
 
 const postDomain = async (req, res, next) => {
@@ -135,6 +155,7 @@ const deleteDomain = async (req, res, next) => {
 };
 
 module.exports = {
+  getDomain,
   getDomains,
   postDomain,
   patchDomain,

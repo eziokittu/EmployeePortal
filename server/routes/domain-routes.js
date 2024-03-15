@@ -12,6 +12,11 @@ router.get(
   domainController.getDomains
 );
 
+router.get(
+  '/get/:domainId', 
+  domainController.getDomain
+);
+
 // POST
 
 router.post(

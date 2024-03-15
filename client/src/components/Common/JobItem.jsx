@@ -51,6 +51,21 @@ const JobItem=({id, stipend, ctc, heading, domain, date, isInternship, userIsAdm
     fetchApplyStatus();
   }, []);
 
+  const [thisDomain, setThisDomain] = useState();
+  useEffect(() => {
+    const fetchDomain = async () => {
+      try {
+        const responseData = await sendRequest(
+          import.meta.env.VITE_BACKEND_URL+`/domains/get/${domain}`
+        );
+        setThisDomain(responseData.domain);
+      } catch (err) {
+        console.log("Error in fetching domain: "+err);
+      }
+    };
+    fetchDomain();
+  }, []);
+
   return(
     <>
       
@@ -86,7 +101,12 @@ const JobItem=({id, stipend, ctc, heading, domain, date, isInternship, userIsAdm
         )}
 
         {/* Domain */}
-        <p className="text-gray-400 text-sm mt-1 pl-3">Domain: {domain}</p>
+        {thisDomain && (
+          <p className="text-gray-400 text-sm mt-1 pl-3">Domain: {thisDomain.name}</p>
+        )}
+        {!thisDomain && (
+          <p className="text-gray-400 text-sm mt-1 pl-3">Domain: ANY</p>
+        )}
       </div>
 
       {/* DATE */}

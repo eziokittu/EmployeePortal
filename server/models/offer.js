@@ -8,7 +8,7 @@ const offerSchema = new Schema({
   link: {type: String, default: 'https://www.google.com'},
   ctc: {type: String, default: '-'},
   stipend: {type: String, default: '-'},
-  domain: {type: String, ref: 'Domain'},
+  domain: { type: mongoose.Types.ObjectId, required: true, ref: 'Domain' },
   date_posting: {type: Date, required: true, default: Date.now() },
   date_start: {type: Date, required: true, default: Date.now() },
   date_end: {type: Date, required: true, default: Date.now() },

@@ -27,6 +27,9 @@ router.post(
       .isEmpty(),
     check('link')
       .not()
+      .isEmpty(),
+    check('domain')
+      .not()
       .isEmpty()
   ],
   offerController.createOffer
@@ -42,6 +45,9 @@ router.post(
       .not()
       .isEmpty(),
     check('link')
+      .not()
+      .isEmpty(),
+    check('domain')
       .not()
       .isEmpty()
   ],
