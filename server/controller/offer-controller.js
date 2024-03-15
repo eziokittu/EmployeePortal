@@ -264,26 +264,36 @@ const editJobOffer = async (req, res, next) => {
     );
   }
 
-  const  {ctc, heading, link} = req.body;
+  const  {ctc, heading, link, domain} = req.body;
   const offerId = req.params.oid;
 
   let existingOffer;
   try {
     existingOffer = await Offer.findById({_id: offerId});
-    // console.log("working1");
     if (!existingOffer) {
-      return new HttpError('Offer not found!', 404);
+      return res.json({ok:-1, message: "Job Offer not found"});
     }
-    // console.log("working2");
   }
   catch (error) {
-    return new HttpError('Some error occured while finding an offer', 500);
+    return res.json({ok:-1, message: "Some error occured while finding Job offer"});
+  }
+
+  // checking if the domain exists
+  let existingDomain;
+  try {
+    existingDomain = await Domain.findOne({name: domain});
+    if (domain!=='-' && !existingDomain){
+      return res.json({ok:-1, message: "Domain does not exist!"});
+    }
+  } catch (error) {
+    return res.json({ok:-1, message: "Some Error occured while finind domain!"});
   }
 
   try {
     existingOffer.ctc = ctc;
     existingOffer.heading = heading;
     existingOffer.link = link;
+    existingOffer.domain = existingDomain;
     await existingOffer.save();
     res.status(200).json({ok:1, offer: existingOffer.toObject({ getters: true }) })
   } catch (err) {
@@ -299,26 +309,36 @@ const editInternshipOffer = async (req, res, next) => {
     );
   }
 
-  const  {stipend, heading, link} = req.body;
+  const  {stipend, heading, link, domain} = req.body;
   const offerId = req.params.oid;
 
   let existingOffer;
   try {
     existingOffer = await Offer.findById({_id: offerId});
-    // console.log("working1");
     if (!existingOffer) {
-      return new HttpError('Offer not found!', 404);
+      return res.json({ok:-1, message: "Internship Offer not found!"});
     }
-    // console.log("working2");
   }
   catch (error) {
-    return new HttpError('Some error occured while finding an offer', 500);
+    return res.json({ok:-1, message: "Some error occured while finding Internship offer"});
+  }
+
+  // checking if the domain exists
+  let existingDomain;
+  try {
+    existingDomain = await Domain.findOne({name: domain});
+    if (domain!=='-' && !existingDomain){
+      return res.json({ok:-1, message: "Domain does not exist!"});
+    }
+  } catch (error) {
+    return res.json({ok:-1, message: "Some Error occured while finind domain!"});
   }
 
   try {
     existingOffer.stipend = stipend;
     existingOffer.heading = heading;
     existingOffer.link = link;
+    existingOffer.domain = existingDomain;
     await existingOffer.save();
     res.status(200).json({ok:1, offer: existingOffer.toObject({ getters: true }) })
   } catch (err) {
@@ -329,32 +349,21 @@ const editInternshipOffer = async (req, res, next) => {
 // DELETE
 
 const deleteOffer = async (req, res, next) => {  
-  const offerId = req.params.oid;
-  let existingOffer;
   try {
-    existingOffer = await Offer.findById({_id: offerId});
-    console.log("working1");
-    if (!existingOffer) {
-      return new HttpError('Offer not found!', 404);
-    }
-    console.log("working2");
-  }
-  catch (error) {
-    return new HttpError('Some error occured while finding an offer', 500);
-  }
-  console.log("working3");
-  try {
-    await Offer.deleteOne(existingOffer);
-  } catch (err) {
-    const error = new HttpError(
-      'Something went wrong, could not delete offer.',
-      500
-    );
-    return next(error);
-  }
+    // Find offers with date_end older than current date
+    const currentDate = new Date();
+    const offersToDelete = await Offer.find({ date_end: { $lt: currentDate } });
 
-  res.status(201).json({ message: 'Deleted offer.' });
+    // Delete the offers
+    await Offer.deleteMany({ _id: { $in: offersToDelete.map(offer => offer._id) } });
+
+    res.status(200).json({ ok:1, message: 'Old Offers deleted successfully.' });
+  } catch (error) {
+    console.error('Error deleting offers:', error);
+    res.status(500).json({ ok:-1, message: 'Something went wrong, could not delete offers.' });
+  }
 };
+
 
 module.exports = {
   getOffer,

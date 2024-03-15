@@ -90,7 +90,7 @@ router.patch(
 // DELETE
 
 router.delete(
-  '/delete/:oid',
+  '/delete',
   [],
   offerController.deleteOffer
 )

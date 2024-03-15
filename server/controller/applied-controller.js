@@ -267,7 +267,6 @@ const getAppliedCountWithOfferId= async (req, res, next) => {
   res.json({ ok:1, count: appliedCount });
 };
 
-
 // POST
 
 const applyOffer = async (req, res, next) => {
@@ -463,33 +462,33 @@ const approveOffers = async (req, res, next) => {
 
 // DELETE
 
-// const deleteOffer = async (req, res, next) => {  
-//   const offerId = req.params.oid;
-//   let existingOffer;
-//   try {
-//     existingOffer = await Offer.findById({_id: offerId});
-//     console.log("working1");
-//     if (!existingOffer) {
-//       return new HttpError('Offer not found!', 404);
-//     }
-//     console.log("working2");
-//   }
-//   catch (error) {
-//     return new HttpError('Some error occured while finding an offer', 500);
-//   }
-//   console.log("working3");
-//   try {
-//     await Offer.deleteOne(existingOffer);
-//   } catch (err) {
-//     const error = new HttpError(
-//       'Something went wrong, could not delete offer.',
-//       500
-//     );
-//     return next(error);
-//   }
+const deleteOffer = async (req, res, next) => {  
+  const offerId = req.params.oid;
+  let existingOffer;
+  try {
+    existingOffer = await Offer.findById({_id: offerId});
+    console.log("working1");
+    if (!existingOffer) {
+      return new HttpError('Offer not found!', 404);
+    }
+    console.log("working2");
+  }
+  catch (error) {
+    return new HttpError('Some error occured while finding an offer', 500);
+  }
+  console.log("working3");
+  try {
+    await Offer.deleteOne(existingOffer);
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not delete offer.',
+      500
+    );
+    return next(error);
+  }
 
-//   res.status(201).json({ message: 'Deleted offer.' });
-// };
+  res.status(201).json({ message: 'Deleted offer.' });
+};
 
 module.exports = {
   getAppliedInternship,

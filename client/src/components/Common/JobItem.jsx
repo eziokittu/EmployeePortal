@@ -69,12 +69,12 @@ const JobItem=({id, stipend, ctc, heading, domain, date, isInternship, userIsAdm
   return(
     <>
       
-    <div className="bg-white mt-10 h-60 w-80 p-5">
+    <div className="bg-white mt-10 h-60 w-80 p-5 flex flex-col justify-between">
 
       {/* Top Part */}
       <div className="flex justify-between">
         {/* Job Heading */}
-        <p className="pl-3">{heading}</p>
+        <p className="text-xl">{heading}</p>
 
         {/* Job Edit Button */}
         <Link to={`/editoffer/${id}`}>
@@ -95,25 +95,29 @@ const JobItem=({id, stipend, ctc, heading, domain, date, isInternship, userIsAdm
 
         {/* Stipend / CTC */}
         {isInternship ? (
-          <p className="text-gray-400 text-sm mt-1 pl-3">Stipend: ${stipend}</p>
+          <p className="text-gray-400 text-sm">Stipend: ${stipend}</p>
         ) : (
-          <p className="text-gray-400 text-sm mt-1 pl-3">CTC: ${ctc}</p>
+          <p className="text-gray-400 text-sm">CTC: ${ctc}</p>
         )}
 
         {/* Domain */}
         {thisDomain && (
-          <p className="text-gray-400 text-sm mt-1 pl-3">Domain: {thisDomain.name}</p>
+          <p className="text-gray-400 text-sm">Domain: {thisDomain.name}</p>
         )}
         {!thisDomain && (
-          <p className="text-gray-400 text-sm mt-1 pl-3">Domain: ANY</p>
+          <p className="text-gray-400 text-sm">Domain: ANY</p>
         )}
       </div>
 
       {/* DATE */}
-      <p className="text-sm mt-1 pl-3 text-gray-400">{date}</p>
+      <p className="text-sm mt-1 text-gray-700">Last Date to apply: 
+        <span className="pl-2 font-bold">
+          {date.split('T')[0]}
+        </span>
+      </p>
 
       {/* Some tasks... */}
-      <div className="flex">
+      {/* <div className="flex">
         <svg
           className="h-6 m-3 mt-6 cursor-pointer"
           clipRule="evenodd"
@@ -138,9 +142,9 @@ const JobItem=({id, stipend, ctc, heading, domain, date, isInternship, userIsAdm
         >
           <path d="M17.843 1c2.159 0 3.912 1.753 3.912 3.912 0 .395-.053 1.704-1.195 2.813l-8.465 8.465c-.596.671-2.12 1.279-3.299.099-1.178-1.177-.586-2.685.088-3.29l4.409-4.409.707.707-3.164 3.163.014.003-1.411 1.413.004.003c-.97 1.151.618 2.93 1.977 1.572l8.383-8.384c.656-.652.94-1.393.94-2.155 0-1.601-1.299-2.9-2.9-2.9-.783 0-1.495.311-2.018.818l-.003-.003c-.573.573-11.502 11.494-11.534 11.527l-.002-.002c-.795.812-1.286 1.923-1.286 3.148 0 2.483 2.017 4.5 4.5 4.5.65 0 1.84.007 3.52-1.668l10.273-10.267.707.707-10.477 10.477c-1.004 1.077-2.435 1.751-4.023 1.751-3.035 0-5.5-2.465-5.5-5.5 0-1.577.666-3 1.731-4.004 10.668-10.667 10.835-10.839 11.295-11.297.277-.278 1.215-1.199 2.817-1.199" />
         </svg>
-      </div>
+      </div> */}
 
-
+      {/* More details and buttons */}
       <div className="flex justify-between mt-4">
         <div className="flex flex-col">
           <span>
