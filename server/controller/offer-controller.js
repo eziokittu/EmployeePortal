@@ -3,39 +3,9 @@ const { validationResult } = require('express-validator');
 // const { v4: uuidv4 } = require('uuid');
 const HttpError = require('../models/http-error');
 const Offer = require('../models/offer');
-const User = require('../models/user');
+const Domain = require('../models/domains');
 
 // GET
-
-// const getOffers = async (req, res, next) => {
-//   const page = req.query.page || 0;
-//   const offersPerPage = 2;
-//   // const { type } = req.body;
-
-//   let allOffers;
-//   try {
-//     allOffers = await Offer
-//       // .find({type: type})
-//       .find()
-//       .skip(page * offersPerPage)
-//       .limit(offersPerPage);
-//   } catch (err) {
-//     const error = new HttpError(
-//       'Fetching offers failed, please try again later.',
-//       500
-//     );
-//     return next(error);
-//   }
-
-//   if (!allOffers || allOffers.length === 0) {
-//     return next(new HttpError('No offers found.', 404));
-//   }
-
-//   res.json({
-//     offers: allOffers.map((offer) => offer.toObject({ getters: true })),
-//   });
-//   console.log("DEBUG -- Offer-Controller - Fetching offers successful!");
-// };
 
 const getInternships = async (req, res, next) => {
   const page = req.query.page || 0;
@@ -146,13 +116,7 @@ const getInternshipCount = async (req, res, next) => {
     // offerCount = await Offer.countDocuments();
     offerCount = await Offer.countDocuments({ type: 'internship' });
   } catch (err) {
-    // const error = new HttpError(
-    //   'Fetching job count failed, please try again later.',
-    //   500
-    // );
-    // return next(error);
-    res.json({ ok:-1, message: 'No internships! count=0' });
-    return
+    return res.json({ ok:-1, message: 'No internships! count=0' });
   }
 
   res.json({ ok:1, count: offerCount });
@@ -188,25 +152,32 @@ const createOffer = async (req, res, next) => {
     );
   }
 
-  const { type, heading, link } = req.body;
+  const { type, heading, link, domain } = req.body;
+
+  let existingDomain;
+  try {
+    existingDomain = Domain.findOne({name: domain});
+    if (domain!=='-' && !existingDomain){
+      return res.json({ok:-1, message: "Domain does not exist!"});
+    }
+  } catch (error) {
+    return res.json({ok:-1, message: "Some Error occured"});
+  }
 
   const createdOffer = new Offer({
-    type,
-    heading,
-    link
+    domain: domain,
+    type: type,
+    heading: heading,
+    link: link
   });
 
   try {
     await createdOffer.save();
   } catch (err) {
-    const error = new HttpError(
-      'Creating new Offer failed, please try again.',
-      500
-    );
-    return next(error);
+    return res.json({ok:-1, message: "Some error occured!"});
   }
 
-  res.status(201).json({offer: createdOffer});
+  res.status(201).json({ok:1, offer: createdOffer});
 };
 
 const createInternshipOffer = async (req, res, next) => {
@@ -217,10 +188,21 @@ const createInternshipOffer = async (req, res, next) => {
     );
   }
 
-  const { stipend, heading, link } = req.body;
+  const { stipend, heading, link, domain } = req.body;
+
+  let existingDomain;
+  try {
+    existingDomain = Domain.findOne({name: domain});
+    if (domain!=='-' && !existingDomain){
+      return res.json({ok:-1, message: "Domain does not exist!"});
+    }
+  } catch (error) {
+    return res.json({ok:-1, message: "Some Error occured"});
+  }
 
   const createdOffer = new Offer({
     type: 'internship',
+    domain: domain,
     stipend: stipend,
     heading: heading,
     link: link
@@ -229,14 +211,10 @@ const createInternshipOffer = async (req, res, next) => {
   try {
     await createdOffer.save();
   } catch (err) {
-    const error = new HttpError(
-      'Creating new Offer failed, please try again.',
-      500
-    );
-    return next(error);
+    res.status(201).json({ok:-1, message: "Creating new internship failed!"});
   }
 
-  res.status(201).json({offer: createdOffer});
+  res.status(201).json({ok:1, offer: createdOffer});
 };
 
 const createJobOffer = async (req, res, next) => {
@@ -247,26 +225,33 @@ const createJobOffer = async (req, res, next) => {
     );
   }
 
-  const { ctc, heading, link } = req.body;
+  const { ctc, heading, link, domain } = req.body;
 
-  const createdOffer = new Offer({
-    type: 'job',
-    ctc: ctc,
-    heading: heading,
-    link: link
-  });
-
+  let existingDomain;
   try {
-    await createdOffer.save();
-  } catch (err) {
-    const error = new HttpError(
-      'Creating new Offer failed, please try again.',
-      500
-    );
-    return next(error);
+    existingDomain = Domain.findOne({name: domain});
+    if (domain!=='-' && !existingDomain){
+      return res.json({ok:-1, message: "Domain does not exist!"});
+    }
+  } catch (error) {
+    return res.json({ok:-1, message: "Some Error occured"});
   }
 
-  res.status(201).json({offer: createdOffer});
+  let createdOffer;
+  try {
+    createdOffer = new Offer({
+      type: 'job',
+      domain: domain,
+      ctc: ctc,
+      heading: heading,
+      link: link
+    });
+    await createdOffer.save();
+  } catch (err) {
+    return res.json({ok:-1, message: "Creating new Job offer failed!"});
+  }
+
+  res.status(201).json({ok:1, offer: createdOffer});
 };
 
 // PATCH

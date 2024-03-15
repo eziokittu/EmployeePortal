@@ -93,6 +93,7 @@ const Internship = () => {
                   employee_salary={item.stipend}
                   date={item.date_posted}
                   stipend={item.stipend}
+                  domain={item.domain}
                   userIsAdmin = {auth.isAdmin}
                   isInternship = {true}
                 />

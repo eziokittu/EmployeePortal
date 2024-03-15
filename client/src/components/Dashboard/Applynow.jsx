@@ -95,15 +95,15 @@ const Applynow = () => {
         'POST',
         formData
       );
-      // setTimeout(() => {
-      //   window.location.reload(false);
-      // }, 1500);
       if (responseData.ok == 0){
         console.log("User could not apply to the "+ loadedOffer.type+"! (Already applied)");
       }
       else if (responseData.ok == 1){
         console.log("Successfully applied to the "+ loadedOffer.type+"!");
       }
+      setTimeout(() => {
+        window.location.reload(false);
+      }, 1500);
     } catch (err) {
       console.log("ERROR applying for this "+ loadedOffer.type+"!");
     }

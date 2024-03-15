@@ -8,7 +8,7 @@ const offerSchema = new Schema({
   link: {type: String, default: 'https://www.google.com'},
   ctc: {type: String, default: '-'},
   stipend: {type: String, default: '-'},
-  // image: {type: String, required: true, minLength: 4, default: 'image.png' },
+  domain: {type: String, ref: 'Domain'},
   date_posting: {type: Date, required: true, default: Date.now() },
   date_start: {type: Date, required: true, default: Date.now() },
   date_end: {type: Date, required: true, default: Date.now() },

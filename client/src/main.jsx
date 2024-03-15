@@ -18,6 +18,7 @@ import Jobs from './components/Dashboard/Jobs.jsx';
 import EditJob from './components/Dashboard/EditJob.jsx';
 import ContactForm from './components/Dashboard/ContactForm.jsx';
 import Certificates from './components/Dashboard/Certificates.jsx';
+import Others from './components/Dashboard/Others.jsx';
 import Activity from './components/Dashboard/Activity.jsx';
 // import Settings from './components/Dashboard/Settings.jsx';
 import AccountSetting from './components/Dashboard/AccountSetting.jsx';
@@ -130,6 +131,7 @@ function App() {
               <Route exact path="/editoffer/:oid" element={<EditJob />} />
               <Route exact path="/applications/:oid" element={<Applications />} />
               <Route exact path="/certificates" element={<Certificates />} />
+              <Route exact path="/others" element={<Others />} />
             </Routes>
           )}
             

@@ -93,6 +93,7 @@ const Jobs = () => {
                   employee_salary={item.stipend}
                   date={item.date_posted}
                   ctc={item.ctc}
+                  domain={item.domain}
                   // isAdmin = {isAdmin}
                   isInternship = {false}
                   userIsAdmin = {auth.isAdmin}

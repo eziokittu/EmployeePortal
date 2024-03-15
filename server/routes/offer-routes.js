@@ -59,6 +59,9 @@ router.post(
       .isEmpty(),
     check('link')
       .not()
+      .isEmpty(),
+    check('domain')
+      .not()
       .isEmpty()
   ],
   offerController.createJobOffer

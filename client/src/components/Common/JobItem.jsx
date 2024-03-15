@@ -4,7 +4,7 @@ import { AuthContext } from '../Backend/context/auth-context';
 import { useHttpClient } from '../Backend/hooks/http-hook';
 import { Link } from "react-router-dom";
 
-const JobItem=({id, stipend, ctc, heading, date, isInternship, userIsAdmin})=>{
+const JobItem=({id, stipend, ctc, heading, domain, date, isInternship, userIsAdmin})=>{
 	const { sendRequest } = useHttpClient();
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
@@ -55,6 +55,8 @@ const JobItem=({id, stipend, ctc, heading, date, isInternship, userIsAdmin})=>{
     <>
       
     <div className="bg-white mt-10 h-60 w-80 p-5">
+
+      {/* Top Part */}
       <div className="flex justify-between">
         {/* Job Heading */}
         <p className="pl-3">{heading}</p>
@@ -72,11 +74,20 @@ const JobItem=({id, stipend, ctc, heading, date, isInternship, userIsAdmin})=>{
         </svg>
         </Link>
       </div>
-      {isInternship ? (
-        <p className="text-gray-400 text-sm mt-1 pl-3">Stipend: ${stipend}</p>
-      ) : (
-        <p className="text-gray-400 text-sm mt-1 pl-3">CTC: ${ctc}</p>
-      )}
+
+      {/* Middle Part */}
+      <div>
+
+        {/* Stipend / CTC */}
+        {isInternship ? (
+          <p className="text-gray-400 text-sm mt-1 pl-3">Stipend: ${stipend}</p>
+        ) : (
+          <p className="text-gray-400 text-sm mt-1 pl-3">CTC: ${ctc}</p>
+        )}
+
+        {/* Domain */}
+        <p className="text-gray-400 text-sm mt-1 pl-3">Domain: {domain}</p>
+      </div>
 
       {/* DATE */}
       <p className="text-sm mt-1 pl-3 text-gray-400">{date}</p>
