@@ -50,4 +50,17 @@ router.patch(
   projectController.updateProjectInfo
 );
 
+router.patch(
+  '/edit/addemployees/:pid',
+  [
+    // check('title')
+    //   .not()
+    //   .isEmpty(),
+    // check('description')
+    //   .not()
+    //   .isEmpty()
+  ],
+  projectController.addProjectMembers
+);
+
 module.exports = router;

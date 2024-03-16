@@ -2,6 +2,7 @@ const { validationResult } = require('express-validator');
 
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
+const Domain = require('../models/domains');
 const Project = require('../models/project');
 
 const getProjects = async (req, res, next) => {
@@ -101,31 +102,83 @@ const getProjectsOngoingCount = async (req, res, next) => {
 // POST
 
 const createProject = async (req, res, next) => {
+  // console.log(req.body);
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(new HttpError('Invalid inputs passed, please check your data.', 422));
+  }
+
+  // const { title, description } = req.body;
+  const { title, description, employees, domain, startDate, endDate } = req.body;
+
+  // checking the existance of the domain
+  let existingDomain;
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return next(new HttpError('Invalid inputs passed, please check your data.', 422));
+    existingDomain = await Domain.findOne({name: domain});
+    if (domain!=='-' && !existingDomain){
+      return res.json({ok:-1, message: "Domain does not exist!"});
     }
+  } catch (error) {
+    return res.json({ok:-1, message: "Some Error occured"});
+  }
 
-    // const { title, description } = req.body;
-    const { title, startDate, endDate } = req.body;
-
-    const createdProject = new Project({
+  // Creating a new project
+  let createdProject
+  try {
+    // const startingDate = startDate.substring(0,10);
+    // const startingDate = startDate.split('T')[0];
+    // const endingDate = endDate.substring(0,10);
+    createdProject = new Project({
       title: title,
-      // description: description,
+      description: description,
+      employees: [],
+      domain: existingDomain,
       date_start: startDate,
       date_end: endDate
     });
-
     await createdProject.save();
+  } catch (err) {
+    return res.json({ok:-1, message: "Some error occured while saving created project: ",err});
+  }
 
-    res.status(201).json({
-      createdProject
-    });
-  } 
-  catch (err) {
-    console.error(err); // Log the error for debugging
-    return next(new HttpError('Creating project failed!, please try again later.', 500));
+  // if employees list is empty
+  if (employees.length === 0){
+    return res.json({ok:1, project: createdProject, message: "Project creation successful but with no employees!"});
+  }
+  
+  // Iterate over all employee IDs and save it if they exist
+  let allValidEmployees = [];
+  for (let empId of employees) {
+    // Checking the existance of the emp ID
+    let existingUser;
+    try {
+      existingUser = await User.findOne({ _id: empId, isEmployee: true });
+      // console.log(empId,"is valid");
+      if (!existingUser) {
+        continue; // Skip this user if they do not exist
+      }
+    } catch (error) {
+      // Log the error but do not stop processing the rest of the user IDs
+      console.error('Error finding user with ID: ', empId, ", ERROR: ", error);
+      continue;
+    }
+
+    // Pushing the ID to the allValidEmployees Array
+    try {
+      allValidEmployees.push(empId);
+    } catch (error) {
+      console.error('Error adding employee ID: ', empID,", ERROR: ", error);
+    }
+  }
+
+  try {
+    createdProject.employees = allValidEmployees;
+    await createdProject.save();
+    return res.status(201).json({ok:1, project: createdProject});
+  } catch (err) {
+    console.error("Error saving project with updated valid employees:", err);
+    return res.json({ok:-1, message: "ERROR saving project with the updated valid employees: ", err});
   }
 }
 
@@ -133,34 +186,112 @@ const createProject = async (req, res, next) => {
 
 // updates project, req.params provides the id
 const updateProjectInfo = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(new HttpError('Invalid inputs passed, please check your data.', 422));
+  }
+
+  const { title, description, domain, startDate, endDate } = req.body;
+
+  const projectId = req.params.pid;
+
+  // Find the existing project by projectId
+  const existingProject = await Project.findById({ _id: projectId });
+  if (!existingProject) {
+    return res.json({ok:-1, message: `Project ID is invalid` });
+  }
+
+  // checking the existance of the domain
+  let existingDomain;
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return next(new HttpError('Invalid inputs passed, please check your data.', 422));
+    existingDomain = await Domain.findOne({name: domain});
+    if (domain!=='-' && !existingDomain){
+      return res.json({ok:-1, message: "Domain does not exist!"});
     }
-
-    const { title, description } = req.body;
-
-    const projectId = req.params.pid;
-
-    // Find the existing project by projectId
-    const existingProject = await Project.findOne({ projectId: projectId });
-    if (!existingProject) {
-      return next(new HttpError('Project not found, update failed.', 404));
-    }
-    
-    // Update project details
+  } catch (error) {
+    return res.json({ok:-1, message: "Some Error occured"});
+  }
+  
+  // Update project details
+  try {
     existingProject.title = title;
+    existingProject.domain = existingDomain;
     existingProject.description = description;
-
+    existingProject.date_start = startDate,
+    existingProject.date_end = endDate
     // Save the updated user
     await existingProject.save();
+    return res
+      .status(200)
+      .json({ 
+        ok:1, 
+        message: "Successfully updated the project INFO", 
+        project: existingProject.toObject({ getters: true }) 
+      });
+  } catch (err) {
+    return res.status(200).json({ ok:-1, message: `Same error occured while updating project INFO, ${err}` });
+  }
+}
 
-    res.status(200).json({ project: existingProject.toObject({ getters: true }) });
-  } 
-  catch (err) {
-    console.error(err); // Log the error for debugging
-    return next(new HttpError('Creating project failed!, please try again later.', 500));
+const addProjectMembers = async (req, res, next) => {
+  // console.log(req.body);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(new HttpError('Invalid inputs passed, please check your data.', 422));
+  }
+
+  // const { title, description } = req.body;
+  const { employees } = req.body;
+  const pid = req.params.pid;
+
+  // Creating a new project
+  let existingProject
+  try {
+    existingProject = await Project.findOne({ _id: pid });
+    if (!existingProject){
+      res.json({ok:-1, message: "Project ID is INVALID!"});
+    }
+  } catch (err) {
+    return res.json({ok:-1, message: "Some error occured while dinsing project: ",err});
+  }
+
+  // if employees list is empty
+  if (employees.length === 0){
+    return res.json({ok:1, project: existingProject, message: "Project edit successful but added no employees!"});
+  }
+  
+  // Iterate over all employee IDs and save it if they exist
+  let allValidEmployees = [];
+  for (let empId of employees) {
+    // Checking the existance of the emp ID
+    let existingUser;
+    try {
+      existingUser = await User.findOne({ _id: empId, isEmployee: true });
+      // console.log(empId,"is valid");
+      if (!existingUser) {
+        continue; // Skip this user if they do not exist
+      }
+    } catch (error) {
+      // Log the error but do not stop processing the rest of the user IDs
+      console.error('Error finding user with ID: ', empId, ", ERROR: ", error);
+      continue;
+    }
+
+    // Pushing the ID to the allValidEmployees Array
+    try {
+      allValidEmployees.push(empId);
+    } catch (error) {
+      console.error('Error adding employee ID: ', empID,", ERROR: ", error);
+    }
+  }
+
+  try {
+    existingProject.employees = allValidEmployees;
+    await existingProject.save();
+    return res.status(201).json({ok:1, project: existingProject, message: "Successfully added employeeID to this existing project"});
+  } catch (err) {
+    console.error("Error saving project with updated valid employees:", err);
+    return res.json({ok:-1, message: "ERROR saving project with the updated valid employees: ", err});
   }
 }
 
@@ -245,6 +376,7 @@ module.exports = {
   getProjectsOngoingCount,
   createProject,
   updateProjectInfo,
+  addProjectMembers,
   deleteProject
   // addEmployee
 };

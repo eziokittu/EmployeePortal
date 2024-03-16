@@ -40,7 +40,7 @@ function ApplicationCard({isJob, data}) {
 				}
       );
       const responseData2 = await sendRequest(
-        import.meta.env.VITE_BACKEND_URL+`/applied/patch/approve`,
+        import.meta.env.VITE_BACKEND_URL+`/applied/patch/approve/offer`,
         'PATCH',
         JSON.stringify({
 					oid: data.offer,
