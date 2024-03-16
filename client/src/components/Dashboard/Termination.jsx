@@ -148,7 +148,7 @@ const Termination = () => {
           <h1 className="font-semibold text-3xl">Termination Status</h1>
   
           {/* Termination Status */}
-          {terminationStatus===true ? (
+          {terminationStatus===false ? (
             <div>
               <p className="font-normal text-xl">Your termination status is ok!</p>
             </div>

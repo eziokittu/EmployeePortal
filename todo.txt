@@ -1,0 +1,3 @@
+1. when deleting the offers from the admin side, also delete the related applied for DB
+2. check if the approve multiple offers is giving unique sequential id to the users or not
+3. add a way to get the unique ref number after server refreshes

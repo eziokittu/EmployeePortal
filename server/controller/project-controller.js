@@ -41,6 +41,126 @@ const getProjects = async (req, res, next) => {
   });
 };
 
+const getProjectsByEmployeeId = async (req, res, next) => {
+  const userId = req.params.uid;
+
+  // const page = req.query.page || 0;
+  // const projectsPerPage = 5;
+
+  let employee;
+  try {
+    employee = await User.findOne({ _id: userId, isEmployee: true }, '-password')
+  } catch (err) {
+    return res.json({ok:-1, message:`Some error occured${err}`});
+  }
+
+  let allProjects;
+  try {
+    allProjects = await Project
+      .find()
+      // .skip(page * projectsPerPage)
+      // .limit(projectsPerPage);
+  } catch (err) {
+    return res.json({
+      ok: -1,
+      message: "Error in fetching employee projects",
+    });
+  }
+
+  if (!allProjects || allProjects.length === 0) {
+    return res.json({
+      ok: 1,
+      message: "No projects found!",
+      projects: []
+    });
+  }
+
+  res.json({
+    ok: 1,
+    projects: allProjects.map((project) => project.toObject({ getters: true })),
+  });
+};
+
+const getCompletedProjectsByEmployeeId = async (req, res, next) => {
+  const userId = req.params.uid;
+
+  // const page = req.query.page || 0;
+  // const projectsPerPage = 5;
+
+  let employee;
+  try {
+    employee = await User.findOne({ _id: userId, isEmployee: true }, '-password')
+  } catch (err) {
+    return res.json({ok:-1, message:`Some error occured${err}`});
+  }
+
+  let allProjects;
+  try {
+    allProjects = await Project
+      .find({isCompleted: true})
+      // .skip(page * projectsPerPage)
+      // .limit(projectsPerPage);
+  } catch (err) {
+    return res.json({
+      ok: -1,
+      message: "Error in fetching employee projects",
+    });
+  }
+
+  if (!allProjects || allProjects.length === 0) {
+    return res.json({
+      ok: 1,
+      message: "No projects found!",
+      projects: []
+    });
+  }
+
+  res.json({
+    ok: 1,
+    projects: allProjects.map((project) => project.toObject({ getters: true })),
+  });
+};
+
+const getOngoingProjectsByEmployeeId = async (req, res, next) => {
+  const userId = req.params.uid;
+
+  // const page = req.query.page || 0;
+  // const projectsPerPage = 5;
+
+  let employee;
+  try {
+    employee = await User.findOne({ _id: userId, isEmployee: true }, '-password')
+  } catch (err) {
+    return res.json({ok:-1, message:`Some error occured${err}`});
+  }
+
+  let allProjects;
+  try {
+    allProjects = await Project
+      .find({isCompleted: false})
+      // .skip(page * projectsPerPage)
+      // .limit(projectsPerPage);
+  } catch (err) {
+    return res.json({
+      ok: -1,
+      message: "Error in fetching employee projects",
+    });
+  }
+
+  if (!allProjects || allProjects.length === 0) {
+    return res.json({
+      ok: 1,
+      message: "No projects found!",
+      projects: []
+    });
+  }
+
+  res.json({
+    ok: 1,
+    projects: allProjects.map((project) => project.toObject({ getters: true })),
+  });
+};
+
 const getProjectCount = async (req, res, next) => {
   let projectCount = 0;
   try {
@@ -68,6 +188,32 @@ const getProjectCount = async (req, res, next) => {
   res.json({
     ok: 1,
     count: projectCount,
+  });
+};
+
+const getProjectCountByEmployeeId = async (req, res, next) => {
+  const userId = req.params.uid;
+
+  let employee;
+  try {
+    employee = await User.findOne({ _id: userId, isEmployee: true }, '-password')
+  } catch (err) {
+    return res.json({ok:-1, message:`Some error occured${err}`});
+  }
+
+  if (!employee.projects || employee.projects.length === 0) {
+    res.json({
+      ok: 1,
+      message: "No projects found!",
+      count: 0
+    });
+    return;
+  }
+
+  res.json({
+    ok: 1,
+    message: "Successful in fetching project count",
+    count: employee.projects.length
   });
 };
 
@@ -343,7 +489,11 @@ const deleteProject = async (req, res, next) => {
 
 module.exports = {
   getProjects,
+  getProjectsByEmployeeId,
+  getCompletedProjectsByEmployeeId,
+  getOngoingProjectsByEmployeeId,
   getProjectCount,
+  getProjectCountByEmployeeId,
   getProjectsCompletedCount,
   getProjectsOngoingCount,
   createProject,

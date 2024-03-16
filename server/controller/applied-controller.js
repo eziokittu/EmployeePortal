@@ -5,9 +5,9 @@ const HttpError = require('../models/http-error');
 const Offer = require('../models/offer');
 const User = require('../models/user');
 const Applied = require('../models/applied');
+const Domain = require('../models/domains');
 
-// Some data
-const domains = ["WEBDEV", "APPDEV", "ML/AI", "UI/UX", "TEAMLEAD", "CYBERSECURITY", "GRAPHICSDESIGN", "VIDEOEDITOR", "MARKETING", "DIGITALMARKETING"];
+let uniqueRefIDCounter = 1;
 
 // GET
 
@@ -382,6 +382,8 @@ const approveOffer = async (req, res, next) => {
     if (existingApplied !== null) {
       existingApplied.isApproved = true;
     }
+    existingUser.isEmployee = true;
+    await existingUser.save();
   } catch (error) {
     console.error(error);
   }
@@ -422,10 +424,23 @@ const approveOffers = async (req, res, next) => {
     return res.json({ ok: -1, message: 'Offer not in correct format / INVALID' });
   }
 
+  // Getting the domain for the offer
+  let offerDomain;
+  try {
+    offerDomain = await Domain.findById({_id: existingOffer.domain});
+    if (!offerDomain){
+      return res.json({ok: -1, message: `Domain ID is invalid for the offer`});
+    }
+  } catch (err) {
+    return res.json({ok: -1, message: `Some error occurred while getting the domain for the offer! ERROR: ${err}`});
+  }
+
   // Iterate over all user IDs and approve the offer for each
   let approvedApplications = [];
   for (let uid of alluid) {
-    let existingUser, existingApplied;
+
+    // Finding the existance of the user with USER ID
+    let existingUser;
     try {
       existingUser = await User.findById({ _id: uid });
       if (!existingUser) {
@@ -437,6 +452,8 @@ const approveOffers = async (req, res, next) => {
       continue;
     }
 
+    // Finding the existance of the applied and updating it
+    let existingApplied;
     try {
       existingApplied = await Applied.findOne({ offer: oid, user: uid });
       if (existingApplied !== null) {
@@ -445,20 +462,41 @@ const approveOffers = async (req, res, next) => {
         approvedApplications.push(existingApplied); // Add to the approved applications list
       }
     } catch (error) {
-      console.error('Error approving application for user with ID:', uid, error);
-      // Log the error but continue processing other user IDs
+      return res.json({ ok:-1, message: `Error approving application for user with ID: ${uid}, ERROR: ${error}`})
+    }
+
+    // Updating the reference ID for the existing user
+    try {
+      const createNewReferenceId = async (offerDomain) => {
+        // const uniqueRefIDNumber = Math.floor(Math.random() * 1000); // Generate a random number
+        const uniqueRefIDNumber = uniqueRefIDCounter.toString().padStart(3, '0');
+        uniqueRefIDCounter++;
+        const year_start = new Date().getFullYear();
+        const year_end = (year_start + 1).toString().slice(-2);
+        const name1 = offerDomain.name1;
+        const name2 = offerDomain.name2;
+        return `RNPW/${year_start}-${year_end}/${name1}${uniqueRefIDNumber}${name2}`;
+      }
+      const referenceId = await createNewReferenceId(offerDomain);
+      console.log(referenceId);
+      existingUser.ref = referenceId;
+      existingUser.domain = offerDomain;
+      existingUser.isEmployee = true;
+      await existingUser.save();
+      console.log("Created reference ID for the user with email: ", existingUser.email,", ref ID:",existingUser.ref);
+    } catch (err) {
+      return res.json({ ok:-1, message: `Error saving reference ID for USER: ${uid}, ERROR: ${err}`})
     }
   }
 
   // Respond with all the approved applications
   if (approvedApplications.length > 0) {
-    res.json({ ok: 1, applied: approvedApplications });
+    res.json({ ok: 1, applied: approvedApplications, message:"Applications approved and updated reference IDs for the users" });
   } else {
     // If no applications were approved, send a different response
-    res.json({ ok: 0, message: 'No applications were approved.' });
+    res.json({ ok: 1, message: 'No applications were approved.' });
   }
 };
-
 
 // DELETE
 

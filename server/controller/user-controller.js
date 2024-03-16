@@ -144,28 +144,14 @@ const getEmployees = async (req, res, next) => {
 
 const getEmployeeById = async (req, res, next) => {
   const userId = req.params['uid'];
-  // console.log(userId);
   let employee;
   try {
     employee = await User.findById({ _id: userId, isEmployee: true }, '-password')
   } catch (err) {
-    const error = new HttpError(
-      'Fetching Employee failed, please try again later.',
-      500
-    );
-    // console.log(error);
-    return next(error);
+    return res.json({ok:-1, message: "Fetching employee failed"});
   }
 
-  // if (employee.isEmployee == false){
-  //   const error = new HttpError(
-  //     'User is not an employee.',
-  //     422
-  //   );
-  //   return next(error);
-  // }
-
-  res.json({employee: employee});
+  res.json({ok:1, employee: employee});
 };
 
 const getEmployeeByEmail = async (req, res, next) => {
@@ -207,7 +193,7 @@ const getAllTerminations = async (req, res, next) => {
   let terminations;
   try {
     terminations = await User
-      .find({isTerminated: false})
+      .find({isTerminated: true})
       .skip(page * terminationsPerPage)
       .limit(terminationsPerPage);
   } catch (err) {
@@ -228,7 +214,7 @@ const getAllTerminations = async (req, res, next) => {
 const getAllTerminationsCount = async (req, res, next) => {
   let terminationCount;
   try {
-    terminationCount = await User.find({isTerminated: false}).countDocuments();
+    terminationCount = await User.find({isTerminated: true}).countDocuments();
   } catch (err) {
     const error = new HttpError(
       'Fetching termination count failed, please try again later.',
@@ -324,7 +310,6 @@ const signup = async (req, res, next) => {
       phone: createdUser.phone,
       image: createdUser.image
     });
-    console.log(firstname);
   } catch (err) {
     console.error(err); // Log the error for debugging
     return next(new HttpError('Signing up failed, please try again later.', 500));
@@ -628,7 +613,8 @@ const terminateEmployeeByEmail = async (req, res, next) => {
       return res.status(500).send("Could not find Employee with this email!");
     }
 
-    existingUser.isTerminated = false;
+    existingUser.isTerminated = true;
+    existingUser.ref = '-';
     await existingUser.save();
 
     res.status(201).send(`Employee with email: ${email} has been terminated!`);
@@ -652,7 +638,7 @@ const unterminateEmployeeByEmail = async (req, res, next) => {
     }
 
     // Set isTerminated back to true to un-terminate the employee
-    existingUser.isTerminated = true;
+    existingUser.isTerminated = false;
     await existingUser.save();
 
     res.status(200).send(`Employee with email: ${email} has been reinstated!`);

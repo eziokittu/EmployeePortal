@@ -14,15 +14,14 @@ const getDomains = async (req, res, next) => {
   try {
     allDomains = await Domain.find();
     if (!allDomains || allDomains.length === 0) {
-      res.json({
+      return res.json({
         ok: 1,
         count: 0,
         message: 'No domains found!',
       });
-      return;
     }
   } catch (err) {
-    res.json({ok:-1, message: "Fetching all domains failed!"});
+    return res.json({ok:-1, message: "Fetching all domains failed!"});
   }
 
   res.json({ok:1, count:1, message: "Successfully Fetched all domains", domains: allDomains});
@@ -31,21 +30,20 @@ const getDomains = async (req, res, next) => {
 const getDomain = async (req, res, next) => {
   const domainId = req.params.domainId;
 
-  let existingDomains;
+  let existingDomain;
   try {
-    existingDomains = await Domain.findOne({_id: domainId});
-    if (!existingDomains) {
-      res.json({
-        ok: 1,
+    existingDomain = await Domain.findOne({_id: domainId});
+    if (!existingDomain) {
+      return res.json({
+        ok: -1,
         message: 'Domain not found!',
       });
-      return;
     }
   } catch (err) {
-    res.json({ok:-1, message: "Fetching domain failed!"});
+    return res.json({ok:-1, message: "Fetching domain failed!"});
   }
 
-  res.json({ok:1, message: "Successfully Fetched the domain", domain: existingDomains});
+  return res.json({ok:1, message: "Successfully Fetched the domain", domain: existingDomain});
 };
 
 // POST

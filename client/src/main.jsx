@@ -11,6 +11,7 @@ import Layout from './Layout.jsx';
 import Sidebar from './components/Sidebar/Sidebar.jsx';
 import Dashboard from './components/Dashboard/Dashboard.jsx';
 import Employee from './components/Dashboard/Employee.jsx';
+import EmployeeDetails from './components/Dashboard/EmployeeDetails.jsx';
 import Projects from './components/Dashboard/Projects.jsx';
 import Termination from './components/Dashboard/Termination.jsx';
 import Internship from './components/Dashboard/Internship.jsx';
@@ -106,6 +107,7 @@ function App() {
               <Route exact path="/projects" element={<Projects />} />
               <Route exact path="/termination" element={<Termination />} />
               <Route exact path="/internships" element={<Internship />} />
+              <Route exact path="/employee-details" element={<EmployeeDetails />} />
               <Route exact path="/jobs" element={<Jobs />} />
               <Route exact path="/apply/:oid" element={<Applynow />} />
               <Route exact path="/contact" element={<ContactForm />} />
