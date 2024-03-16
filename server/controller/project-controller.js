@@ -341,34 +341,6 @@ const deleteProject = async (req, res, next) => {
   res.status(200).json({ message: 'Deleted project.' });
 };
 
-// const addEmployee = async(req, res, next) => {
-//   try{
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//       return next(new HttpError('Invalid inputs passed, please check your data.', 422));
-//     }
-
-//     const { userId, projectId } = req.body;
-
-//     // Find the existing project by projectId
-//     const existingProject = await Project.findOne({ projectId: projectId });
-//     if (!existingProject) {
-//       return next(new HttpError('Project not found, update failed.', 404));
-//     }
-    
-//     // Update project details
-//     existingProject.employees = title;
-//     existingProject.description = description;
-
-//     // Save the updated user
-//     await existingProject.save();
-//   } 
-//   catch (err) {
-//     console.error(err); // Log the error for debugging
-//     return next(new HttpError('Creating project failed!, please try again later.', 500));
-//   }
-// }
-
 module.exports = {
   getProjects,
   getProjectCount,
@@ -378,5 +350,4 @@ module.exports = {
   updateProjectInfo,
   addProjectMembers,
   deleteProject
-  // addEmployee
 };
