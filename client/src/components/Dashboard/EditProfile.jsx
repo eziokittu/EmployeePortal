@@ -4,6 +4,8 @@ import { useHttpClient } from '../Backend/hooks/http-hook';
 import { AuthContext } from '../Backend/context/auth-context';
 import profileImg from '../../assets/profile.png';
 
+import Alert from '../Alert/Alert';
+
 const EditProfile = () => {
 	const { sendRequest } = useHttpClient();
   const auth = useContext(AuthContext);

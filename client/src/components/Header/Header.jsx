@@ -24,7 +24,9 @@ const Header = () => {
 							<img className="w-100 h-8 " src="https://framerusercontent.com/images/xLOBENWTydKgd9jy7VGqXoMKkww.png" alt="rnpsoft Logo" />
 						</div>
 					</Link>
-					<Link to='/'><div className='text-white text-xl'>Employee Portal</div></Link>
+					<Link to='/'>
+						<div className='text-white text-3xl font-bold'>Employee Portal</div>
+					</Link>
 					<div className="flex items-center lg:order-2">
 						{!auth.token && (
 						<>

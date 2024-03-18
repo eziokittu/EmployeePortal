@@ -11,8 +11,10 @@ router.get('/emp/completed/:uid', projectController.getCompletedProjectsByEmploy
 router.get('/emp/ongoing/:uid', projectController.getOngoingProjectsByEmployeeId);
 router.get('/count', projectController.getProjectCount);
 router.get('/count/emp/:uid', projectController.getProjectCountByEmployeeId);
-router.get('/completed', projectController.getProjectsCompletedCount);
-router.get('/ongoing', projectController.getProjectsOngoingCount);
+router.get('/count/emp/ongoing/:uid', projectController.getOngoingProjectCountByEmployeeId);
+router.get('/count/emp/completed/:uid', projectController.getCompletedProjectCountByEmployeeId);
+router.get('/count/completed', projectController.getProjectsCompletedCount);
+router.get('/count/ongoing', projectController.getProjectsOngoingCount);
 
 router.post(
   '/',

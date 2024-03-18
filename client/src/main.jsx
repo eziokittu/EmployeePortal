@@ -13,6 +13,7 @@ import Dashboard from './components/Dashboard/Dashboard.jsx';
 import Employee from './components/Dashboard/Employee.jsx';
 import EmployeeDetails from './components/Dashboard/EmployeeDetails.jsx';
 import Projects from './components/Dashboard/Projects.jsx';
+import MyProjects from './components/Dashboard/MyProjects.jsx';
 import Termination from './components/Dashboard/Termination.jsx';
 import Internship from './components/Dashboard/Internship.jsx';
 import Jobs from './components/Dashboard/Jobs.jsx';
@@ -104,7 +105,7 @@ function App() {
               <Route path="*" element={<Error isFullPage={false} />} />
               <Route exact path="/" element={<Dashboard />} />
               <Route exact path="/dashboard" element={<Dashboard />} />
-              <Route exact path="/projects" element={<Projects />} />
+              <Route exact path="/projects" element={<MyProjects />} />
               <Route exact path="/termination" element={<Termination />} />
               <Route exact path="/internships" element={<Internship />} />
               <Route exact path="/employee-details" element={<EmployeeDetails />} />

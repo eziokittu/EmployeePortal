@@ -6,6 +6,7 @@ const projectSchema = new Schema({
   title: {type: String, required: true, default: "Project Title" },
   description: {type: String, required: true, default: "-" },
   review: {type: String, required: true, default: "-" },
+  link: {type: String, required: true, default: "https://google.com" },
   srs: {type: String, required: true, minLength: 4, default: process.env.DB_USER_DEFAULT_SRS },
   isCompleted: {type: Boolean, required: true, default: false},
   domain: { type: mongoose.Types.ObjectId, required: true, ref: 'Domain'},
