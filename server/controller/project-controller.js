@@ -336,7 +336,6 @@ const createProject = async (req, res, next) => {
 
   // Linking the SRS file to the project
   try {
-    console.log(req.file.path);
     createdProject.srs = req.file.path;
     await createdProject.save();
   }

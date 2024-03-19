@@ -165,13 +165,35 @@ const Projects = () => {
 		try {
       const formData = new FormData();
       formData.append('srs', file);
-      formData.append('title', text);
-      formData.append('description', description);
+
+      // for project title
+      if (text===''){
+        console.log("project title cannot be empty!")
+        return;
+      }
+      else {
+        formData.append('title', text);
+      }
+
+      // for project description
+      if (description===''){
+        formData.append('description', '-');
+      }
+      else {
+        formData.append('description', description);
+      }
       formData.append('employees', []);
       formData.append('domain', selectedDomain);
       formData.append('startDate', startDate);
       formData.append('endDate', endDate);
-      formData.append('link', link);
+
+      // for project link
+      if (link===''){
+        formData.append('link', 'https://www.google.com');
+      }
+      else {
+        formData.append('link', link);
+      }
 			const responseData = await sendRequest(
 				`${import.meta.env.VITE_BACKEND_URL}/projects/`,
 				'POST',
@@ -195,8 +217,8 @@ const Projects = () => {
   const [text, setText] = useState('');
   const [description, setDescription] = useState('');
   const [selectedDomain, setSelectedDomain] = useState('Choose a Domain');
-  const [startDate, setStartDate] = useState(Date.now());
-  const [endDate, setEndDate] = useState(Date.now());
+  const [startDate, setStartDate] = useState(new Date().toISOString());
+  const [endDate, setEndDate] = useState(new Date().toISOString());
   const [link, setLink] = useState('');
   // for searchbar defining states
   const [searchQuery, setSearchQuery] = useState('');
