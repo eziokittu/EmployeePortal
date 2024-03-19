@@ -3,30 +3,33 @@ import { useHttpClient } from '../Backend/hooks/http-hook';
 import { AuthContext } from '../Backend/context/auth-context';
 
 // project, deleteproject, editproject, toggleIsCompleted
-const ProjectItem = ({ task, deleteTask, editTask, toggleCompleted }) => {
+const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 	const { sendRequest } = useHttpClient();
   const auth = useContext(AuthContext);
 
 	const projectDeleteHandler = async event => {
-		event.preventDefault();
 		try {
 			const responseData = await sendRequest(
 				import.meta.env.VITE_BACKEND_URL+`/projects/`,
 				'DELETE',
 				JSON.stringify({
-					projectId: project.id
+					projectId: task.id
 				}),
 				{
 					'Content-Type': 'application/json'
 				}
 			);
-			console.log("Deleted project");
+			if (responseData.ok===1){
+				console.log("Deleted project");
 
-			// Refreshes the page after 1 second
-			setTimeout(() => {
-				window.location.reload(false);
-			}, 1000);
-
+				// Refreshes the page after 1 second
+				setTimeout(() => {
+					window.location.reload(false);
+				}, 1500);
+			}
+			else {
+				console.log(responseData.message)
+			}
 		} catch (err) {
 			console.log('ERROR deleting project, ID:', project.id);
 		}
@@ -34,12 +37,48 @@ const ProjectItem = ({ task, deleteTask, editTask, toggleCompleted }) => {
 
 	// State defined for editing the project details
 	const [isEditing, setIsEditing] = useState(false);
-	const [editedProjectName, setEditedProjectName] = useState(task.text);
-	const [editedProjectDescription, setEditedProjectDescription] = useState(task.projectDescription);
+	const [editedProjectName, setEditedProjectName] = useState(task.title);
+	const [editedProjectDescription, setEditedProjectDescription] = useState(task.description);
 	const [editedProjectLink, setEditedProjectLink] = useState(task.link);
-	const [editedProjectType, setEditedProjectType] = useState(task.selectedOption);
-	const [editedStartDate, setEditedStartDate] = useState(task.startDate);
-	const [editedEndDate, setEditedEndDate] = useState(task.endDate);
+	const [editedProjectType, setEditedProjectType] = useState(
+		(projectDomains!==null ? projectDomains[0].name : 'ANY')
+	);
+	const [editedStartDate, setEditedStartDate] = useState(task.date_start);
+	const [editedEndDate, setEditedEndDate] = useState(task.date_end);
+
+	// Function to edit current project
+	const projectEditHandler = async event => {
+		try {
+			const responseData = await sendRequest(
+				import.meta.env.VITE_BACKEND_URL+`/projects/patch/${task.id}`,
+				'PATCH',
+				JSON.stringify({
+					title: editedProjectName,
+					description: editedProjectDescription,
+					domain: editedProjectType,
+					link: editedProjectLink,
+					startDate: editedStartDate,
+					endDate: editedEndDate
+				}),
+				{
+					'Content-Type': 'application/json'
+				}
+			);
+			if (responseData.ok===1){
+				console.log("Updated project details");
+
+				// Refreshes the page after 1 second
+				setTimeout(() => {
+					window.location.reload(false);
+				}, 1500);
+			}
+			else {
+				console.log(responseData.message)
+			}
+		} catch (err) {
+			console.log('ERROR deleting project, ID:', project.id);
+		}
+	};
 
 	// Function to handle the save button click
 	function handleSaveClick() {
@@ -145,7 +184,7 @@ const ProjectItem = ({ task, deleteTask, editTask, toggleCompleted }) => {
 
 							{/* Delete Button */}
 							<button
-								onClick={() => deleteTask(task.id)}
+								onClick={() => projectDeleteHandler()}
 								className="text-sm text-white bg-red-500 w-20 py-2 rounded-md hover:bg-red-600"
 							>
 								Delete
@@ -183,13 +222,17 @@ const ProjectItem = ({ task, deleteTask, editTask, toggleCompleted }) => {
 				/>
 				{/* Project Type edit input box */}
 				<select
+					id={domain.id}
+					defaultValue={domain.name}
 					value={editedProjectType}
 					onChange={(e) => setEditedProjectType(e.target.value)}
 					className="mt-2 block w-full px-3 py-2 border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 				>
-					<option value="Web-Development">Web Development</option>
-					<option value="App-Development">App Development</option>
-					<option value="Machine-Learning">Machine Learning</option>
+					{projectDomains.map(d => (
+						<option value={d.name}>{d.name}</option>
+					))}
+					
+					{/* <option value="App-Development">App Development</option> */}
 				</select>
 				{/* Project Start and End Date edit input box */}
 				<div className='flex justify-center items-center gap-2'>
@@ -211,7 +254,7 @@ const ProjectItem = ({ task, deleteTask, editTask, toggleCompleted }) => {
 				{/* Save and Cancel Button */}
 				<div className="flex justify-between items-center mt-4">
 					<button
-						onClick={handleSaveClick}
+						onClick={projectEditHandler}
 						className="text-sm text-white bg-green-500 px-3 py-1 rounded-md hover:bg-green-600"
 					>
 						Save

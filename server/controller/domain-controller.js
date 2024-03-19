@@ -24,7 +24,7 @@ const getDomains = async (req, res, next) => {
     return res.json({ok:-1, message: "Fetching all domains failed!"});
   }
 
-  res.json({ok:1, count:1, message: "Successfully Fetched all domains", domains: allDomains});
+  res.json({ok:1,  message: "Successfully Fetched all domains", domains: allDomains});
 };
 
 const getDomain = async (req, res, next) => {

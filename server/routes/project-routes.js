@@ -2,6 +2,7 @@ const express = require('express');
 const { check } = require('express-validator');
 
 const projectController = require('../controller/project-controller');
+const srsUpload = require('../middlewares/srs-upload');
 
 const router = express.Router();
 
@@ -19,13 +20,14 @@ router.get('/count/ongoing', projectController.getProjectsOngoingCount);
 router.post(
   '/',
   [
-    check('title')
-      .not()
-      .isEmpty()
+    // check('title')
+    //   .not()
+    //   .isEmpty()
     // check('description')
     //   .not()
     //   .isEmpty()
   ],
+  srsUpload.single('srs'),
   projectController.createProject
 );
 
@@ -44,20 +46,20 @@ router.delete(
 );
 
 router.patch(
-  '/edit/:pid',
+  '/patch/:pid',
   [
-    check('title')
-      .not()
-      .isEmpty(),
-    check('description')
-      .not()
-      .isEmpty()
+    // check('title')
+    //   .not()
+    //   .isEmpty(),
+    // check('description')
+    //   .not()
+    //   .isEmpty()
   ],
   projectController.updateProjectInfo
 );
 
 router.patch(
-  '/edit/addemployees/:pid',
+  '/patch/addemployees/:pid',
   [
     // check('title')
     //   .not()

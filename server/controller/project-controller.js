@@ -1,5 +1,6 @@
 const { validationResult } = require('express-validator');
 
+const fs = require('fs');
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
 const Domain = require('../models/domains');
@@ -7,7 +8,7 @@ const Project = require('../models/project');
 
 const getProjects = async (req, res, next) => {
   const page = req.query.page || 0;
-  const projectsPerPage = 5;
+  const projectsPerPage = 2;
 
   let allProjects;
   try {
@@ -292,7 +293,7 @@ const getProjectsOngoingCount = async (req, res, next) => {
 // POST
 
 const createProject = async (req, res, next) => {
-  // console.log(req.body);
+  console.log(req.body);
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -331,6 +332,16 @@ const createProject = async (req, res, next) => {
     await createdProject.save();
   } catch (err) {
     return res.json({ok:-1, message: "Some error occured while saving created project: ",err});
+  }
+
+  // Linking the SRS file to the project
+  try {
+    console.log(req.file.path);
+    createdProject.srs = req.file.path;
+    await createdProject.save();
+  }
+  catch (err2){
+    console.log("File path error:\n",err2);
   }
 
   // if employees list is empty
@@ -377,6 +388,7 @@ const createProject = async (req, res, next) => {
 
 // updates project, req.params provides the id
 const updateProjectInfo = async (req, res, next) => {
+  // console.log(req.body);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(new HttpError('Invalid inputs passed, please check your data.', 422));
@@ -490,23 +502,17 @@ const addProjectMembers = async (req, res, next) => {
 // DELETE
 
 const deleteProject = async (req, res, next) => {
-  // console.log(req.params.pid);
   const { projectId } = req.body;
 	let project;
   try {
     // project = await Project.findById(req.params.pid);
     project = await Project.findById(projectId);
   } catch (err) {
-    const error = new HttpError(
-      'Something went wrong, could not find project to delete.',
-      500
-    );
-    return next(error);
+    res.status(200).json({ok:-1, message: `Invalid project ID: ${err}` });
   }
 
   if (!project) {
-    const error = new HttpError('Could not find project for this id.', 404);
-    return next(error);
+    res.status(200).json({ok:-1, message: 'Project could not be fetched' });
   }
 
   // Check if Admin
@@ -522,15 +528,10 @@ const deleteProject = async (req, res, next) => {
     await Project.deleteOne(project);
   } 
   catch (err) {
-    console.log(err);
-    const error = new HttpError(
-      'Something went wrong[4], could not delete project.',
-      500
-    );
-    return next(error);
+    res.json({ok:-1, message: 'Could not delete prodduct' });
   }
 
-  res.status(200).json({ message: 'Deleted project.' });
+  res.status(200).json({ok:1, message: 'Deleted project.' });
 };
 
 module.exports = {
