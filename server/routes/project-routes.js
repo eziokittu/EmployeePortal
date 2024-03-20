@@ -59,7 +59,7 @@ router.patch(
 );
 
 router.patch(
-  '/patch/addemployees/:pid',
+  '/patch/addemployees-id/:pid',
   [
     // check('title')
     //   .not()
@@ -68,7 +68,20 @@ router.patch(
     //   .not()
     //   .isEmpty()
   ],
-  projectController.addProjectMembers
+  projectController.addProjectMembersById
+);
+
+router.patch(
+  '/patch/addemployees-email/:pid',
+  [
+    // check('title')
+    //   .not()
+    //   .isEmpty(),
+    // check('description')
+    //   .not()
+    //   .isEmpty()
+  ],
+  projectController.addProjectMembersByEmail
 );
 
 module.exports = router;
