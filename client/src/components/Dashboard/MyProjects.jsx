@@ -13,13 +13,13 @@ const Projects = () => {
   const auth = useContext(AuthContext);
 
   // handling the pagination
-  const projectsDisplayedPerPage = 5;
+  // const projectsDisplayedPerPage = 5;
   const [projectsCount, setProjectsCount] = useState(0);
-  const [pageCount, setPageCount] = useState(0);
-  const [page, setPage] = useState(0);
-  const handlePageClick = (num) => {
-    setPage(num);
-  };
+  // const [pageCount, setPageCount] = useState(0);
+  // const [page, setPage] = useState(0);
+  // const handlePageClick = (num) => {
+  //   setPage(num);
+  // };
 
   // getting all the projects from database
   const [projects, setProjects] = useState([]);
@@ -38,7 +38,7 @@ const Projects = () => {
         );
         if (responseData.ok===1){
           setProjectsCount(responseData.count);
-          setPageCount(Math.ceil(responseData.count / projectsDisplayedPerPage))
+          // setPageCount(Math.ceil(responseData.count / projectsDisplayedPerPage))
         }
         else {
           console.log("No projects found!");
@@ -52,7 +52,8 @@ const Projects = () => {
     const fetchProjects = async () => {
       try {
         const responseData = await sendRequest(
-          `${import.meta.env.VITE_BACKEND_URL}/projects/emp/all/${auth.userId}?page=${page}`
+          `${import.meta.env.VITE_BACKEND_URL}/projects/emp/all/${auth.userId}`
+          // `${import.meta.env.VITE_BACKEND_URL}/projects/emp/all/${auth.userId}?page=${page}`
         );
         if (responseData.ok===1){
           setProjects(responseData.projects);
@@ -67,7 +68,8 @@ const Projects = () => {
 
     fetchProjectCount();
     fetchProjects();
-  }, [page]);
+  // }, [page]);
+  }, []);
 
   // Fetching MY ongoing and completed project count only 1 time per page reload
   useEffect(() => {
@@ -157,45 +159,15 @@ const Projects = () => {
 
   
   //Toggle Completed function
-  function toggleCompleted(id) {
-    setTasks(tasks.map(task => {
-      if (task.id === id) {
-        return { ...task, completed: !task.completed };
-      } else {
-        return task;
-      }
-    }));
-  }
-  // Search function
-  // useEffect(() => {
-  //   const results = tasks.filter(task =>
-  //     task.text.toLowerCase().includes(searchQuery.toLowerCase())
-  //   );
-  //   setSearchResults(results);
-  // }, [searchQuery, tasks]);
-
-  // Filter function
-  // const filteredTasks = tasks.filter(task => {
-  //   const taskDate = new Date(task.startDate);
-  //   const now = new Date();
-  
-  //   switch (filter) {
-  //     case 'day':
-  //       return taskDate.toDateString() === now.toDateString();
-  //     case 'week':
-  //       const oneWeekAgo = new Date();
-  //       oneWeekAgo.setDate(now.getDate() - 7);
-  //       return taskDate >= oneWeekAgo;
-  //     case 'month':
-  //       return taskDate.getMonth() === now.getMonth() && taskDate.getFullYear() === now.getFullYear();
-  //     case 'year':
-  //       return taskDate.getFullYear() === now.getFullYear();
-  //     case 'all':
-  //       return true;
-  //     default:
-  //       return true;
-  //   }
-  // });
+  // function toggleCompleted(id) {
+  //   setTasks(tasks.map(task => {
+  //     if (task.id === id) {
+  //       return { ...task, completed: !task.completed };
+  //     } else {
+  //       return task;
+  //     }
+  //   }));
+  // }
 
   return (
     <div className="p-4 sm:ml-64">
@@ -226,11 +198,13 @@ const Projects = () => {
           <div className="mb-4 rounded bg-gray-50 dark:bg-gray-800">
             {/* Searchbar and Heading Start */}
             <div className='flex justify-between items-center px-4 py-3'>
-              <div className='w-72'>
+
+              {/* <div className='w-72'>
                 <h1 className=' text-xl mr-4 font-bold'>Ongoing Projects</h1>
-              </div>
-              {/* Searchbar and filter */}
-              <div className='w-full mr-4'>
+              </div> */}
+
+              {/* Search input */}
+              {/* <div className='w-full mr-4'>
                 <form>
                   <div className="flex">
                     <div className="relative w-full">
@@ -255,9 +229,10 @@ const Projects = () => {
                     </div>
                   </div>
                 </form>
-              </div>
+              </div> */}
+
               {/* Filter by week, month */}
-              <div className='w-64'>
+              {/* <div className='w-64'>
                 <select
                   id="filter"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -270,7 +245,7 @@ const Projects = () => {
                   <option value="month">This Month</option>
                   <option value="year">This Year</option>
                 </select>
-              </div>
+              </div> */}
             </div>
             {/* Searchbar and Heading End */}
 
@@ -293,7 +268,7 @@ const Projects = () => {
                           endDate={task.endDate}
                           selectedFile={task.selectedFile}
                           link={task.link}
-                          toggleCompleted={toggleCompleted}
+                          // toggleCompleted={toggleCompleted}
                         />
                       ))}
                 </div>

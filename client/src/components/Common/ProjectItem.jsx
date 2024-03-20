@@ -42,9 +42,10 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 	const [editedProjectName, setEditedProjectName] = useState(task.title);
 	const [editedProjectDescription, setEditedProjectDescription] = useState(task.description);
 	const [editedProjectLink, setEditedProjectLink] = useState(task.link);
-	const [editedProjectType, setEditedProjectType] = useState(
-		(projectDomains!==null ? projectDomains[0].name : 'ANY')
-	);
+	const [editedProjectType, setEditedProjectType] = useState();
+	// const [editedProjectType, setEditedProjectType] = useState(
+	// 	(projectDomains!==null ? projectDomains[0].name : 'ANY')
+	// );
 	const [editedStartDate, setEditedStartDate] = useState(task.date_start);
 	const [editedEndDate, setEditedEndDate] = useState(task.date_end);
 
@@ -105,9 +106,9 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 		navigate(`/project-details/${projectId}`);
 	}
 	// Button to handle the checkbox click
-	function handleChange() {
-		toggleCompleted(task.id);
-	}
+	// function handleChange() {
+	// 	toggleCompleted(task.id);
+	// }
 
 	// Function to get the domain name for the project
 	const [domain, setDomain] = useState();
@@ -162,7 +163,7 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 							<span className="text-sm text-black">{task.date_start.split('T')[0]} - {task.date_end.split('T')[0]}</span>
 						</div>
 						{/* Checkbox to mark the project as completed */}
-						{auth.isAdmin && (
+						{/* {auth.isAdmin && (
 						<div className="flex items-center font-semibold mb-4 border-primary-600">
 							<input
 								type="checkbox"
@@ -172,7 +173,7 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 							/>
 							<span className="ml-2 text-md">Mark as Completed</span>
 						</div>
-						)}
+						)} */}
 						{/* PDF File need to complete the backend*/}
 						<p className="text-gray-600 mb-4">{task.setPdfFile}</p>
 

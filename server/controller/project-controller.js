@@ -45,37 +45,37 @@ const getProjects = async (req, res, next) => {
 const getProjectsByEmployeeId = async (req, res, next) => {
   const userId = req.params.uid;
 
-  // const page = req.query.page || 0;
-  // const projectsPerPage = 5;
-
   let employee;
   try {
-    employee = await User.findOne({ _id: userId, isEmployee: true }, '-password')
+    employee = await User.findOne({ _id: userId, isEmployee: true }, '-password');
   } catch (err) {
-    return res.json({ok:-1, message:`Some error occured${err}`});
+    return res.json({ ok: -1, message: `Some error occurred: ${err}` });
   }
 
-  let allProjects;
-  for (let id of employee.projects){
+  let allProjects = []; // Initialize allProjects as an empty array
+
+  for (let id of employee.projects) {
     let project;
     try {
-      project = await Project.findOne({ _id: id })
+      project = await Project.findOne({ _id: id });
     } catch (err) {
-      return res.json({ok:-1, message:`Some error occured ${err}`});
+      return res.json({ ok: -1, message: `Some error occurred: ${err}` });
     }
-    allProjects.push(project);
+    if (project) {
+      allProjects.push(project);
+    }
   }
 
   if (!allProjects || allProjects.length === 0) {
     return res.json({
-      ok: 1,
-      message: "No projects found!",
-      projects: []
+      ok: -1,
+      message: "No projects found!"
     });
   }
 
   res.json({
     ok: 1,
+    message: "Successfully fetched all projects!",
     projects: allProjects.map((project) => project.toObject({ getters: true })),
   });
 };
@@ -181,6 +181,7 @@ const getProjectCount = async (req, res, next) => {
 const getProjectCountByEmployeeId = async (req, res, next) => {
   const userId = req.params.uid;
 
+  // Checking if the employee exists
   let employee;
   try {
     employee = await User.findOne({ _id: userId, isEmployee: true }, '-password')
@@ -211,29 +212,35 @@ const getOngoingProjectCountByEmployeeId = async (req, res, next) => {
   try {
     employee = await User.findOne({ _id: userId, isEmployee: true }, '-password')
   } catch (err) {
-    return res.json({ok:-1, message:`Some error occured${err}`});
+    return res.json({ok:-1, message:`Some error occurred: ${err}`});
   }
 
   if (!employee.projects || employee.projects.length === 0) {
-    res.json({
+    return res.json({
       ok: 1,
       message: "No projects found!",
       count: 0
     });
-    return;
   }
 
-  let ongoingProjects = [];
-  for (let project of employee.projects){
-    if (project.isCompleted === false){
-      ongoingProjects.push(project);
+  let totalCount = 0;
+  for (let pid of employee.projects) {
+    try {
+      // Find the existing project by projectId
+      const existingProject = await Project.findById(pid);
+      if (existingProject && !existingProject.isCompleted) {
+        totalCount += 1;
+      }
+    } catch (err) {
+      console.error(`Error occurred while fetching project: ${err.message}`);
+      return res.json({ ok: -1, message: `Some error occurred: ${err.message}` });
     }
   }
 
   res.json({
     ok: 1,
-    message: "Successful in fetching project count",
-    count: ongoingProjects.length
+    message: "Successful in fetching ongoing project count",
+    count: totalCount
   });
 };
 
@@ -244,29 +251,35 @@ const getCompletedProjectCountByEmployeeId = async (req, res, next) => {
   try {
     employee = await User.findOne({ _id: userId, isEmployee: true }, '-password')
   } catch (err) {
-    return res.json({ok:-1, message:`Some error occured${err}`});
+    return res.json({ok:-1, message:`Some error occurred: ${err}`});
   }
 
   if (!employee.projects || employee.projects.length === 0) {
-    res.json({
+    return res.json({
       ok: 1,
       message: "No projects found!",
       count: 0
     });
-    return;
   }
 
-  let completedProjects = [];
-  for (let project of employee.projects){
-    if (project.isCompleted === true){
-      completedProjects.push(project);
+  let totalCount = 0;
+  for (let pid of employee.projects) {
+    try {
+      // Find the existing project by projectId
+      const existingProject = await Project.findById(pid);
+      if (existingProject && existingProject.isCompleted) {
+        totalCount += 1;
+      }
+    } catch (err) {
+      console.error(`Error occurred while fetching project: ${err.message}`);
+      return res.json({ ok: -1, message: `Some error occurred: ${err.message}` });
     }
   }
 
   res.json({
     ok: 1,
-    message: "Successful in fetching project count",
-    count: completedProjects.length
+    message: "Successful in fetching completed project count",
+    count: totalCount
   });
 };
 
