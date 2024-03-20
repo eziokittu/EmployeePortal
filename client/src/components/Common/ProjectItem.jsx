@@ -1,9 +1,11 @@
 import React, {useState, useContext, useEffect} from 'react'
 import { useHttpClient } from '../Backend/hooks/http-hook';
 import { AuthContext } from '../Backend/context/auth-context';
+import { useNavigate } from 'react-router-dom';
 
 // project, deleteproject, editproject, toggleIsCompleted
 const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
+	const navigate = useNavigate();
 	const { sendRequest } = useHttpClient();
   const auth = useContext(AuthContext);
 
@@ -99,6 +101,9 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 	function handleCancelClick() {
 		setIsEditing(false);
 	}
+	function handleDetailsClick(projectId) {
+		navigate(`/project-details/${projectId}`);
+	}
 	// Button to handle the checkbox click
 	function handleChange() {
 		toggleCompleted(task.id);
@@ -133,6 +138,7 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 					<div className="p-5">
 						{/* Project Title */}
 						<h2 className="text-xl font-bold mb-2">{task.title}</h2>
+						
 						{/* Project Description */}
 						<p className="text-gray-600 mb-4">{task.description}</p>
 						<div className='flex items-center '>
@@ -171,26 +177,36 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 						<p className="text-gray-600 mb-4">{task.setPdfFile}</p>
 
 						{/* Edit and Delete Button */}
-						{auth.isAdmin && (
 						<div className="flex justify-between items-center">
 
 							{/* Edit Button */}
+							{auth.isAdmin && (
 							<button
 								onClick={handleEditClick}
 								className="text-sm text-white bg-blue-500 w-20 py-2 mr-10 rounded-md hover:bg-blue-600"
 							>
 								Edit
 							</button>
+							)}
+
+							{/* Details Button */}
+							<button
+								onClick={handleDetailsClick}
+								className="text-sm text-white bg-gray-500 w-20 py-2 mr-10 rounded-md hover:bg-gray-600"
+							>
+								Details
+							</button>
 
 							{/* Delete Button */}
+							{auth.isAdmin && (
 							<button
 								onClick={() => projectDeleteHandler()}
 								className="text-sm text-white bg-red-500 w-20 py-2 rounded-md hover:bg-red-600"
 							>
 								Delete
 							</button>
+							)}
 						</div>
-						)}
 					</div>
 				</div>
 			</div>
@@ -222,8 +238,6 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 				/>
 				{/* Project Type edit input box */}
 				<select
-					id={domain.id}
-					defaultValue={domain.name}
 					value={editedProjectType}
 					onChange={(e) => setEditedProjectType(e.target.value)}
 					className="mt-2 block w-full px-3 py-2 border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"

@@ -168,7 +168,7 @@ const Internship = () => {
         <div className="mb-2">Select a domain from below</div>
         <div className="flex space-x-4 text-center justify-center">
           <select 
-            className="p-1"
+            className="p-2 rounded-lg"
             onChange={(e) => {
               setSelectedDomain(e.target.value);
               setPage(0);
@@ -176,7 +176,10 @@ const Internship = () => {
           >
             {projectDomains && (
               projectDomains.map(d => (
-                <option key={d.id} value={d.name}>{d.name}</option>
+                <option 
+                  key={d.id} 
+                  value={d.name}
+                >{d.name}</option>
               ))
             )}
           </select>
@@ -185,6 +188,7 @@ const Internship = () => {
             onClick={() => {
               setSelectedDomain("-");
               setResetSelectedDomain(true);
+              setPage(0);
             }}
           >
             <p className="font-bold">Reset</p>

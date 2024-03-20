@@ -15,8 +15,7 @@ const getDomains = async (req, res, next) => {
     allDomains = await Domain.find();
     if (!allDomains || allDomains.length === 0) {
       return res.json({
-        ok: 1,
-        count: 0,
+        ok: -1,
         message: 'No domains found!',
       });
     }

@@ -28,6 +28,18 @@ const Projects = () => {
   const [completedProjects, setCompletedProjects] = useState();
   const [ongoingProjects, setOngoingProjects] = useState();
   const [projectDomains, setProjectDomains] = useState();
+
+  const [text, setText] = useState('');
+  const [description, setDescription] = useState('');
+  const [selectedDomain, setSelectedDomain] = useState();
+  const [startDate, setStartDate] = useState(new Date().toISOString());
+  const [endDate, setEndDate] = useState(new Date().toISOString());
+  const [link, setLink] = useState('');
+  // for searchbar defining states
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  // for filter dropdown defining states
+  const [filter, setFilter] = useState('all');
   
   // Fetching the all projects and count only 1 time per page reload OR change in page of pagination
   useEffect(() => {
@@ -117,6 +129,7 @@ const Projects = () => {
         );
         if (responseData.ok===1){
           setProjectDomains(responseData.domains);
+          setSelectedDomain(responseData.domains[0].name);
         }
       } catch (err) {
         console.log("Error in fetching domains: "+err);
@@ -213,19 +226,6 @@ const Projects = () => {
 			console.log('ERROR creating new project'+err);
 		}  
   };  
-
-  const [text, setText] = useState('');
-  const [description, setDescription] = useState('');
-  const [selectedDomain, setSelectedDomain] = useState('Choose a Domain');
-  const [startDate, setStartDate] = useState(new Date().toISOString());
-  const [endDate, setEndDate] = useState(new Date().toISOString());
-  const [link, setLink] = useState('');
-  // for searchbar defining states
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-  // for filter dropdown defining states
-  const [filter, setFilter] = useState('all');
-
 
   //Toggle Completed function
   // function toggleCompleted(id) {
@@ -446,18 +446,18 @@ const Projects = () => {
               className='border-2 w-1/2 border-gray-200 rounded-lg px-3 py-1.5 mb-2 flex justify-center items-center'
             >
               <div className=''>Select Project Domain</div>
+              {projectDomains && (
               <select
                 className='border-2 w-3/4 border-gray-200 rounded-lg m-2 p-2'
-                defaultValue={'Choose a Domain'}
+                defaultValue={projectDomains[0]}
                 value={selectedDomain} 
                 onChange={e => setSelectedDomain(e.target.value)}
               >
-                {projectDomains && (
-                  projectDomains.map(d => (
-                    <option key={d.id} value={d.name}>{d.name}</option>
-                  ))
-                )}
+                {projectDomains.map(d => (
+                  <option key={d.id} value={d.name}>{d.name}</option>
+                ))}
               </select>
+              )}
             </div>
             <br />
 

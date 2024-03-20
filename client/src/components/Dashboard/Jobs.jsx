@@ -169,7 +169,7 @@ const Jobs = () => {
         <div className="flex space-x-4 text-center justify-center">
           <select 
             // value="UI-UX"
-            className="p-1"
+            className="p-2 rounded-lg"
             onChange={(e) => {
               setSelectedDomain(e.target.value);
               setPage(0);
@@ -177,7 +177,10 @@ const Jobs = () => {
           >
             {projectDomains && (
               projectDomains.map(d => (
-                <option key={d.id} value={d.name}>{d.name}</option>
+                <option 
+                  key={d.id} 
+                  value={d.name}
+                >{d.name}</option>
               ))
             )}
           </select>
@@ -186,6 +189,7 @@ const Jobs = () => {
             onClick={() => {
               setSelectedDomain("-");
               setResetSelectedDomain(true);
+              setPage(0);
             }}
           >
             <p className="font-bold">Reset</p>

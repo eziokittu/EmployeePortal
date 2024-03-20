@@ -14,6 +14,7 @@ import Employee from './components/Dashboard/Employee.jsx';
 import EmployeeDetails from './components/Dashboard/EmployeeDetails.jsx';
 import Projects from './components/Dashboard/Projects.jsx';
 import MyProjects from './components/Dashboard/MyProjects.jsx';
+import ProjectDetails from './components/Dashboard/ProjectDetails.jsx';
 import Termination from './components/Dashboard/Termination.jsx';
 import Internship from './components/Dashboard/Internship.jsx';
 import Jobs from './components/Dashboard/Jobs.jsx';
@@ -106,6 +107,7 @@ function App() {
               <Route exact path="/" element={<Dashboard />} />
               <Route exact path="/dashboard" element={<Dashboard />} />
               <Route exact path="/projects" element={<MyProjects />} />
+              <Route exact path="/project-details/:pid" element={<ProjectDetails />} />
               <Route exact path="/termination" element={<Termination />} />
               <Route exact path="/internships" element={<Internship />} />
               <Route exact path="/employee-details" element={<EmployeeDetails />} />
@@ -113,7 +115,6 @@ function App() {
               <Route exact path="/apply/:oid" element={<Applynow />} />
               <Route exact path="/contact" element={<ContactForm />} />
               <Route exact path="/certificates" element={<Certificates />} />
-              {/* <Route exact path="/settings" element={<Settings />} /> */}
               <Route exact path="/edit-profile" element={<EditProfile />} />
               <Route exact path="/account-settings" element={<AccountSetting />} />
               <Route exact path="/change-password" element={<ChangePassword />} />
@@ -128,6 +129,7 @@ function App() {
               <Route exact path="/dashboard" element={<Dashboard />} />
               <Route exact path="/employee" element={<Employee />} />
               <Route exact path="/projects" element={<Projects />} />
+              <Route exact path="/project-details/:pid" element={<ProjectDetails />} />
               <Route exact path="/termination" element={<Termination />} />
               <Route exact path="/internships" element={<Internship />} />
               <Route exact path="/jobs" element={<Jobs />} />
