@@ -7,14 +7,42 @@ import { AuthContext } from '../Backend/context/auth-context';
 const Jobs = () => {
   const { sendRequest } = useHttpClient();
   const auth = useContext(AuthContext);
-
   const jobsDisplayedPerPage = 2;
 
+  // declaring states
+  const [selectedDomain, setSelectedDomain] = useState("-"); // "-" refers to all the domains
+  const [resetSelectedDomain, setResetSelectedDomain] = useState(false);
+  const [projectDomains, setProjectDomains] = useState();
   const [loadedJobs, setLoadedJobs] = useState();
-  const fetchJobs = async () => {
+  const [jobCount, setJobCount] = useState();
+  const [allJobCount, setAllJobCount] = useState(0);
+
+  // handling the pagination
+  const [pageCount, setPageCount] = useState();
+  const [page, setPage] = useState(0);
+  const handlePageClick = (num) => {
+    setPage(num);
+  };
+
+  // Function to fetch the project domains
+  const fetchProjectDomains = async event => {
     try {
       const responseData = await sendRequest(
-        import.meta.env.VITE_BACKEND_URL + `/offers/get/jobs?page=${page}`
+        `${import.meta.env.VITE_BACKEND_URL}/domains/get`
+      );
+      if (responseData.ok===1){
+        setProjectDomains(responseData.domains);
+      }
+    } catch (err) {
+      console.log("Error in fetching domains: "+err);
+    }
+  };
+
+  // function to fetch all the jobs
+  const fetchAllJobs = async event => {
+    try {
+      const responseData = await sendRequest(
+        import.meta.env.VITE_BACKEND_URL + `/offers/get/jobs/-?page=${page}`
       );
       if (responseData.ok===1){
         setLoadedJobs(responseData.jobs);
@@ -26,7 +54,8 @@ const Jobs = () => {
       console.error(`ERROR fetching Jobs`, err);
     }
   };
-  const [jobCount, setJobCount] = useState();
+
+  // function to fetch all the job count
   const fetchJobCount = async () => {
     try {
       const responseData = await sendRequest(
@@ -42,27 +71,132 @@ const Jobs = () => {
     } catch (err) {
       console.error(`ERROR fetching Job count`, err);
     }
-  };
-
-  // handling the pagination
-  const [pageCount, setPageCount] = useState();
-  const [page, setPage] = useState(0);
-  const handlePageClick = (num) => {
-    setPage(num);
-  };
-
+  }; 
+  
+  // Initial fetch
   useEffect(() => {
-    fetchJobCount();
-    fetchJobs();
-  }, [sendRequest, page]);
+    // function to fetch all the job count
+    const fetchAllJobCount = async () => {
+      try {
+        const responseData = await sendRequest(
+          import.meta.env.VITE_BACKEND_URL + `/offers/get/jobcount`
+        );
+        if (responseData.ok===1){
+          setJobCount(responseData.count);
+          setAllJobCount(responseData.count);
+          setPageCount(Math.ceil(responseData.count / jobsDisplayedPerPage));
+        }
+        else{
+          console.log(responseData.message);
+        }
+      } catch (err) {
+        console.error(`ERROR fetching Job count`, err);
+      }
+    }; 
+    if (selectedDomain === "-") {
+      fetchProjectDomains();
+      fetchAllJobCount();
+      console.log("Fetching all project domains:");
+    }
+  }, []);
+
+  // Initial fetch + fetches on page change
+  useEffect(() => {
+    if (selectedDomain === "-") {
+      fetchJobCount();
+      fetchAllJobs();
+      console.log("Fetching job count and all jobs");
+      setResetSelectedDomain(false);
+    }
+  }, [resetSelectedDomain, page]);
+  
+  // function to fetch jobs by domain
+  const fetchJobsByDomain = async selectedDomain => {
+    try {
+      const responseData = await sendRequest(
+        import.meta.env.VITE_BACKEND_URL + `/offers/get/jobs/${selectedDomain}?page=${page}`
+      );
+      if (responseData.ok===1){
+        setLoadedJobs(responseData.jobs);
+      }
+      else{
+        console.log(responseData.message);
+      }
+    } catch (err) {
+      console.error(`ERROR fetching Jobs`, err);
+    }
+  };
+
+  // function to fetch job count by domain
+  const fetchJobCountByDomain = async selectedDomain => {
+    try {
+      const responseData = await sendRequest(
+        import.meta.env.VITE_BACKEND_URL + `/offers/get/jobcount/${selectedDomain}`
+      );
+      if (responseData.ok===1){
+        setJobCount(responseData.count);
+        setPageCount(Math.ceil(responseData.count / jobsDisplayedPerPage));
+      }
+      else{
+        console.log(responseData.message);
+      }
+    } catch (err) {
+      console.error(`ERROR fetching Job count`, err);
+    }
+  }; 
+
+  // runs on changin domain or page
+  useEffect(() => {
+    // selectedDomain is "-" initially
+    if (selectedDomain !== "-") {
+      fetchJobsByDomain(selectedDomain);
+      fetchJobCountByDomain(selectedDomain);
+      console.log("Fetching jobs and jobcount for domain: " + selectedDomain);
+    }
+  }, [selectedDomain, page]);
 
   return (
     <div className="p-4 sm:ml-64 bg-blue-50 min-h-[500px]">
 
       {/* Heading Section */}
-      <div className="bg-white rounded-lg flex justify-between">
-        <h1 className="p-4 text-2xl font-bold">{`Job Opportunities (${jobCount})`}</h1>
-        <p className="text-gray-400  text-4xl pr-6">...</p>
+      <div className="bg-white rounded-lg justify-center">
+        <h1 className="p-4 text-2xl font-bold">{`Job Opportunities [${allJobCount}]`}</h1>
+      </div>
+
+      {/* Select Domain checkbox */}
+      <div className="mt-3 text-sm text-center">
+        <div className="mb-2">Select a domain from below</div>
+        <div className="flex space-x-4 text-center justify-center">
+          <select 
+            // value="UI-UX"
+            className="p-1"
+            onChange={(e) => {
+              setSelectedDomain(e.target.value);
+              setPage(0);
+            }}
+          >
+            {projectDomains && (
+              projectDomains.map(d => (
+                <option key={d.id} value={d.name}>{d.name}</option>
+              ))
+            )}
+          </select>
+          <button 
+            className="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 flex flex-col justify-center" 
+            onClick={() => {
+              setSelectedDomain("-");
+              setResetSelectedDomain(true);
+            }}
+          >
+            <p className="font-bold">Reset</p>
+          </button>
+        </div>
+        {selectedDomain==='-' && (
+          <div className="my-2">[Showing opportunities for all domains]</div>
+        )}
+        {selectedDomain!=='-' && (
+          <div className="my-2">{`[Showing opportunities for Domain: ${selectedDomain}]`}</div>
+        )}
       </div>
 
       {/* Job Opportunities */}
@@ -73,9 +207,9 @@ const Jobs = () => {
           <div className="flex gap-4">
           {loadedJobs && loadedJobs.map((item) => {
             return (
-              <div key={item.id}>
+              <div key={item._id}>
                 <JobItem
-                  id={item.id}
+                  id={item._id}
                   heading={item.heading}
                   employee_salary={item.stipend}
                   date={item.date_end}

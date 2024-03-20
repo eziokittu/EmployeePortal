@@ -18,11 +18,7 @@ const getInternships = async (req, res, next) => {
       .skip(page * internshipsPerPage)
       .limit(internshipsPerPage);
   } catch (err) {
-    const error = new HttpError(
-      'Fetching offers failed, please try again later.',
-      500
-    );
-    return next(error);
+    return res.json({ok:-1, message: "Some error occured!"+err});
   }
 
   if (!allOffers || allOffers.length === 0) {
@@ -35,7 +31,7 @@ const getInternships = async (req, res, next) => {
 
   res.json({
     ok: 1,
-    internships: allOffers.map((offer) => offer.toObject({ getters: true })),
+    jobs: allOffers.map((offer) => offer.toObject({ getters: true })),
   });
   // console.log("DEBUG -- Offer-Controller - Fetching internships successful!");
 };
@@ -51,11 +47,7 @@ const getJobs = async (req, res, next) => {
       .skip(page * jobsPerPage)
       .limit(jobsPerPage);
   } catch (err) {
-    const error = new HttpError(
-      'Fetching offers failed, please try again later.',
-      500
-    );
-    return next(error);
+    return res.json({ok:-1, message: "Some error occured!"+err});
   }
 
   if (!allOffers || allOffers.length === 0) {
@@ -71,6 +63,80 @@ const getJobs = async (req, res, next) => {
     jobs: allOffers.map((offer) => offer.toObject({ getters: true })),
   });
   // console.log("DEBUG -- Offer-Controller - Fetching internships successful!");
+};
+
+const getInternshipsByDomain = async (req, res, next) => {
+  const page = req.query.page || 0;
+  const internshipsPerPage = 2;
+
+  const domain = req.params['domain'];
+
+  let existingDomain;
+  let allInternships;
+  if (domain==='-' || !domain ){
+    try {
+      allJobs = await Offer
+        .find({type: "job"})
+        .skip(page * internshipsPerPage)
+        .limit(internshipsPerPage);
+    } catch (err) {
+      return res.json({ok:-1, message:"Fetching offer with offerId failed, please try again later."})
+    }
+  }
+  else {
+    try {
+      existingDomain = await Domain.findOne({name: domain});
+    } catch (error) {
+      return res.json({ok:-1, message: "Domain does not exist with this ID"});
+    }
+    try {
+      allJobs = await Offer
+        .find({domain: existingDomain, type: "internship"})
+        .skip(page * jobsPerPage)
+        .limit(jobsPerPage);
+    } catch (err) {
+      return res.json({ok:-1, message:"Fetching offer with offerId failed, please try again later."})
+    }
+  }
+
+  res.json({ok:1, message:"Fetching all internships successful", internships: allInternships});
+};
+
+const getJobsByDomain = async (req, res, next) => {
+  const page = req.query.page || 0;
+  const jobsPerPage = 2;
+
+  const domain = req.params['domain'];
+
+  let existingDomain;
+  let allJobs;
+  if (domain==='-' || !domain ){
+    try {
+      allJobs = await Offer
+        .find({type: "job"})
+        .skip(page * jobsPerPage)
+        .limit(jobsPerPage);
+    } catch (err) {
+      return res.json({ok:-1, message:"Fetching offer with offerId failed, please try again later."})
+    }
+  }
+  else {
+    try {
+      existingDomain = await Domain.findOne({name: domain});
+    } catch (error) {
+      return res.json({ok:-1, message: "Domain does not exist with this ID"});
+    }
+    try {
+      allJobs = await Offer
+        .find({domain: existingDomain, type: "job"})
+        .skip(page * jobsPerPage)
+        .limit(jobsPerPage);
+    } catch (err) {
+      return res.json({ok:-1, message:"Fetching offer with offerId failed, please try again later."})
+    }
+  }
+
+  res.json({ok:1, message:"Fetching all jobs successful", jobs: allJobs});
 };
 
 const getOffer = async (req, res, next) => {
@@ -98,14 +164,10 @@ const getOfferCount = async (req, res, next) => {
     offerCount = await Offer.countDocuments();
     // offerCount = await Offer.countDocuments({ type: type });
   } catch (err) {
-    const error = new HttpError(
-      'Fetching offer count failed, please try again later.',
-      500
-    );
-    return next(error);
+    return res.json({ok:-1, message: "Some error occured!"+err})
   }
 
-  res.json({ offerCount });
+  res.json({ok:1, count: offerCount });
   // console.log("DEBUG -- Offer-Controller - Fetching offer count successful!");
 };
 
@@ -113,33 +175,62 @@ const getInternshipCount = async (req, res, next) => {
   let offerCount;
   const { type } = req.body;
   try {
-    // offerCount = await Offer.countDocuments();
     offerCount = await Offer.countDocuments({ type: 'internship' });
   } catch (err) {
-    return res.json({ ok:-1, message: 'No internships! count=0' });
+    return res.json({ ok:-1, message: 'No internships! count=0'+err });
+  }
+  res.json({ ok:1, count: offerCount });
+};
+
+const getInternshipCountByDomain = async (req, res, next) => {
+  const domain = req.params['domain'];
+
+  let existingDomain;
+  try {
+    existingDomain = await Domain.findOne({name: domain});
+  } catch (error) {
+    return res.json({ok:-1, message: "Domain does not exist with this ID"});
   }
 
+  let offerCount;
+  try {
+    offerCount = await Offer.countDocuments({ type: 'internship', domain: existingDomain});
+  } catch (err) {
+    res.json({ ok:-1, message: 'No jobs! count=0'+err });
+    return
+  }
   res.json({ ok:1, count: offerCount });
-  // console.log("DEBUG -- Offer-Controller - Fetching internships count successful!");
 };
 
 const getJobCount = async (req, res, next) => {
   let offerCount;
   try {
-    // offerCount = await Offer.countDocuments();
     offerCount = await Offer.countDocuments({ type: 'job' });
   } catch (err) {
-    // const error = new HttpError(
-    //   'Fetching job count failed, please try again later.',
-    //   500
-    // );
-    // return next(error);
-    res.json({ ok:-1, message: 'No jobs! count=0' });
+    res.json({ ok:-1, message: 'No jobs! count=0'+err });
     return
   }
-
   res.json({ ok:1, count: offerCount });
-  // console.log("DEBUG -- Offer-Controller - Fetching job count successful!");
+};
+
+const getJobCountByDomain = async (req, res, next) => {
+  const domain = req.params['domain'];
+
+  let existingDomain;
+  try {
+    existingDomain = await Domain.findOne({name: domain});
+  } catch (error) {
+    return res.json({ok:-1, message: "Domain does not exist with this ID"});
+  }
+
+  let offerCount;
+  try {
+    offerCount = await Offer.countDocuments({ type: 'job', domain: existingDomain});
+  } catch (err) {
+    res.json({ ok:-1, message: 'No jobs! count=0'+err });
+    return
+  }
+  res.json({ ok:1, count: offerCount });
 };
 
 // POST
@@ -367,12 +458,16 @@ const deleteOffer = async (req, res, next) => {
 
 module.exports = {
   getOffer,
-  // getOffers,
   getInternships,
+  getInternshipsByDomain,
   getJobs,
+  getJobsByDomain,
+
   getOfferCount,
   getInternshipCount,
+  getInternshipCountByDomain,
   getJobCount,
+  getJobCountByDomain,
 
   createOffer,
   createInternshipOffer,

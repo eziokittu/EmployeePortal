@@ -111,7 +111,7 @@ const getEmployeeCount = async (req, res, next) => {
 
 const getEmployees = async (req, res, next) => {
   const page = req.query.page || 0;
-  const employeesPerPage = 3;
+  const employeesPerPage = 5;
 
   let allEmployees;
   try {

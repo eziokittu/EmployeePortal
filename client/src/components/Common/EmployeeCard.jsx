@@ -1,24 +1,53 @@
-import React from 'react';
-import profileImg from '../../assets/profile.png'
+import StarRatings from 'react-star-ratings';
+import { useState } from 'react';
 
-const EmployeeCard = ({ name, date, projects, role, email , empImg}) => {
+const EmployeeCard = ({ firstname, lastname, employeeID, email, progress, link }) => {
+    // updating the star rating state
+    const [rating, setRating] = useState(progress);
+    // updating star rating function
+    const handleRatingChange = (newRating) => {
+        setRating((newRating));
+    };
     return (
-        <div className="flex items-center justify-around rounded">
-            <div className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow">
-                <div className="flex flex-col items-center pb-5">
-                    {(import.meta.env.VITE_USER_DEFAULT_IMAGE === empImg) ? (
-                        <img className="w-24 h-24 mb-3 mt-3 rounded-full shadow-lg" src={profileImg} alt="emp" />
-                    ) : (
-                        <img className="w-24 h-24 mb-3 mt-3 rounded-full shadow-lg" src={import.meta.env.VITE_ASSETS_URL+`/`+empImg} alt="emp img" />
-                    )}
-                    <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">{name}</h5>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">{date} - Present</span>
-                    <span className="text-m pt-2 text-gray-500 dark:text-gray-400">{role}</span>
-                    <span className="text-m pt-2 text-gray-500 dark:text-gray-400">{`Projects Completed - ${projects}`}</span>
-                    {/* <a href="#" className="inline-flex items-center mt-2 px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 ">{mobile}</a> */}
-                    <a href="#" className="inline-flex items-center mt-2 px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 ">{email}</a>
-                </div>
+        <div className="text-sm grid grid-cols-12 gap-5 bg-white drop-shadow-lg rounded-lg p-4 w-full mb-4">
+            {/* Employee Name */}
+            <div className='flex flex-col justify-center items-center col-span-2'>
+                <h2 className="text-md font-bold text-black">{firstname}</h2>
+                <h2 className="text-md font-bold text-black">{lastname}</h2>
             </div>
+            {/* Employee ID */}
+            <div className='flex justify-center items-center col-span-3'>
+                <p className=" text-black font-bold">{employeeID}</p>
+            </div>
+            {/* Employee Email */}
+            <div className='flex justify-center items-center col-span-2'>
+                <p className=" text-black font-bold">{email}</p>
+            </div>
+            {/* Star Progress Input */}
+            <div className="flex justify-center items-center col-span-3">
+                <StarRatings
+                    rating={rating}
+                    starRatedColor="blue"
+                    starHoverColor="blue"
+                    changeRating={handleRatingChange}
+                    numberOfStars={5}
+                    starDimension="20px"
+                    starSpacing="1px"
+                    name="rating"
+                />
+            </div>
+            {/* View Project Button */}
+            <button
+                onClick={() => {
+                    window.open(link, '_blank');
+                    console.log(link);
+                }}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col justify-center col-span-2 items-center bg-primary-600 hover:bg-blue-600 text-white font-bold p-2 rounded-xl">
+                <span>View</span>
+                <span className=''>Project</span>
+            </button>
         </div>
     )
 }
