@@ -40,11 +40,11 @@ function ApplicationCard({isJob, data}) {
 				}
       );
       const responseData2 = await sendRequest(
-        import.meta.env.VITE_BACKEND_URL+`/applied/patch/approve/offer`,
+        import.meta.env.VITE_BACKEND_URL+`/applied/patch/approve/offers`,
         'PATCH',
         JSON.stringify({
 					oid: data.offer,
-					uid: data.user
+					alluid: [data.user]
 				}),
 				{
 					'Content-Type': 'application/json'
