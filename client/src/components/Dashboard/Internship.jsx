@@ -164,24 +164,26 @@ const Internship = () => {
       </div>
 
       {/* Select Domain checkbox */}
+      {projectDomains && (
       <div className="mt-3 text-sm text-center">
         <div className="mb-2">Select a domain from below</div>
         <div className="flex space-x-4 text-center justify-center">
           <select 
+            // value="UI-UX"
             className="p-2 rounded-lg"
-            onChange={(e) => {
+            onClickCapture={(e) => {
               setSelectedDomain(e.target.value);
               setPage(0);
             }}
           >
-            {projectDomains && (
+            {
               projectDomains.map(d => (
                 <option 
                   key={d.id} 
                   value={d.name}
                 >{d.name}</option>
               ))
-            )}
+            }
           </select>
           <button 
             className="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 flex flex-col justify-center" 
@@ -201,6 +203,15 @@ const Internship = () => {
           <div className="my-2">{`[Showing opportunities for Domain: ${selectedDomain}]`}</div>
         )}
       </div>
+      )}
+
+      {/* if no domains exist */}
+      {!projectDomains && (
+      <div className="mt-3 text-sm text-center">
+        <div className="mb-2">No domains exist</div>
+        <div className="my-2">[Showing opportunities for all domains]</div>
+      </div>
+      )}
 
       {/* Internship Opportunities */}
       <div className="flex">

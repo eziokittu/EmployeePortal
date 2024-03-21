@@ -403,9 +403,10 @@ const updateUserInfo = async (req, res, next) => {
 
   const userId = req.params.uid;
 
+  let existingUser;
   try {
     // Find the existing user by email
-    const existingUser = await User.findById({ _id: userId });
+    existingUser = await User.findById({ _id: userId });
     if (!existingUser) {
       return next(new HttpError('User not found, update failed.', 404));
     }
@@ -647,6 +648,35 @@ const unterminateEmployeeByEmail = async (req, res, next) => {
   }
 }
 
+const giveRating = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(new HttpError('Invalid inputs passed, please check your data.', 422));
+  }
+
+  const { rating, userId } = req.body;
+
+  let existingUser;
+  try {
+    // Find the existing user by email
+    existingUser = await User.findById({ _id: userId, isEmployee: true }, '-password');
+    if (!existingUser) {
+      return next(new HttpError('User not found, update failed.', 404));
+    }
+  } catch (err) {
+    return res.json({ok:-1, message:"The user ID is invalid!"+err})
+  }
+
+  try {
+    existingUser.rating = rating;
+    existingUser.save();
+  } catch (err) {
+    return res.json({ok:-1, message: "saving the existing user failed!"+err})
+  }
+
+  return res.json({ok:1, message})
+}
+
 // DELETE
 
 const deleteUser = async (req, res, next) => {
@@ -723,6 +753,7 @@ module.exports = {
   removeUserImage,
   updateEmployeeAsUser,
   updateUserAsEmployee,
+  giveRating,
 
   terminateEmployeeByEmail,
   unterminateEmployeeByEmail,
