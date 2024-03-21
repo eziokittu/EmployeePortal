@@ -109,12 +109,15 @@ mongoose
     // Set the employee count
     try {
       let count = await User.countDocuments({isEmployee: true});
-      if (!count){
+      if (!count || count===0){
         count = 1;
+        console.log("LOG - [no employees]");
+      }
+      else {
+        console.log("LOG - Employee count:"+count);
       }
       adminUser.employeeCount = count;
       await adminUser.save()
-      console.log("LOG - Employee count:"+count);
     } catch (err) {
       console.log("LOG - ERROR in fetching employee count!");
     }
