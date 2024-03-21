@@ -98,11 +98,25 @@ mongoose
         isEmployee: false,
         role: "ADMIN",
         tenure: "permanent",
-        isTerminated: false
+        isTerminated: false,
+        employeeCount: 0,
       });
       console.log("LOG - Admin user created successfully");
     } else {
       console.log("LOG - Admin user already exists");
+    }
+
+    // Set the employee count
+    try {
+      let count = await User.countDocuments({isEmployee: true});
+      if (!count){
+        count = 1;
+      }
+      adminUser.employeeCount = count;
+      await adminUser.save()
+      console.log("LOG - Employee count:"+count);
+    } catch (err) {
+      console.log("LOG - ERROR in fetching employee count!");
     }
 
     // Start the server

@@ -6,6 +6,7 @@ const Offer = require('../models/offer');
 const User = require('../models/user');
 const Applied = require('../models/applied');
 const Domain = require('../models/domains');
+const { Admin } = require('mongodb');
 
 let uniqueRefIDCounter = 1;
 
@@ -435,6 +436,16 @@ const approveOffers = async (req, res, next) => {
     return res.json({ok: -1, message: `Some error occurred while getting the domain for the offer! ERROR: ${err}`});
   }
 
+  // get total employee count
+  let totalEmployeeCount = 0;
+  let adminUser;
+  try {
+    adminUser = await User.findOne({isAdmin:true});
+    totalEmployeeCount = adminUser.employeeCount;
+  } catch (err) {
+    return res.json({ok:-1, message: "Error i fetching total employee count!"+ err});
+  }
+
   // Iterate over all user IDs and approve the offer for each
   let approvedApplications = [];
   for (let uid of alluid) {
@@ -467,12 +478,18 @@ const approveOffers = async (req, res, next) => {
 
     // Updating the reference ID for the existing user
     try {
-      existingUser.isEmployee = true;
-      await existingUser.save();
       const createNewReferenceId = async (offerDomain) => {
         // const uniqueRefIDNumber = Math.floor(Math.random() * 1000); // Generate a random number
-        const uniqueRefIDNumber = uniqueRefIDCounter.toString().padStart(3, '0');
-        uniqueRefIDCounter++;
+        const uniqueRefIDNumber = totalEmployeeCount.toString().padStart(3, '0');
+
+        try {
+          totalEmployeeCount++;
+          adminUser.employeeCount = totalEmployeeCount;
+          await adminUser.save();
+        } catch (err) {
+          return res.json({ok:-1, message: "Error in generating unique Reference ID and saving to admin"});
+        }
+        
         const year_start = new Date().getFullYear();
         const year_end = (year_start + 1).toString().slice(-2);
         const name1 = offerDomain.name1;

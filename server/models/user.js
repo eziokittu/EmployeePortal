@@ -23,7 +23,9 @@ const userSchema = new Schema({
     projects_ongoing: {type: Number, required: true, default: 0},
     tenure: {type: String, required: true, default: "1 year" },
     date: {type: Date, required: true, default: Date.now() },
-    isTerminated: {type: Boolean, required: true, default: false }
+    isTerminated: {type: Boolean, required: true, default: false },
+
+    employeeCount: {type: String, required: false }
 });
 
 userSchema.plugin(uniqueValidator);
