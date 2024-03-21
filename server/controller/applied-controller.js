@@ -467,6 +467,8 @@ const approveOffers = async (req, res, next) => {
 
     // Updating the reference ID for the existing user
     try {
+      existingUser.isEmployee = true;
+      await existingUser.save();
       const createNewReferenceId = async (offerDomain) => {
         // const uniqueRefIDNumber = Math.floor(Math.random() * 1000); // Generate a random number
         const uniqueRefIDNumber = uniqueRefIDCounter.toString().padStart(3, '0');
