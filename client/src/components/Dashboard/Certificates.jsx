@@ -1,11 +1,11 @@
-import React from 'react'
-
-function Certificates() {
+const Certificate = () => {
   return (
-    <div className='p-4 sm:ml-64 bg-blue-50 min-h-[500px]'>
-      Certificates
+    <div className="p-4 sm:ml-64">
+      <div className="p-4 border-2 border-gray-200 rounded-lg dark:border-gray-700">
+        <h1>Certificates</h1>
+      </div>
     </div>
   )
 }
 
-export default Certificates
+export default Certificate

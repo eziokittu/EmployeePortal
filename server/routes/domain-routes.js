@@ -11,7 +11,10 @@ router.get(
   '/get', 
   domainController.getDomains
 );
-
+router.get(
+  '/get/project/:pid', 
+  domainController.getDomainByProjectId
+);
 router.get(
   '/get/:domainId', 
   domainController.getDomain

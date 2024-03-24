@@ -42,6 +42,30 @@ const getProjects = async (req, res, next) => {
   });
 };
 
+const getProjectById = async (req, res, next) => {
+  const pid = req.params.pid;
+
+  let existingProject;
+  try {
+    existingProject = await Project.findById({_id: pid});
+  } catch (err) {
+    return res.json({ok:-1, message: "Fetching project failed! "+err})
+  }
+
+  if (!existingProject === 0) {
+    res.json({
+      ok: -1,
+      message: "Project does not exist with this ID",
+    });
+    return;
+  }
+
+  res.json({
+    ok: 1,
+    project: existingProject,
+  });
+};
+
 const getProjectsByEmployeeId = async (req, res, next) => {
   const userId = req.params.uid;
 
@@ -635,6 +659,7 @@ const deleteProject = async (req, res, next) => {
 
 module.exports = {
   getProjects,
+  getProjectById,
   getProjectsByEmployeeId,
   getCompletedProjectsByEmployeeId,
   getOngoingProjectsByEmployeeId,

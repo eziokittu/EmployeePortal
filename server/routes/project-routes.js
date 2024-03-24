@@ -7,6 +7,7 @@ const srsUpload = require('../middlewares/srs-upload');
 const router = express.Router();
 
 router.get('/', projectController.getProjects);
+router.get('/project/:pid', projectController.getProjectById);
 router.get('/emp/all/:uid', projectController.getProjectsByEmployeeId);
 router.get('/emp/completed/:uid', projectController.getCompletedProjectsByEmployeeId);
 router.get('/emp/ongoing/:uid', projectController.getOngoingProjectsByEmployeeId);

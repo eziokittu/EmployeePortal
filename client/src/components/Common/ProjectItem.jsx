@@ -192,7 +192,7 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 
 							{/* Details Button */}
 							<button
-								onClick={handleDetailsClick}
+								onClick={() => {handleDetailsClick(task._id)}}
 								className="text-sm text-white bg-gray-500 w-20 py-2 mr-10 rounded-md hover:bg-gray-600"
 							>
 								Details

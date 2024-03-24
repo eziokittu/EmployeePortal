@@ -366,8 +366,8 @@ const Projects = () => {
                 </div>
               </div>
 
+              {/* Projects start */}
               <div className='my-3' >
-                {/* Projects start */}
                 <div className="mb-2">
                   {/* Project Component */}
                   {projects && projectDomains && (
@@ -380,7 +380,6 @@ const Projects = () => {
                             key={task.id}
                             task={task}
                             projectDomains = {projectDomains}
-                            link={task.link}
                           />
                         ))}
                     </div>

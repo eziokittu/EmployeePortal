@@ -3,6 +3,7 @@ const { validationResult } = require('express-validator');
 // const { v4: uuidv4 } = require('uuid');
 const HttpError = require('../models/http-error');
 const Domain = require('../models/domains');
+const Project = require('../models/project');
 
 // Some data
 // const domains = ["WEBDEV", "APPDEV", "ML/AI", "UI/UX", "TEAMLEAD", "CYBERSECURITY", "GRAPHICSDESIGN", "VIDEOEDITOR", "MARKETING", "DIGITALMARKETING"];
@@ -40,6 +41,42 @@ const getDomain = async (req, res, next) => {
     }
   } catch (err) {
     return res.json({ok:-1, message: "Fetching domain failed!"});
+  }
+
+  return res.json({ok:1, message: "Successfully Fetched the domain", domain: existingDomain});
+};
+
+const getDomainByProjectId = async (req, res, next) => {
+  const pid = req.params.pid;
+
+  let existingProject;
+  try {
+    existingProject = await Project.findById({_id: pid})
+  } catch (err) {
+    return res.json({ok:-1, message: "Fetching project failed! "+err})
+  }
+
+  if (!existingProject) {
+    res.json({
+      ok: -1,
+      message: "Project does not exist with this ID",
+    });
+    return;
+  }
+
+  let existingDomain;
+  try {
+    existingDomain = await Domain.findById({_id: existingProject.domain});
+  } catch (err) {
+    return res.json({ok:-1, message: "Fetching project domain failed! "+err})
+  }
+
+  if (!existingDomain) {
+    res.json({
+      ok: -1,
+      message: "Domain is not found with this project ID",
+    });
+    return;
   }
 
   return res.json({ok:1, message: "Successfully Fetched the domain", domain: existingDomain});
@@ -153,6 +190,7 @@ const deleteDomain = async (req, res, next) => {
 
 module.exports = {
   getDomain,
+  getDomainByProjectId,
   getDomains,
   postDomain,
   patchDomain,
