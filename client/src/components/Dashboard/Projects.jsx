@@ -318,11 +318,11 @@ const Projects = () => {
             <div className="">
               {/* Searchbar and Heading */}
               <div className='flex justify-between items-center px-4 py-3'>
-                <div className='w-72'>
+                {/* <div className='w-72'>
                   <h1 className=' text-xl mr-4 font-bold'>Ongoing Projects</h1>
-                </div>
+                </div> */}
                 {/* Searchbar and filter */}
-                <div className='w-full mr-4'>
+                {/* <div className='w-full mr-4'>
                   <form>
                     <div className="flex">
                       <div className="relative w-full">
@@ -347,9 +347,9 @@ const Projects = () => {
                       </div>
                     </div>
                   </form>
-                </div>
+                </div> */}
                 {/* Filter by week, month */}
-                <div className='w-64'>
+                {/* <div className='w-64'>
                   <select
                     defaultValue={'all'}
                     id="filter"
@@ -363,7 +363,7 @@ const Projects = () => {
                     <option value="month">This Month</option>
                     <option value="year">This Year</option>
                   </select>
-                </div>
+                </div> */}
               </div>
 
               {/* Projects start */}

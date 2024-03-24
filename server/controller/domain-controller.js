@@ -79,6 +79,7 @@ const getDomainByProjectId = async (req, res, next) => {
     return;
   }
 
+  // console.log(existingDomain);
   return res.json({ok:1, message: "Successfully Fetched the domain", domain: existingDomain});
 };
 

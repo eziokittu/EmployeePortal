@@ -43,9 +43,6 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 	const [editedProjectDescription, setEditedProjectDescription] = useState(task.description);
 	const [editedProjectLink, setEditedProjectLink] = useState(task.link);
 	const [editedProjectType, setEditedProjectType] = useState();
-	// const [editedProjectType, setEditedProjectType] = useState(
-	// 	(projectDomains!==null ? projectDomains[0].name : 'ANY')
-	// );
 	const [editedStartDate, setEditedStartDate] = useState(task.date_start);
 	const [editedEndDate, setEditedEndDate] = useState(task.date_end);
 
@@ -116,10 +113,11 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
     const fetchProjectDomainName = async () => {
       try {
         const responseData = await sendRequest(
-          `${import.meta.env.VITE_BACKEND_URL}/domains/get/${task.domain}`
+          `${import.meta.env.VITE_BACKEND_URL}/domains/get/project/${task._id}`
         );
         if (responseData.ok===1){
           setDomain(responseData.domain);
+          setEditedProjectType(responseData.domain.name);
         }
         else {
           console.log("Error in setting domain");
@@ -238,17 +236,18 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 					className="mt-2 block w-full px-3 py-2 border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 				/>
 				{/* Project Type edit input box */}
-				<select
+				{domain && (<select
 					value={editedProjectType}
 					onChange={(e) => setEditedProjectType(e.target.value)}
 					className="mt-2 block w-full px-3 py-2 border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 				>
 					{projectDomains.map(d => (
-						<option value={d.name}>{d.name}</option>
+						<option defaultValue={domain.name} value={domain.name}>{d.name}</option>
 					))}
 					
 					{/* <option value="App-Development">App Development</option> */}
 				</select>
+				)}
 				{/* Project Start and End Date edit input box */}
 				<div className='flex justify-center items-center gap-2'>
 					<input

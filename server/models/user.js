@@ -15,6 +15,7 @@ const userSchema = new Schema({
     bio: {type: String, required: true, default: '-' },
 
     ref: {type: String, required:true, default: "-"}, // RNPW/2024-25/WEB123DEV
+    role: { type: String, ref: 'Domain', required: false },
     rating: {type: Number, required: true, default: 0 },
     certificates: [{type: String, minLength: 4 }],
     domain: { type: mongoose.Types.ObjectId, ref: 'Domain' },

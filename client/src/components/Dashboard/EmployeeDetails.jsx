@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useHttpClient } from '../Backend/hooks/http-hook';
 import { AuthContext } from '../Backend/context/auth-context';
+import { useNavigate } from 'react-router-dom';
 
 const EmployeeDetails = () => {
+	const navigate = useNavigate();
 	const { sendRequest } = useHttpClient();
   const auth = useContext(AuthContext);
 
@@ -131,23 +133,27 @@ const EmployeeDetails = () => {
 				</div>
 
 				{/* Projects Starts */}
+				{employeeProjects && employeeProjects.map((proj)=>(
 				<div className="grid grid-cols-2 gap-4 mb-4">
 					{/* Project Item start*/}
 					<div className="flex items-center justify-around rounded-xl bg-gray-100 p-8 dark:bg-gray-800">
 						<div className='bg-indigo-300 h-10 w-10 rounded-lg'></div>
 						<div>
 							{/* project heading */}
-							<h2 className='text-3xl font-bold'>Project 1</h2>
+							<h2 className='text-3xl font-bold'>{proj.title}</h2>
 							{/* Project Description */}
-							<p>Make your Product be the first on the searching result</p>
+							<p>{proj.description}</p>
 						</div>
 						{/* arrow button */}
-						{/* <div onClick={openProject}>
-							<svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 0 64 64" id="Arrow"><path fill="#151616" d="m-210.9-289-2-2 11.8-11.7-11.8-11.7 2-2 13.8 13.7-13.8 13.7" transform="translate(237 335)" className="color134563 svgShape"></path></svg>
-						</div> */}
+						<div onClick={()=>(navigate(`/project-details/${proj._id}`))}>
+							<svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 0 64 64" id="Arrow">
+								<path fill="#151616" d="m-210.9-289-2-2 11.8-11.7-11.8-11.7 2-2 13.8 13.7-13.8 13.7" transform="translate(237 335)" className="color134563 svgShape"></path>
+							</svg>
+						</div>
 					</div>
 
 				</div>
+				))}
 
 			</div>
 			)}

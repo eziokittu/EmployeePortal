@@ -10,6 +10,7 @@ router.get('/', userController.getUsers);
 router.get('/user/id/:uid', userController.getUserById);
 router.get('/user/email/:email', userController.getUserByEmail);
 router.get('/user/username/:username', userController.getUserByUsername);
+router.get('/employees/project/:pid', userController.getEmployeesByProjectId);
 
 router.get('/emp', userController.getEmployees);
 router.get('/emp/id/:uid', userController.getEmployeeById);
@@ -55,6 +56,14 @@ router.patch(
       .isLength({ min: 6 })
   ],
   userController.updateUserPassword
+);
+// PATCH: Update user info
+router.patch(
+  '/edit/role/:empId',
+  [
+    
+  ],
+  userController.updateEmployeeRole
 );
 // PATCH: Update user info
 router.patch(

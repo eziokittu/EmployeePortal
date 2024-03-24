@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
+const Project = require('../models/project');
+const Role = require('../models/role');
 
 // GET
 
@@ -94,6 +96,52 @@ const getUserByUsername = async (req, res, next) => {
   }
 
   res.json({employee: employee});
+};
+
+const getEmployeesByProjectId = async (req, res, next) => {
+  const pid = req.params.pid;
+
+  let existingProject;
+  try {
+    existingProject = await Project.findById({_id: pid});
+  } catch (err) {
+    return res.json({ok:-1, message: "Fetching project failed! "+err})
+  }
+  if (!existingProject === 0) {
+    res.json({
+      ok: -1,
+      message: "Project does not exist with this ID",
+    });
+    return;
+  }
+
+  // Iterate over all user IDs
+  let existingEmployees = [];
+  for (let uid of existingProject.employees) {
+
+    // Finding the existance of the user with USER ID
+    let existingUser;
+    try {
+      existingUser = await User.findOne({ _id: uid, isEmployee: true, isAdmin: false });
+      if (!existingUser) {
+        continue; // Skip this user if they do not exist
+      }
+    } catch (error) {
+      // Log the error but do not stop processing the rest of the user IDs
+      console.error('Error finding user with ID:', uid, error);
+      continue;
+    }
+
+    existingEmployees.push(existingUser);
+  }
+
+  // Respond with all the approved applications
+  if (existingEmployees.length > 0) {
+    res.json({ ok: 1, employees: existingEmployees, message:"Fetching employees successful" });
+  } else {
+    // If no applications were approved, send a different response
+    res.json({ ok: -1, message: 'No employees' });
+  }
 };
 
 const getEmployeeCount = async (req, res, next) => {
@@ -600,6 +648,33 @@ const updateEmployeeAsUser = async (req, res, next) => {
   }
 };
 
+const updateEmployeeRole = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+
+  const empId = req.params.empId;
+  const { role } = req.body;
+
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ _id: empId, isEmployee: true });
+  } catch (err) {
+    return res.json({ok:-1, message: "Invalid Employee ID!"})
+  }
+
+  try {
+    existingUser.role = role;
+    existingUser.save();
+    return res.json({ok:1, message: "Updated employee Role", role:existingUser.role})
+  } catch (err) {
+    return res.json({ok:-1, message: "Error in updating employee role"})
+  }
+};
+
 const terminateEmployeeByEmail = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -743,6 +818,7 @@ module.exports = {
   getUserById,
   getUserByEmail,
   getUserByUsername,
+  getEmployeesByProjectId,
 
 	signup,
 	login,
@@ -751,6 +827,7 @@ module.exports = {
   updateUserPassword,
   updateUserImage,
   removeUserImage,
+  updateEmployeeRole,
   updateEmployeeAsUser,
   updateUserAsEmployee,
   giveRating,

@@ -1,5 +1,6 @@
 require('dotenv').config()
-const User = require('./models/user'); // Assuming you have a User model defined
+const User = require('./models/user');
+const Role = require('./models/role');
 const bcrypt = require('bcryptjs');
 
 // libraries
@@ -16,6 +17,7 @@ const projectRoutes = require('./routes/project-routes');
 const offerRoutes = require('./routes/offer-routes');
 const appliedRoutes = require('./routes/applied-routes');
 const domainRoutes = require('./routes/domain-routes');
+const roleRoutes = require('./routes/role-routes');
 
 const HttpError = require('./models/http-error');
 
@@ -43,6 +45,7 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/offers', offerRoutes);
 app.use('/api/applied', appliedRoutes);
 app.use('/api/domains', domainRoutes);
+app.use('/api/roles', roleRoutes);
 
 app.use((req, res, next) => {
   const error = new HttpError('Could not find this route. ['+req.body.url+']', 404);
@@ -76,10 +79,6 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true
   })
-  // .then(() =>{
-  //   app.listen(5000);
-  //   console.log("LOG - Server running on port", 5000);
-  // })
   .then(async () => {
     console.log("LOG - MongoDB connected successfully");
 
@@ -106,6 +105,18 @@ mongoose
       console.log("LOG - Admin user already exists");
     }
 
+    // Check if "member" role exists
+    const memberRole = await Role.findOne({ name: 'member' });
+    if (!memberRole) {
+      // If 'member' role doesn't exist, create it
+      await Role.create({ 
+        name: 'member'
+      });
+      console.log("LOG - 'member' role created successfully");
+    } else {
+      console.log("LOG - 'member' role already exists");
+    }
+
     // Set the employee count
     try {
       let count = await User.countDocuments({isEmployee: true});
@@ -114,10 +125,10 @@ mongoose
         console.log("LOG - [no employees]");
       }
       else {
-        console.log("LOG - Employee count:"+count);
+        console.log("LOG - Employee count: "+count);
       }
       adminUser.employeeCount = count;
-      await adminUser.save()
+      await adminUser.save();
     } catch (err) {
       console.log("LOG - ERROR in fetching employee count!");
     }

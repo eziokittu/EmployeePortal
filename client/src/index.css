@@ -2,3 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
+.shadow-slate-200-800{
+  @apply 
+  shadow-[0_0_15px_theme('colors.slate.200')] 
+hover:shadow-[0_0_15px_theme('colors.slate.800')];
+}
+.shadow-slate-800-200{
+  @apply 
+  shadow-[0_0_15px_theme('colors.slate.800')] 
+hover:shadow-[0_0_15px_theme('colors.slate.200')];
+}
+
+/* Scrollbar modification */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background-color: rgb(3, 9, 27);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background-color: rgb(85, 65, 215);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(0, 89, 255);
+}

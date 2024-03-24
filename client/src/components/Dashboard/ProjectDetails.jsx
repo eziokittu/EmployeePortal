@@ -1,4 +1,4 @@
-import React, {useState, useContext, useEffect} from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { useHttpClient } from '../Backend/hooks/http-hook';
 import { AuthContext } from '../Backend/context/auth-context';
 import { useParams } from 'react-router-dom';
@@ -9,8 +9,11 @@ import srs from '../../assets/project/srs.png'
 import document from '../../assets/project/document.png'
 import status from '../../assets/project/status.png'
 
-const ProjectDetails = ({task, taskDomain}) => {
-	const { sendRequest } = useHttpClient();
+import { Viewer, Worker } from "@react-pdf-viewer/core";
+import "@react-pdf-viewer/core/lib/styles/index.css";
+
+const ProjectDetails = ({ task, taskDomain }) => {
+  const { sendRequest } = useHttpClient();
   const auth = useContext(AuthContext);
   const { pid } = useParams();
 
@@ -22,19 +25,19 @@ const ProjectDetails = ({task, taskDomain}) => {
         const responseData = await sendRequest(
           `${import.meta.env.VITE_BACKEND_URL}/projects/project/${pid}`
         );
-        if (responseData.ok===1){
+        if (responseData.ok === 1) {
           setLoadedProject(responseData.project);
         }
         else {
           console.log("No project found!");
         }
       } catch (err) {
-        console.log("Error in fetching project: "+err);
+        console.log("Error in fetching project: " + err);
       }
     };
     fetchProject();
   }, []);
-  
+
   const [loadedDomain, setLoadedDomain] = useState();
   // Function to fetch project domain
   useEffect(() => {
@@ -43,34 +46,90 @@ const ProjectDetails = ({task, taskDomain}) => {
         const responseData = await sendRequest(
           `${import.meta.env.VITE_BACKEND_URL}/domains/get/project/${pid}`
         );
-        if (responseData.ok===1){
+        if (responseData.ok === 1) {
           setLoadedDomain(responseData.domain);
         }
         else {
           console.log("Error in setting domain");
         }
       } catch (err) {
-        console.log("Error in fetching domain "+err);
+        console.log("Error in fetching domain " + err);
       }
     };
     fetchProjectDomainName();
   }, [loadedProject]);
 
+  const [allRoles, setAllRoles] = useState();
+  // Function to fetch all roles
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const responseData = await sendRequest(
+          `${import.meta.env.VITE_BACKEND_URL}/roles/get`
+        );
+        if (responseData.ok === 1) {
+          setAllRoles(responseData.roles);
+        }
+        else {
+          console.log("Error in setting roles");
+        }
+      } catch (err) {
+        console.log("Error in fetching roles " + err);
+      }
+    };
+    fetchRoles();
+  }, []);
+
+  // fetching all the employee details from the mongoDB database
+  const [loadedEmployees, setLoadedEmployees] = useState();
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const responseData = await sendRequest(
+          import.meta.env.VITE_BACKEND_URL + `/users/employees/project/${pid}`
+        );
+        if (responseData.ok === 1) {
+          setLoadedEmployees(responseData.employees);
+        }
+        else {
+          console.log(responseData.message)
+        }
+      } catch (err) {
+        console.log("Error in fetching employees: " + err);
+      }
+    };
+    fetchEmployees();
+  }, [loadedProject]);
+
   // State to manage the section of the project details
   const [section, setSection] = useState('overview');
-  
 
-  // Function and states to view SRS pdf
-  const [isSrsViewing, setIsSrsViewing] = useState(false);
-  const [viewPdf, setViewPdf] = useState(null);
-  const fileType = ["application/pdf"];
-  useEffect(() => {
-    if (viewPdf !== null && isSrsViewing) {
-      setViewPdf(pdfFile);
-    } else {
-      setViewPdf(null);
-    }
-  }, [isSrsViewing]);
+  const updateEmployeeRole = async (role, empId) => {
+    try {
+			const responseData = await sendRequest(
+				`${import.meta.env.VITE_BACKEND_URL}/users/edit/role/${empId}`,
+				'PATCH',
+				JSON.stringify({
+					role: role
+				}),
+				{
+					'Content-Type': 'application/json'
+				}
+			);
+      if (responseData.ok===1){
+        console.log("updated employee role");
+      }
+      
+
+      // Refreshes the page after 1.5 seconds
+      setTimeout(() => {
+        window.location.reload(false);
+      }, 1500);
+      
+		} catch (err) {
+			console.log('ERROR updating employee role');
+		}  
+  }
 
   return (
     <div className="p-4 sm:ml-64">
@@ -121,7 +180,7 @@ const ProjectDetails = ({task, taskDomain}) => {
                     </div>
                     <div className='my-auto '>
                       <h2 className='text-xl font-semibold'>Title</h2>
-                      <p>{loadedProject.title}</p>
+                      <p className='text-lg'>{loadedProject.title}</p>
                     </div>
                   </div>
 
@@ -132,7 +191,9 @@ const ProjectDetails = ({task, taskDomain}) => {
                     </div>
                     <div className='my-auto '>
                       <h2 className='text-xl font-semibold'>Description</h2>
-                      <p>{loadedProject.description}</p>
+                      <p className='text-lg'>
+                        {loadedProject.description}
+                      </p>
                     </div>
                   </div>
 
@@ -143,7 +204,7 @@ const ProjectDetails = ({task, taskDomain}) => {
                     </div>
                     <div className='my-auto '>
                       <h2 className='text-xl font-semibold'>Start Date</h2>
-                      <p >{loadedProject.date_start.split('T')[0]}</p>
+                      <p className='text-lg'>{loadedProject.date_start.split('T')[0]}</p>
                     </div>
                   </div>
 
@@ -154,10 +215,10 @@ const ProjectDetails = ({task, taskDomain}) => {
                     </div>
                     <div className='my-auto '>
                       <h2 className='text-xl font-semibold'>End Date</h2>
-                      <p >{loadedProject.date_end.split('T')[0]}</p>
+                      <p className='text-lg'>{loadedProject.date_end.split('T')[0]}</p>
                     </div>
                   </div>
-                  
+
                   {/* Project Status */}
                   <div className="flex justify-start bg-white border-2 border-gray-400 rounded-xl">
                     <div className='mx-6 my-4'>
@@ -165,7 +226,7 @@ const ProjectDetails = ({task, taskDomain}) => {
                     </div>
                     <div className='my-auto '>
                       <h2 className='text-xl font-semibold'>Status</h2>
-                      <p >{loadedProject.isCompleted}</p>
+                      <p className='text-lg' >{loadedProject.isCompleted === true ? 'Completed' : 'Ongoing'}</p>
                     </div>
                   </div>
 
@@ -175,11 +236,15 @@ const ProjectDetails = ({task, taskDomain}) => {
                       <img src={srs} className='w-100' alt="" />
                     </div>
                     <div className='my-auto '>
-                      <h2 className='text-xl font-semibold'>SRS Document</h2>
-                      <button 
-                        className='bg-blue-500 p-4 hover:bg-blue-700 text-white'
-                        onClick={()=>(setIsSrsViewing(!isSrsViewing))}
-                      >View SRS PDF</button>
+                      <h2 className='text-lg mb-2 font-semibold'>SRS Document</h2>
+                      {/* <button
+                        className='bg-blue-500 p-3 text-xl hover:bg-blue-700 text-white rounded-xl'
+                        // onClick={() => (setIsSrsViewing(!isSrsViewing))}
+                      >View</button> */}
+                      <a
+                        href={`${import.meta.env.VITE_ASSETS_URL}/${loadedProject.srs}`} target="_blank" rel="noopener noreferrer"
+                        className='bg-blue-500 p-2 text-xl hover:bg-blue-700 text-white rounded-xl'
+                      >View</a>
                     </div>
                   </div>
                 </div>
@@ -191,32 +256,85 @@ const ProjectDetails = ({task, taskDomain}) => {
               </div>
             )}
           </>
-          
+
         ) : (
           // Team Section
           <>
-            {loadedDomain && loadedProject && (
+            {loadedEmployees && (
               <div className="bg-gray-100 rounded-xl mt-8 pb-8">
-                {/* Heading */}
-                <h1 className="text-3xl font-bold pb-8 pt-14 text-center">Current Project Team</h1>
-                <div className='mx-8'>
-
-                  {/* Employee Cards Start*/}
-                  <div className="grid grid-cols-3 bg-white drop-shadow-lg rounded-lg p-6 w-full mb-4">
-                    {/* Employee Name */}
-                    <div className='flex justify-center items-center'>
-                      <h2 className="text-lg font-bold text-black">Akash Saha</h2>
+                {/* Heading Section */}
+                {/* <h1 className="text-3xl font-bold pb-8 pt-14 text-center">Current Project Team</h1> */}
+                <div className='px-8'>
+                  <h1 className="text-3xl font-bold text-center my-2">Project Members</h1>
+                  {/* Employee Card  Heading*/}
+                  <div className={`${auth.isAdmin===true ? 'grid-cols-5' : 'grid-cols-4'} grid gap-5 bg-primary-600 text-white shadow-gray-300 shadow-xl rounded-t-lg p-4 rounded-lg mb-4 w-full`}>
+                    <div className='flex justify-center items-center col-span-1'>
+                      <h2 className="text-sm font-bold">Name</h2>
                     </div>
-                    {/* Employee ID */}
-                    <div className='flex justify-center items-center'>
-                      <p className=" text-black font-bold">RNPW/2024-25/WEB007DEV</p>
+                    <div className='flex justify-center items-center col-span-1'>
+                      <h2 className="text-sm font-bold">Reference ID</h2>
                     </div>
-                    {/* Employee Email */}
-                    <div className='flex justify-center items-center'>
-                      <p className=" text-black font-bold">email@gmail.com</p>
+                    <div className='flex justify-center items-center col-span-1'>
+                      <h2 className="text-sm font-bold">Email</h2>
                     </div>
+                    <div className='flex justify-center items-center col-span-1'>
+                      <h2 className="text-sm font-bold">Project Role</h2>
+                    </div>
+                    {auth.isAdmin===true && (
+                    <div className='flex justify-center items-center col-span-1'>
+                      <h2 className="text-sm font-bold">Actions</h2>
+                    </div>
+                    )}
                   </div>
+                </div>
 
+                {/* Body section */}
+                <div className='px-8'>
+                  {/* Employee Cards */}
+                  {loadedEmployees.map(emp => (
+                    <div className={`grid ${auth.isAdmin===true ? 'grid-cols-5' : 'grid-cols-4'} bg-white drop-shadow-lg rounded-lg p-6 w-full mb-4`}>
+                      {/* Employee Name */}
+                      <div className='flex justify-center items-center'>
+                        <h2 className="text-lg font-bold text-black">{emp.firstname + ' ' + emp.lastname}</h2>
+                      </div>
+                      {/* Employee ID */}
+                      <div className='flex justify-center items-center'>
+                        <p className="text-black font-bold">{emp.ref}</p>
+                      </div>
+                      {/* Employee Email */}
+                      <div className='flex justify-center items-center'>
+                        <p className="text-black font-bold">{emp.email}</p>
+                      </div>
+                      {/* Employee Role */}
+                      {auth.isAdmin ? (
+                        <div className='flex justify-center items-center'>
+                          {allRoles && (
+                            <select
+                              className='border-2 border-gray-200 rounded-lg m-2 p-2'
+                              defaultValue={emp.role}
+                              value={emp.role} 
+                              onChange={e => updateEmployeeRole(e.target.value, emp._id)}
+                            >
+                              {allRoles.map(r => (
+                                <option key={r.id} value={r.name}>{r.name}</option>
+                              ))}
+                            </select>
+                          )}
+                        </div>
+                      ) : (
+                        <div className='flex justify-center items-center'>
+                          <p className="text-black font-bold">{emp.role}</p>
+                        </div>
+                      )}
+                      {/* Employee Remove Button */}
+                      {auth.isAdmin && (
+                      <div className='flex justify-center items-center'>
+                        <button className="p-2 rounded-xl bg-red-500 hover:bg-red-800 text-white font-bold">Remove</button>
+                      </div>
+                      )}
+                      
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -228,24 +346,7 @@ const ProjectDetails = ({task, taskDomain}) => {
           </>
         )}
 
-        {/* Bottom Section - PDF viewer */}
-        {isSrsViewing && loadedDomain && loadedProject && (
-          <div>
-            <div className="p-4 border-2 border-gray-200 rounded-lg dark:border-gray-700">
-              <h1 className="text-3xl text-center mt-4 mb-8 font-bold">
-                Pdf Viewer
-              </h1>
-            </div>
-            <div className=" container">
-              <div className="w-full">
-                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
-                  <Viewer fileUrl={viewPdf}>
-                  </Viewer>
-                </Worker>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Bottom Section - PDF viewer - removed cuz not working*/}
 
       </div>
     </div>

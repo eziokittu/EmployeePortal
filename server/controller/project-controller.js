@@ -430,6 +430,7 @@ const updateProjectInfo = async (req, res, next) => {
     return next(new HttpError('Invalid inputs passed, please check your data.', 422));
   }
 
+  console.log(req.body);
   const { title, description, domain, link, startDate, endDate } = req.body;
 
   const projectId = req.params.pid;

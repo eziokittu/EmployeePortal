@@ -500,6 +500,7 @@ const approveOffers = async (req, res, next) => {
       console.log(referenceId);
       existingUser.ref = referenceId;
       existingUser.domain = offerDomain;
+      // existingUser.role = 
       existingUser.isEmployee = true;
       await existingUser.save();
       console.log("Created reference ID for the user with email: ", existingUser.email,", ref ID:",existingUser.ref);
