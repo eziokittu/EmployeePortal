@@ -8,7 +8,7 @@ import { AuthContext } from '../Backend/context/auth-context';
 import Card from '../Common/Card';
 import { Link, useParams } from 'react-router-dom';
 
-const MyProjects = ({ employee }) => {
+const MyProjects = () => {
   const auth = useContext(AuthContext);
   let userId = auth.userId;
   if (auth.isAdmin === true){
@@ -173,10 +173,11 @@ const MyProjects = ({ employee }) => {
 
   // Fetching the user details
   if (auth.isAdmin){
+    useEffect(() => {
       const fetchEmployeeDetails = async () => {
         try {
           const responseData = await sendRequest(
-            `${import.meta.env.VITE_BACKEND_URL}/users/emp/id/${employee._id}`
+            `${import.meta.env.VITE_BACKEND_URL}/users/emp/id/${userId}`
           );
           if (responseData.ok===1){
             console.log("fetched the eemployee details successfully");
@@ -190,6 +191,7 @@ const MyProjects = ({ employee }) => {
         }
       };
       fetchEmployeeDetails();
+    }, []);
   }
   
   //Toggle Completed function
@@ -208,11 +210,11 @@ const MyProjects = ({ employee }) => {
       <div className="p-4 border-2 border-gray-200 rounded-lg">
 
         {auth.isAdmin && employeeDetails && (
-          <div className='font-bold text-2xl mb-4 text-center'>
-            <p>Showing projects for {employeeDetails.lastname}</p>
-            <p>{`${employeeDetails.firstname} ${employeeDetails.lastname}`}</p>
-            <p></p>
-            <p></p>
+          <div className='font-bold text-xl mb-4 text-center bg-gray-100 p-4'>
+            <p className="text-2xl">Showing projects for</p>
+            <p>{`Employee: ${employeeDetails.firstname} ${employeeDetails.lastname}`}</p>
+            <p>{`Ref ID: ${employeeDetails.ref}`}</p>
+            <p>{`Email: ${employeeDetails.email}`}</p>
           </div>
         )}
 

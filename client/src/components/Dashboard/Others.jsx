@@ -10,8 +10,32 @@ function Others() {
   const [domainName1, setDomainName1] = useState('');
   const [domainName2, setDomainName2] = useState('');
 
+  // function to check for invalid inputs and return the list of error message strings
+  const validateDomainsInput = () => {
+    let alerts = [];
+    if (!domainName.trim()) {
+			alerts.push('Enter a valid Domain name');
+		}
+    if (!domainName1.trim()) {
+			alerts.push('Enter a valid Domain name 1 for Ref ID');
+		}
+    if (!domainName2.trim()) {
+			alerts.push('Enter a valid Domain name 2 for Ref ID');
+		}
+		return alerts; // Return the alerts array directly
+	}
+
   // Function to add a new domain
   const addDomainSubmitHandler = async event => {
+    event.preventDefault();
+
+    // Checking for invalid input
+    const validationAlerts = validateDomainsInput()
+    if (validationAlerts.length > 0) {
+      alert(`Please correct the following input errors:\n- ${validationAlerts.join('\n- ')}`);
+      return;
+    }
+    
     event.preventDefault();
 		try {
 			const responseData = await sendRequest(
@@ -96,9 +120,25 @@ function Others() {
 
   const [roleName, setRoleName] = useState('');
 
+  const validateRolesInput = () => {
+    let alerts = [];
+    if (!roleName.trim()) {
+			alerts.push('Enter a valid role name');
+		}
+		return alerts; // Return the alerts array directly
+	}
+
   // Function to add a new domain
   const addRoleSubmitHandler = async event => {
     event.preventDefault();
+
+    // Checking for invalid input
+    const validationAlerts = validateRolesInput()
+    if (validationAlerts.length > 0) {
+      alert(`Please correct the following input errors:\n- ${validationAlerts.join('\n- ')}`);
+      return;
+    }
+
 		try {
 			const responseData = await sendRequest(
 				`${import.meta.env.VITE_BACKEND_URL}/roles/post`,

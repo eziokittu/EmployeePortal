@@ -154,7 +154,7 @@ const getOffer = async (req, res, next) => {
     );
     return next(error);
   }
-  res.json({offer: offer});
+  res.json({ok:1, offer: offer, message:"Successful!"});
 };
 
 const getOfferCount = async (req, res, next) => {

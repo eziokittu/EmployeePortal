@@ -4,8 +4,6 @@ import { useHttpClient } from '../Backend/hooks/http-hook';
 import { AuthContext } from '../Backend/context/auth-context';
 import profileImg from '../../assets/profile.png';
 
-import Alert from '../Alert/Alert';
-
 const EditProfile = () => {
 	const { sendRequest } = useHttpClient();
   const auth = useContext(AuthContext);
@@ -18,11 +16,71 @@ const EditProfile = () => {
   const [inputEmail, setInputEmail] = useState(auth.email);
   const [inputBio, setInputBio] = useState(auth.bio);
 
-	// console.log(auth.firstname);
+	// State to hold form errors
+	const [formErrors, setFormErrors] = useState({});
+
+	// State to hold error alert messages
+	const [errorAlerts, setErrorAlerts] = useState([]);
+	
+	// Validation function
+	// const validate = () => {
+	// 	let errors = {};
+	// 	let alerts = [];
+	// 	if (!inputFirstName.trim()) {
+	// 		errors.firstName = 'First name cannot be empty';
+	// 		alerts.push('First name cannot be empty');
+	// 	}
+	// 	if (!inputLastName.trim()) {
+	// 		errors.lastName = 'Last name cannot be empty';
+	// 		alerts.push('Last name cannot be empty');
+	// 	}
+	// 	// Add similar conditions for other inputs
+	// 	if (inputPhone.length !== 10) {
+	// 		errors.phone = 'Enter a valid phone number';
+	// 		alerts.push('Enter a valid phone number');
+	// 	}
+	// 	if (!inputEmail.includes('@')) {
+	// 		errors.email = 'Enter a valid email address';
+	// 		alerts.push('Enter a valid email address');
+	// 	}
+	// 	if (!inputBio.trim()) {
+	// 		errors.bio = 'Bio cannot be empty';
+	// 		alerts.push('Bio cannot be empty');
+	// 	}
+
+	// 	setFormErrors(errors);
+	// 	setErrorAlerts(alerts);
+	// 	// Return true if there are no errors
+	// 	return alerts.length === 0;
+	// }
+	const validate = () => {
+    let errors = {};
+    let alerts = [];
+    if (inputPhone.length <10 || inputPhone.length >13) {
+			errors.phone = 'Enter a valid phone number';
+			alerts.push('Enter a valid phone number');
+		}
+		return alerts; // Return the alerts array directly
+	}
 
 	// Function to update user details
   const userInfoUpdateHandler = async event => {
     event.preventDefault();
+		// const isValid = validate(); // validate now returns the alerts directly
+
+		// // Now validate function returns the alerts array directly
+		// if (!isValid) {
+		// 	// Directly use the alerts from the validation function
+		// 	alert(`Please correct the following errors:\n- ${errorAlerts.join('\n- ')}`);
+		// 	return;
+		// }
+		const validationAlerts = validate(); // This now directly receives the alerts array
+
+    if (validationAlerts.length > 0) {
+        // Show the alert with the immediate errors returned by the validate function
+        alert(`Please correct the following errors:\n- ${validationAlerts.join('\n- ')}`);
+        return; // Stop the function if there are errors
+    }
     try {
       const responseData = await sendRequest(
         import.meta.env.VITE_BACKEND_URL+`/users/edit/info/${auth.userId}`,
