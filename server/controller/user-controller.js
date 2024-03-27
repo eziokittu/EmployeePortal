@@ -194,7 +194,10 @@ const getEmployeeById = async (req, res, next) => {
   const userId = req.params['uid'];
   let employee;
   try {
-    employee = await User.findById({ _id: userId, isEmployee: true }, '-password')
+    employee = await User.findOne({ _id: userId, isEmployee: true }, '-password')
+    if (!employee){
+      return res.json({ok:-1, message:"Employee does not exist with userId: "+userId})
+    }
   } catch (err) {
     return res.json({ok:-1, message: "Fetching employee failed"});
   }
@@ -206,7 +209,10 @@ const getEmployeeByEmail = async (req, res, next) => {
   const email = req.params['email'];
   let employee;
   try {
-    employee = await User.find({ email: email, isEmployee: true }, '-password')
+    employee = await User.findOne({ email: email, isEmployee: true }, '-password')
+    if (!employee){
+      return res.json({ok:-1, message:"Employee does not exist with email: "+email})
+    }
   } catch (err) {
     const error = new HttpError(
       'Fetching Employee failed, please try again later.',
@@ -222,7 +228,10 @@ const getEmployeeByUsername = async (req, res, next) => {
   const username = req.params['username'];
   let employee;
   try {
-    employee = await User.find({ userName: username, isEmployee: true }, '-password')
+    employee = await User.findOne({ userName: username, isEmployee: true }, '-password')
+    if (!employee){
+      return res.json({ok:-1, message:"Employee does not exist with username: "+username})
+    }
   } catch (err) {
     const error = new HttpError(
       'Fetching Employee failed, please try again later.',

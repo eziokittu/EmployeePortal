@@ -242,7 +242,7 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 					className="mt-2 block w-full px-3 py-2 border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 				>
 					{projectDomains.map(d => (
-						<option defaultValue={domain.name} value={domain.name}>{d.name}</option>
+						<option defaultValue={d.name} value={d.name}>{d.name}</option>
 					))}
 					
 					{/* <option value="App-Development">App Development</option> */}

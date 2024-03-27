@@ -8,7 +8,7 @@ import { AuthContext } from '../Backend/context/auth-context';
 import Card from '../Common/Card';
 import { Link, useParams } from 'react-router-dom';
 
-const MyProjects = () => {
+const MyProjects = ({ employee }) => {
   const auth = useContext(AuthContext);
   let userId = auth.userId;
   if (auth.isAdmin === true){
@@ -24,6 +24,7 @@ const MyProjects = () => {
   const [myCompletedProjects, setMyCompletedProjects] = useState();
   const [myOngoingProjects, setMyOngoingProjects] = useState();
   const [projectDomains, setProjectDomains] = useState();
+  const [employeeDetails, setEmployeeDetails] = useState();
 
   // Fetching the all projects and count only 1 time per page reload OR change in page of pagination
   useEffect(() => {
@@ -152,6 +153,7 @@ const MyProjects = () => {
     fetchOngoingProjectCount();
   }, []);
 
+  // Fetching the project Domains
   useEffect(() => {
     // Function to fetch the project domains
     const fetchProjectDomains = async () => {
@@ -168,6 +170,27 @@ const MyProjects = () => {
     };
     fetchProjectDomains();
   }, []);
+
+  // Fetching the user details
+  if (auth.isAdmin){
+      const fetchEmployeeDetails = async () => {
+        try {
+          const responseData = await sendRequest(
+            `${import.meta.env.VITE_BACKEND_URL}/users/emp/id/${employee._id}`
+          );
+          if (responseData.ok===1){
+            console.log("fetched the eemployee details successfully");
+            setEmployeeDetails(responseData.employee);
+          }
+          else{
+            console.log(responseData.message);
+          }
+        } catch (err) {
+          console.log("Error in fetching domains: "+err);
+        }
+      };
+      fetchEmployeeDetails();
+  }
   
   //Toggle Completed function
   // function toggleCompleted(id) {
@@ -183,6 +206,15 @@ const MyProjects = () => {
   return (
     <div className="p-4 sm:ml-64">
       <div className="p-4 border-2 border-gray-200 rounded-lg">
+
+        {auth.isAdmin && employeeDetails && (
+          <div className='font-bold text-2xl mb-4 text-center'>
+            <p>Showing projects for {employeeDetails.lastname}</p>
+            <p>{`${employeeDetails.firstname} ${employeeDetails.lastname}`}</p>
+            <p></p>
+            <p></p>
+          </div>
+        )}
 
         {/* My Projects Overview for ADMIN */}
         {auth.isAdmin && (
