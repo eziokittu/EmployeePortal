@@ -175,23 +175,23 @@ const ProjectDetails = ({ task, taskDomain }) => {
                 <div className="grid grid-cols-2 gap-4 pt-8 pb-14 mx-20">
                   {/* Project Title */}
                   <div className="flex justify-start bg-white border-2 border-gray-400 rounded-xl">
-                    <div className='mx-6 my-4'>
+                    <div className='mx-4 my-4'>
                       <img src={title} className='w-100' alt="" />
                     </div>
                     <div className='my-auto '>
                       <h2 className='text-xl font-semibold'>Title</h2>
-                      <p className='text-lg'>{loadedProject.title}</p>
+                      <p className=''>{loadedProject.title}</p>
                     </div>
                   </div>
 
                   {/* Project Description */}
                   <div className="flex justify-start bg-white border-2 border-gray-400 rounded-xl">
-                    <div className='mx-6 my-4'>
+                    <div className='mx-4 my-4'>
                       <img src={document} className='w-100' alt="" />
                     </div>
                     <div className='my-auto '>
                       <h2 className='text-xl font-semibold'>Description</h2>
-                      <p className='text-lg'>
+                      <p className=''>
                         {loadedProject.description}
                       </p>
                     </div>
@@ -199,7 +199,7 @@ const ProjectDetails = ({ task, taskDomain }) => {
 
                   {/* Project Start Date */}
                   <div className="flex justify-start bg-white border-2 border-gray-400 rounded-xl">
-                    <div className='mx-6 my-4'>
+                    <div className='mx-4 my-4'>
                       <img src={date} className='w-100' alt="" />
                     </div>
                     <div className='my-auto '>
@@ -210,7 +210,7 @@ const ProjectDetails = ({ task, taskDomain }) => {
 
                   {/* Project End Date */}
                   <div className="flex justify-start bg-white border-2 border-gray-400 rounded-xl">
-                    <div className='mx-6 my-4'>
+                    <div className='mx-4 my-4'>
                       <img src={date} className='w-100' alt="" />
                     </div>
                     <div className='my-auto '>
@@ -221,7 +221,7 @@ const ProjectDetails = ({ task, taskDomain }) => {
 
                   {/* Project Status */}
                   <div className="flex justify-start bg-white border-2 border-gray-400 rounded-xl">
-                    <div className='mx-6 my-4'>
+                    <div className='mx-4 my-4'>
                       <img src={status} className='w-100' alt="" />
                     </div>
                     <div className='my-auto '>
@@ -231,22 +231,20 @@ const ProjectDetails = ({ task, taskDomain }) => {
                   </div>
 
                   {/* Project SRS Document */}
-                  <div className="flex justify-start bg-white border-2 border-gray-400 rounded-xl">
-                    <div className='mx-6 my-4'>
+                  <a 
+                    href={`${import.meta.env.VITE_ASSETS_URL}/${loadedProject.srs}`} target="_blank" rel="noopener noreferrer"
+                    className="flex justify-start bg-white border-2 border-gray-400 rounded-xl"
+                  >
+                    <div className='mx-4 my-4'>
                       <img src={srs} className='w-100' alt="" />
                     </div>
-                    <div className='my-auto '>
-                      <h2 className='text-lg mb-2 font-semibold'>SRS Document</h2>
-                      {/* <button
-                        className='bg-blue-500 p-3 text-xl hover:bg-blue-700 text-white rounded-xl'
-                        // onClick={() => (setIsSrsViewing(!isSrsViewing))}
-                      >View</button> */}
-                      <a
-                        href={`${import.meta.env.VITE_ASSETS_URL}/${loadedProject.srs}`} target="_blank" rel="noopener noreferrer"
-                        className='bg-blue-500 p-2 text-xl hover:bg-blue-700 text-white rounded-xl'
-                      >View</a>
+                    <div className='my-auto'>
+                      <h2 
+                        className='text-lg font-semibold'
+                      >SRS Document
+                      </h2>
                     </div>
-                  </div>
+                  </a>
                 </div>
               </div>
             )}
@@ -261,7 +259,7 @@ const ProjectDetails = ({ task, taskDomain }) => {
           // Team Section
           <>
             {loadedEmployees && (
-              <div className="bg-gray-100 rounded-xl mt-8 pb-8">
+              <div className="bg-gray-100 rounded-xl mt-8 py-8">
                 {/* Heading Section */}
                 {/* <h1 className="text-3xl font-bold pb-8 pt-14 text-center">Current Project Team</h1> */}
                 <div className='px-8'>

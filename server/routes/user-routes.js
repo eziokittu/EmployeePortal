@@ -118,6 +118,20 @@ router.patch(
   userController.updateEmployeeAsUser
 );
 
+// PATCH: Update Employee rating
+router.patch(
+  '/edit/rating/',
+  [
+    check('userId')
+      .not()
+      .isEmpty(),
+    check('rating')
+      .not()
+      .isEmpty(),
+  ],
+  userController.giveRating
+);
+
 // PATCH: Terminate an employee by email
 router.patch(
   '/edit/terminate',

@@ -60,30 +60,7 @@ const Employee = () => {
 
   return (
     <div className="p-4 sm:ml-64 min-h-[500px]">
-      {/* {employeeCount>0 && (
-			<div className="p-4 border-2 bg-slate-200 border-gray-200 rounded-lg">
-				<div className="grid grid-cols-3 gap-4 mb-4">
-					{loadedEmployees && loadedEmployees.map((employee) => {
-						return (
-							<div key={employee.id}>
-								<EmployeeCard 
-                  key={employee.id}
-                  employeeID={employee.ref}
-									name={employee.firstname +' '+ employee.lastname} 
-									date={employee.date.split('T')[0]} 
-									role={employee.role}
-									email={employee.email}
-									projects={employee.projects_complete}
-                  // progress={item.progress}
-                  // link={item.projectLink}
-								/>
-							</div>
-						);
-					})}
-				</div>
-
-			</div>
-      )} */}
+      
       <div className="px-4 border-2 bg-gray-100 border-gray-200 rounded-lg">
         <div>
           <h1 className="text-3xl font-bold text-center my-2">Employees</h1>
@@ -112,13 +89,12 @@ const Employee = () => {
             return (
               <div key={employee.id}>
                 <EmployeeCard
-                  key={employee.id}
+                  id={employee.id}
                   employeeID={employee.ref}
 									firstname={employee.firstname}
                   lastname={employee.lastname} 
                   email={employee.email}
-                  // progress={item.progress}
-                  // link={item.projectLink}
+                  rating={employee.rating}
                 />
               </div>
             );

@@ -1,32 +1,29 @@
-import { useState, useEffect, useContext } from 'react';
+import React, {useState, useEffect, useContext} from "react";
 import ticketsOpen from '../../assets/ticketsOpen.png';
 import ticketsClosed from '../../assets/ticketsClosed.png';
 import ProjectItem from '../Common/ProjectItem';
-import ReactPaginate from 'react-paginate';
+// import ReactPaginate from 'react-paginate';
 import { useHttpClient } from '../Backend/hooks/http-hook';
 import { AuthContext } from '../Backend/context/auth-context';
 import Card from '../Common/Card';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
-const Projects = () => {
-  const { sendRequest } = useHttpClient();
+const MyProjects = () => {
   const auth = useContext(AuthContext);
+  let userId = auth.userId;
+  if (auth.isAdmin === true){
+    const { uid } = useParams();
+    userId = uid;
+  }
 
-  // handling the pagination
-  // const projectsDisplayedPerPage = 5;
+  const { sendRequest } = useHttpClient();
   const [projectsCount, setProjectsCount] = useState(0);
-  // const [pageCount, setPageCount] = useState(0);
-  // const [page, setPage] = useState(0);
-  // const handlePageClick = (num) => {
-  //   setPage(num);
-  // };
 
   // getting all the projects from database
   const [projects, setProjects] = useState([]);
-  const [completedProjects, setCompletedProjects] = useState();
-  const [ongoingProjects, setOngoingProjects] = useState();
   const [myCompletedProjects, setMyCompletedProjects] = useState();
   const [myOngoingProjects, setMyOngoingProjects] = useState();
+  const [projectDomains, setProjectDomains] = useState();
 
   // Fetching the all projects and count only 1 time per page reload OR change in page of pagination
   useEffect(() => {
@@ -34,7 +31,7 @@ const Projects = () => {
     const fetchProjectCount = async () => {
       try {
         const responseData = await sendRequest(
-          `${import.meta.env.VITE_BACKEND_URL}/projects/count/emp/${auth.userId}`
+          `${import.meta.env.VITE_BACKEND_URL}/projects/count/emp/${userId}`
         );
         if (responseData.ok===1){
           setProjectsCount(responseData.count);
@@ -52,8 +49,8 @@ const Projects = () => {
     const fetchProjects = async () => {
       try {
         const responseData = await sendRequest(
-          `${import.meta.env.VITE_BACKEND_URL}/projects/emp/all/${auth.userId}`
-          // `${import.meta.env.VITE_BACKEND_URL}/projects/emp/all/${auth.userId}?page=${page}`
+          `${import.meta.env.VITE_BACKEND_URL}/projects/emp/all/${userId}`
+          // `${import.meta.env.VITE_BACKEND_URL}/projects/emp/all/${userId}?page=${page}`
         );
         if (responseData.ok===1){
           setProjects(responseData.projects);
@@ -73,12 +70,11 @@ const Projects = () => {
 
   // Fetching MY ongoing and completed project count only 1 time per page reload
   useEffect(() => {
-
     // Function to fetch the ongoing project count
     const fetchOngoingProjectCount = async () => {
       try {
         const responseData = await sendRequest(
-          `${import.meta.env.VITE_BACKEND_URL}/projects/count/emp/ongoing/${auth.userId}`
+          `${import.meta.env.VITE_BACKEND_URL}/projects/count/emp/ongoing/${userId}`
         );
         if (responseData.ok===1){
           setMyOngoingProjects(responseData.count);
@@ -96,7 +92,7 @@ const Projects = () => {
     const fetchCompletedProjectCount = async () => {
       try {
         const responseData = await sendRequest(
-          `${import.meta.env.VITE_BACKEND_URL}/projects/count/emp/completed/${auth.userId}`
+          `${import.meta.env.VITE_BACKEND_URL}/projects/count/emp/completed/${userId}`
         );
         if (responseData.ok===1){
           setMyCompletedProjects(responseData.count);
@@ -116,7 +112,6 @@ const Projects = () => {
 
   // Fetching TOTAL ongoing and completed project count only 1 time per page reload
   useEffect(() => {
-
     // Function to fetch the ongoing project count
     const fetchOngoingProjectCount = async () => {
       try {
@@ -157,6 +152,22 @@ const Projects = () => {
     fetchOngoingProjectCount();
   }, []);
 
+  useEffect(() => {
+    // Function to fetch the project domains
+    const fetchProjectDomains = async () => {
+      try {
+        const responseData = await sendRequest(
+          `${import.meta.env.VITE_BACKEND_URL}/domains/get`
+        );
+        if (responseData.ok===1){
+          setProjectDomains(responseData.domains);
+        }
+      } catch (err) {
+        console.log("Error in fetching domains: "+err);
+      }
+    };
+    fetchProjectDomains();
+  }, []);
   
   //Toggle Completed function
   // function toggleCompleted(id) {
@@ -173,25 +184,48 @@ const Projects = () => {
     <div className="p-4 sm:ml-64">
       <div className="p-4 border-2 border-gray-200 rounded-lg">
 
-        {/* My Projects Overview */}
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          {/* Onfoing Projetcs */}
-          <Card 
-            name='My Ongoing Projects' 
-            value={(!myOngoingProjects ? "0" : myOngoingProjects)} 
-            imgValue={ticketsOpen} 
-          />
-          {/* Completed Projects */}
-          <Card 
-            name='My Completed Projects' 
-            value={(!myCompletedProjects ? "0" : myCompletedProjects)} 
-            imgValue={ticketsClosed}
-          />
-        </div>
+        {/* My Projects Overview for ADMIN */}
+        {auth.isAdmin && (
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            {/* Ongoing Projetcs */}
+            <Card 
+              name='Their Ongoing Projects' 
+              value={(!myOngoingProjects ? "0" : myOngoingProjects)} 
+              imgValue={ticketsOpen} 
+            />
+            {/* Completed Projects */}
+            <Card 
+              name='Their Completed Projects' 
+              value={(!myCompletedProjects ? "0" : myCompletedProjects)} 
+              imgValue={ticketsClosed}
+            />
+          </div>
+        )}
+        
+        {/* My Projects Overview for Employee*/}
+        {!auth.isAdmin && (
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            {/* Onfoing Projetcs */}
+            <Card 
+              name='My Ongoing Projects' 
+              value={(!myOngoingProjects ? "0" : myOngoingProjects)} 
+              imgValue={ticketsOpen} 
+            />
+            {/* Completed Projects */}
+            <Card 
+              name='My Completed Projects' 
+              value={(!myCompletedProjects ? "0" : myCompletedProjects)} 
+              imgValue={ticketsClosed}
+            />
+          </div>
+        )}
 
         {/* Ongoing Projects  */}
-        {/* Add Project Heading */}
-        <h2 className='font-bold text-3xl mb-4 text-center'>My Projects</h2>
+        {!auth.isAdmin ? (
+          <h2 className='font-bold text-3xl mb-4 text-center'>My Projects</h2>
+        ) : (
+          <h2 className='font-bold text-3xl mb-4 text-center'>Their Projects</h2>
+        )}
 
         {/* Displaying all projects */}
         {projects && projectsCount>0 && (
@@ -253,25 +287,20 @@ const Projects = () => {
               {/* Projects start */}
               <div className="mb-2">
                 {/* Project Component Start */}
-                <div className='grid grid-cols-2 gap-4'>
-                  {/* Conditional rendering between Search result and tasks list */}
-                  {
-                    // (searchQuery.length === 0 || searchResults.length === 0 ? filteredTasks : searchResults)
-                    projects
-                      .map(task => (
+                {projects && projectDomains && (
+                  <div className='grid grid-cols-2 gap-4'>
+                    {/* Conditional rendering between Search result and tasks list */}
+                    {
+                      // (searchQuery.length === 0 || searchResults.length === 0 ? filteredTasks : searchResults)
+                      projects.map(task => (
                         <ProjectItem
                           key={task.id}
                           task={task}
-                          projetDesceiption={task.projectDescription}
-                          selectedOption={task.selectedOption}
-                          startDate={task.startDate}
-                          endDate={task.endDate}
-                          selectedFile={task.selectedFile}
-                          link={task.link}
-                          // toggleCompleted={toggleCompleted}
+                          projectDomains = {projectDomains}
                         />
                       ))}
-                </div>
+                  </div>
+                )}
                 {/* Project Component End */}
               </div>
               {/* Projects End */}
@@ -301,6 +330,6 @@ const Projects = () => {
   )
 }
 
-export default Projects
+export default MyProjects
 
 

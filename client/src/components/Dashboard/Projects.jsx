@@ -490,7 +490,7 @@ const Projects = () => {
             <label htmlFor="">Enter SRS document</label>
             <input
               id='srs_file'
-              className='border-2 w-1/2 border-gray-200 rounded-lg px-3 py-1.5 mr-2 mb-2'
+              className='border-2 w-1/2 border-gray-200 rounded-lg px-3 py-1.5 mb-2'
               type="file"
               ref={filePickerRef}
               placeholder='Enter SRS'
@@ -500,14 +500,14 @@ const Projects = () => {
             {/* Project Link input field */}
             <input
               required
-              className='border-2 w-1/2 border-gray-200 rounded-lg px-3 py-1.5 mr-2 mb-2 placeholder:text-gray-800'
+              className='border-2 w-1/2 border-gray-200 rounded-lg px-3 py-1.5 mb-2 placeholder:text-gray-800'
               type="text"
               placeholder='Enter Project Link'
               value={link}
               onChange={(e) => setLink(e.target.value)}
             /> <br />
             <button
-              className='text-white w-1/2 bg-primary-600 border-2 hover:bg-white hover:text-primary-600 hover:border-primary-600 focus:ring-2 focus:ring-indigo-300 font-bold rounded-lg text-lg px-4 lg:px-5 py-2 lg:py-2.5 mr-2'
+              className='text-white w-1/2 bg-primary-600 border-2 hover:bg-white hover:text-primary-600 hover:border-primary-600 focus:ring-2 focus:ring-indigo-300 font-bold rounded-lg text-lg px-4 lg:px-5 py-2 lg:py-2.5'
               onClick={() => { projectAddHandler() }}
             >
               Add Projects

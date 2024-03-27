@@ -129,6 +129,7 @@ function App() {
               <Route exact path="/dashboard" element={<Dashboard />} />
               <Route exact path="/employee" element={<Employee />} />
               <Route exact path="/projects" element={<Projects />} />
+              <Route exact path="/:uid/projects" element={<MyProjects />} />
               <Route exact path="/project-details/:pid" element={<ProjectDetails />} />
               <Route exact path="/termination" element={<Termination />} />
               <Route exact path="/internships" element={<Internship />} />

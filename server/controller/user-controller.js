@@ -742,14 +742,24 @@ const giveRating = async (req, res, next) => {
     return res.json({ok:-1, message:"The user ID is invalid!"+err})
   }
 
+  // Checking if rating is in range
+  let finalRating = rating;
+  if (rating>5){
+    finalRating = 5;
+  }
+  else if (rating<0){
+    finalRating = 0;
+  }
+
+  // Updating the user's rating
   try {
-    existingUser.rating = rating;
+    existingUser.rating = finalRating;
     existingUser.save();
   } catch (err) {
     return res.json({ok:-1, message: "saving the existing user failed!"+err})
   }
 
-  return res.json({ok:1, message})
+  return res.json({ok:1, message: "Successfully updated employee rating"})
 }
 
 // DELETE

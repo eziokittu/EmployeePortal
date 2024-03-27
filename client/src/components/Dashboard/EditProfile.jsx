@@ -39,11 +39,11 @@ const EditProfile = () => {
 					'Content-Type': 'application/json'
 				}
       );
-			console.log("DEBUG 1");
+			// console.log("DEBUG 1");
 			setTimeout(() => {
 				window.location.reload(false);
 			}, 2500);
-			console.log("DEBUG 2");
+			// console.log("DEBUG 2");
 			await auth.updateUser(
         inputUserName,
         inputFirstName,
@@ -55,7 +55,7 @@ const EditProfile = () => {
 				auth.image,
 				false
       );
-			console.log("DEBUG 3");
+			// console.log("DEBUG 3");
       console.log("User details updated successfully!");
     } catch (err) {
       console.log('ERROR updating user details!');
