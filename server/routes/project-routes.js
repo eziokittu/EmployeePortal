@@ -56,6 +56,7 @@ router.patch(
     //   .not()
     //   .isEmpty()
   ],
+  srsUpload.single('srs'),
   projectController.updateProjectInfo
 );
 

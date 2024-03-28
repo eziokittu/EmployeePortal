@@ -59,6 +59,7 @@ const ProjectDetails = ({ task, taskDomain }) => {
     fetchProjectDomainName();
   }, [loadedProject]);
 
+  const [updateRoleClicked, setUpdateRoleClicked] = useState(false);
   const [allRoles, setAllRoles] = useState();
   // Function to fetch all roles
   useEffect(() => {
@@ -90,6 +91,7 @@ const ProjectDetails = ({ task, taskDomain }) => {
         );
         if (responseData.ok === 1) {
           setLoadedEmployees(responseData.employees);
+          setUpdateRoleClicked(false); // reset the state
         }
         else {
           console.log(responseData.message)
@@ -99,7 +101,7 @@ const ProjectDetails = ({ task, taskDomain }) => {
       }
     };
     fetchEmployees();
-  }, [loadedProject]);
+  }, [loadedProject, updateRoleClicked]);
 
   // State to manage the section of the project details
   const [section, setSection] = useState('overview');
@@ -118,14 +120,8 @@ const ProjectDetails = ({ task, taskDomain }) => {
 			);
       if (responseData.ok===1){
         console.log("updated employee role");
+        setUpdateRoleClicked(true);
       }
-      
-
-      // Refreshes the page after 1.5 seconds
-      setTimeout(() => {
-        window.location.reload(false);
-      }, 1500);
-      
 		} catch (err) {
 			console.log('ERROR updating employee role');
 		}  

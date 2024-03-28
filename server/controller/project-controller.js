@@ -431,8 +431,8 @@ const updateProjectInfo = async (req, res, next) => {
   }
 
   console.log(req.body);
-  const { title, description, domain, link, startDate, endDate } = req.body;
 
+  const { title, description, domain, link, startDate, endDate } = req.body;
   const projectId = req.params.pid;
 
   // Find the existing project by projectId
@@ -442,36 +442,54 @@ const updateProjectInfo = async (req, res, next) => {
   }
 
   // checking the existance of the domain
-  let existingDomain;
-  try {
-    existingDomain = await Domain.findOne({name: domain});
-    if (domain!=='-' && !existingDomain){
-      return res.json({ok:-1, message: "Domain does not exist!"});
-    }
-  } catch (error) {
-    return res.json({ok:-1, message: "Some Error occured"});
-  }
+  // let existingDomain;
+  // try {
+  //   existingDomain = await Domain.findOne({name: domain});
+  //   if (domain!=='-' && !existingDomain){
+  //     return res.json({ok:-1, message: "Domain does not exist! Domain:"+domain});
+  //   }
+  // } catch (error) {
+  //   return res.json({ok:-1, message: "Some Error occured"});
+  // }
   
   // Update project details
   try {
     existingProject.title = title;
-    existingProject.domain = existingDomain;
+    // existingProject.domain = existingDomain;
     existingProject.description = description;
     existingProject.link = link;
     existingProject.date_start = startDate,
     existingProject.date_end = endDate
     // Save the updated user
     await existingProject.save();
-    return res
-      .status(200)
-      .json({ 
-        ok:1, 
-        message: "Successfully updated the project INFO", 
-        project: existingProject.toObject({ getters: true }) 
-      });
   } catch (err) {
     return res.status(200).json({ ok:-1, message: `Same error occured while updating project INFO, ${err}` });
   }
+
+  // Unlinking the existing SRS
+  const srsPath = existingProject.srs;
+  if (srsPath !== process.env.DB_USER_DEFAULT_SRS){
+    fs.unlink(srsPath, err => {
+      console.log("Successfully deleted the srs file for the project:", title);
+    })
+  }
+
+  // Linking the SRS file to the project
+  try {
+    existingProject.srs = req.file.path;
+    await existingProject.save();
+  }
+  catch (err2){
+    console.log("File path error:\n",err2);
+  }
+
+  return res
+    .status(200)
+    .json({ 
+      ok:1, 
+      message: "Successfully updated the project INFO", 
+      project: existingProject.toObject({ getters: true }) 
+    });
 }
 
 const addProjectMembersById = async (req, res, next) => {

@@ -143,7 +143,6 @@ const Projects = () => {
 
   // For updating the image
   const [file, setFile] = useState();
-  const [previewUrl, setPreviewUrl] = useState(auth.image);
   const [isValid, setIsValid] = useState(false);
   const [inputImage, setInputImage] = useState(auth.image);
 
@@ -155,9 +154,6 @@ const Projects = () => {
       return;
     }
     const fileReader = new FileReader();
-    // fileReader.onload = () => {
-    //   setPreviewUrl(fileReader.result);
-    // };
     fileReader.readAsDataURL(file);
 	}, [file]);
 

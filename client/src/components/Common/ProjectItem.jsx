@@ -1,4 +1,4 @@
-import React, {useState, useContext, useEffect} from 'react'
+import React, { useState, useContext, useEffect, useRef } from 'react'
 import { useHttpClient } from '../Backend/hooks/http-hook';
 import { AuthContext } from '../Backend/context/auth-context';
 import { useNavigate } from 'react-router-dom';
@@ -7,12 +7,12 @@ import { useNavigate } from 'react-router-dom';
 const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 	const navigate = useNavigate();
 	const { sendRequest } = useHttpClient();
-  const auth = useContext(AuthContext);
+	const auth = useContext(AuthContext);
 
 	const projectDeleteHandler = async event => {
 		try {
 			const responseData = await sendRequest(
-				import.meta.env.VITE_BACKEND_URL+`/projects/`,
+				import.meta.env.VITE_BACKEND_URL + `/projects/`,
 				'DELETE',
 				JSON.stringify({
 					projectId: task.id
@@ -21,7 +21,7 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 					'Content-Type': 'application/json'
 				}
 			);
-			if (responseData.ok===1){
+			if (responseData.ok === 1) {
 				console.log("Deleted project");
 
 				// Refreshes the page after 1 second
@@ -39,32 +39,75 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 
 	// State defined for editing the project details
 	const [isEditing, setIsEditing] = useState(false);
-	const [editedProjectName, setEditedProjectName] = useState(task.title);
+	const [editedProjectTitle, setEditedProjectTitle] = useState(task.title);
 	const [editedProjectDescription, setEditedProjectDescription] = useState(task.description);
 	const [editedProjectLink, setEditedProjectLink] = useState(task.link);
 	const [editedProjectType, setEditedProjectType] = useState();
 	const [editedStartDate, setEditedStartDate] = useState(task.date_start);
 	const [editedEndDate, setEditedEndDate] = useState(task.date_end);
+	const [domain, setDomain] = useState();
+
+	// For updating the image
+  const [file, setFile] = useState();
+  const [isValid, setIsValid] = useState(false);
+  const [inputFile, setInputFile] = useState(auth.image);
+
+  const filePickerRef = useRef();
+
+	// Function to update the preview image when the file changes
+  useEffect(() => {
+    if (!file) {
+      return;
+    }
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(file);
+	}, [file]);
+
+  const pickedHandler = event => {
+    let pickedFile;
+    if (event.target.files && event.target.files.length === 1) {
+      pickedFile = event.target.files[0];
+      setFile(pickedFile);
+      setIsValid(true);
+    } else {
+      setIsValid(false);
+    }
+    setInputFile(pickedFile);
+  };
 
 	// Function to edit current project
 	const projectEditHandler = async event => {
 		try {
+			const formData = new FormData();
+      formData.append('srs', file);
+
+      // for project title
+      if (editedProjectTitle===''){
+        editedProjectTitle = task.title;
+      }
+			formData.append('title', editedProjectTitle);
+
+      // for project description
+      if (editedProjectDescription===''){
+        editedProjectDescription = task.description;
+      }
+			formData.append('description', editedProjectDescription);
+
+			// for project link
+      if (editedProjectLink===''){
+        editedProjectLink = task.link;
+			}
+			formData.append('link', editedProjectLink);		
+      formData.append('domain', editedProjectType);
+      formData.append('startDate', editedStartDate);
+      formData.append('endDate', editedEndDate);
+
 			const responseData = await sendRequest(
-				import.meta.env.VITE_BACKEND_URL+`/projects/patch/${task.id}`,
+				import.meta.env.VITE_BACKEND_URL + `/projects/patch/${task.id}`,
 				'PATCH',
-				JSON.stringify({
-					title: editedProjectName,
-					description: editedProjectDescription,
-					domain: editedProjectType,
-					link: editedProjectLink,
-					startDate: editedStartDate,
-					endDate: editedEndDate
-				}),
-				{
-					'Content-Type': 'application/json'
-				}
+        formData
 			);
-			if (responseData.ok===1){
+			if (responseData.ok === 1) {
 				console.log("Updated project details");
 
 				// Refreshes the page after 1 second
@@ -80,18 +123,6 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 		}
 	};
 
-	// Function to handle the save button click
-	function handleSaveClick() {
-		editTask(task.id, {
-			text: editedProjectName,
-			projectDescription: editedProjectDescription,
-			link: editedProjectLink,
-			selectedOption: editedProjectType,
-			startDate: editedStartDate,
-			endDate: editedEndDate,
-		});
-		setIsEditing(false);
-	}
 	// Button to handle the edit button click
 	function handleEditClick() {
 		setIsEditing(true);
@@ -108,26 +139,25 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 	// }
 
 	// Function to get the domain name for the project
-	const [domain, setDomain] = useState();
-  useEffect(() => {
-    const fetchProjectDomainName = async () => {
-      try {
-        const responseData = await sendRequest(
-          `${import.meta.env.VITE_BACKEND_URL}/domains/get/project/${task._id}`
-        );
-        if (responseData.ok===1){
-          setDomain(responseData.domain);
-          setEditedProjectType(responseData.domain.name);
-        }
-        else {
-          console.log("Error in setting domain");
-        }
-      } catch (err) {
-        console.log("Error in fetching domain "+err);
-      }
-    };
-    fetchProjectDomainName();
-  }, []);
+	useEffect(() => {
+		const fetchProjectDomainName = async () => {
+			try {
+				const responseData = await sendRequest(
+					`${import.meta.env.VITE_BACKEND_URL}/domains/get/project/${task._id}`
+				);
+				if (responseData.ok === 1) {
+					setDomain(responseData.domain);
+					setEditedProjectType(responseData.domain.name);
+				}
+				else {
+					console.log("Error in setting domain");
+				}
+			} catch (err) {
+				console.log("Error in fetching domain " + err);
+			}
+		};
+		fetchProjectDomainName();
+	}, []);
 
 	return (
 		// Project Item View Card
@@ -137,7 +167,7 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 					<div className="p-5">
 						{/* Project Title */}
 						<h2 className="text-xl font-bold mb-2">{task.title}</h2>
-						
+
 						{/* Project Description */}
 						<p className="text-gray-600 mb-4">{task.description}</p>
 						<div className='flex items-center '>
@@ -180,17 +210,17 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 
 							{/* Edit Button */}
 							{auth.isAdmin && (
-							<button
-								onClick={handleEditClick}
-								className="text-sm text-white bg-blue-500 w-20 py-2 mr-10 rounded-md hover:bg-blue-600"
-							>
-								Edit
-							</button>
+								<button
+									onClick={handleEditClick}
+									className="text-sm text-white bg-blue-500 w-20 py-2 mr-10 rounded-md hover:bg-blue-600"
+								>
+									Edit
+								</button>
 							)}
 
 							{/* Details Button */}
 							<button
-								onClick={() => {handleDetailsClick(task._id)}}
+								onClick={() => { handleDetailsClick(task._id) }}
 								className="text-sm text-white bg-gray-500 w-20 py-2 mr-10 rounded-md hover:bg-gray-600"
 							>
 								Details
@@ -198,12 +228,12 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 
 							{/* Delete Button */}
 							{auth.isAdmin && (
-							<button
-								onClick={() => projectDeleteHandler()}
-								className="text-sm text-white bg-red-500 w-20 py-2 rounded-md hover:bg-red-600"
-							>
-								Delete
-							</button>
+								<button
+									onClick={() => projectDeleteHandler()}
+									className="text-sm text-white bg-red-500 w-20 py-2 rounded-md hover:bg-red-600"
+								>
+									Delete
+								</button>
 							)}
 						</div>
 					</div>
@@ -215,9 +245,9 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 				{/* Project Title edit input box */}
 				<input
 					type="text"
-					value={editedProjectName}
+					value={editedProjectTitle}
 					placeholder='Enter Project Title'
-					onChange={(e) => setEditedProjectName(e.target.value)}
+					onChange={(e) => setEditedProjectTitle(e.target.value)}
 					className="mt-2 block w-full px-3 py-2 border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 				/>
 				{/* Project Description edit input box */}
@@ -235,19 +265,30 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 					onChange={(e) => setEditedProjectLink(e.target.value)}
 					className="mt-2 block w-full px-3 py-2 border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 				/>
-				{/* Project Type edit input box */}
-				{domain && (<select
-					value={editedProjectType}
-					onChange={(e) => setEditedProjectType(e.target.value)}
-					className="mt-2 block w-full px-3 py-2 border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-				>
-					{projectDomains.map(d => (
-						<option defaultValue={d.name} value={d.name}>{d.name}</option>
-					))}
-					
-					{/* <option value="App-Development">App Development</option> */}
-				</select>
-				)}
+				<div className='flex gap-2 justify-center'>
+					{/* Project Type edit input box */}
+					{domain && (<select
+						defaultValue={editedProjectType}
+						value={editedProjectType}
+						onChange={e => setEditedProjectType(e.target.value)}
+						className="mt-2 block w-full px-3 py-2 border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+					>
+						{projectDomains.map(d => (
+							<option key={d.id} defaultValue={d.name} value={d.name}>{d.name}</option>
+						))}
+					</select>
+					)}
+					<input
+						id='srs_file'
+						type="file"
+						className="mt-2 block w-full px-3 py-2 bg-white border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+						placeholder="Upload new SRS File"
+						name="file"
+						ref={filePickerRef}
+						accept=".pdf"
+						onChange={pickedHandler}
+					/>
+				</div>
 				{/* Project Start and End Date edit input box */}
 				<div className='flex justify-center items-center gap-2'>
 					<input
