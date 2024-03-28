@@ -442,20 +442,20 @@ const updateProjectInfo = async (req, res, next) => {
   }
 
   // checking the existance of the domain
-  // let existingDomain;
-  // try {
-  //   existingDomain = await Domain.findOne({name: domain});
-  //   if (domain!=='-' && !existingDomain){
-  //     return res.json({ok:-1, message: "Domain does not exist! Domain:"+domain});
-  //   }
-  // } catch (error) {
-  //   return res.json({ok:-1, message: "Some Error occured"});
-  // }
+  let existingDomain;
+  try {
+    existingDomain = await Domain.findOne({name: domain});
+    if (domain!=='-' && !existingDomain){
+      return res.json({ok:-1, message: "Domain does not exist! Domain:"+domain});
+    }
+  } catch (error) {
+    return res.json({ok:-1, message: "Some Error occured"});
+  }
   
   // Update project details
   try {
     existingProject.title = title;
-    // existingProject.domain = existingDomain;
+    existingProject.domain = existingDomain;
     existingProject.description = description;
     existingProject.link = link;
     existingProject.date_start = startDate,
