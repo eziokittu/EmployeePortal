@@ -1,5 +1,6 @@
 {
   "env": {
+    "DB_PORT": 5000,
     "DB_USER": "user",
     "DB_PASSWORD": "user",
     "DB_NAME": "rnpsoft-employee-portal",

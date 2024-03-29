@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useHttpClient } from '../Backend/hooks/http-hook';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 
-function CreateOffer() {
+function EditOffer() {
   const { sendRequest } = useHttpClient();
+  const [loadedOffer, setLoadedOffer] = useState();
+  const [loadedOfferDomain, setLoadedOfferDomain] = useState();
+  const { oid } = useParams();
   const navigate = useNavigate();
 
   const [offerType, setOfferType] = useState('internship');
@@ -16,6 +19,7 @@ function CreateOffer() {
 
   // Initial fetch
   useEffect(() => {
+
     // Function to fetch the project domains
     const fetchProjectDomains = async event => {
       try {
@@ -30,28 +34,60 @@ function CreateOffer() {
         console.log("Error in fetching domains: " + err);
       }
     };
+
+    // Function to fetch the offer
+    const fetchOffer = async event => {
+      try {
+        const responseData = await sendRequest(
+          `${import.meta.env.VITE_BACKEND_URL}/offers/get/offer/${oid}`
+        );
+        if (responseData.ok === 1) {
+          setLoadedOffer(responseData.offer);
+          setOfferType(responseData.offer.type)
+          setInputLink(responseData.offer.link)
+          setInputCtc(responseData.offer.ctc)
+          setInputStipend(responseData.offer.stipend)
+          setInputHeading(responseData.offer.heading)
+          setInputHeading(responseData.offer.heading)
+        }
+      } catch (err) {
+        console.log("Error in fetching offer: "+err);
+      }
+    };
     fetchProjectDomains();
+    fetchOffer();
   }, []);
+
+  // Initial fetch + fetch on change in loadedOffer
+  useEffect(() => {
+    // Function to fetch the offer domain
+    const fetchOfferDomain = async event => {
+      try {
+        const responseData = await sendRequest(
+          `${import.meta.env.VITE_BACKEND_URL}/domains/get/${loadedOffer.domain}`
+        );
+        if (responseData.ok === 1) {
+          setLoadedOfferDomain(responseData.domain);
+        }
+      } catch (err) {
+        console.log("Error in fetching offer domain! ERROR: "+err);
+      }
+    };
+    if (loadedOffer){
+      fetchOfferDomain();
+    }
+  }, [loadedOffer]);
 
   // function to check for invalid inputs and return the list of error message strings
   const validateCreateOfferInput = () => {
     let alerts = [];
-    // if (!inputCtc.trim()) {
-    //   alerts.push('Offer CTC cannot be empty');
-    // }
-    // if (!inputStipend.trim()) {
-    //   alerts.push('Offer Stipend cannot be empty');
-    // }
-    // if (!inputLink.trim()) {
-    //   alerts.push('Offer Link cannot be empty');
-    // }
     if (!inputHeading.trim()) {
       alerts.push('Offer name cannot be empty');
     }
     return alerts; // Return the alerts array directly
   }
 
-  const createOfferHandler = async event => {
+  const editOfferHandler = async event => {
     event.preventDefault();
     try {
       // Checking for invalid input
@@ -67,40 +103,41 @@ function CreateOffer() {
       const correctedLink = inputLink.trim() ? inputLink : '-';
 
       // Setting the data to be sent based on the offer type
-      let postData = {
+      let patchData = {
         heading: inputHeading,
         link: correctedLink,
         domain: selectedDomain
       };
 
       if (offerType === 'job') {
-        postData.ctc = correctedCtc;
-      } else { // Assuming it's an internship if not a job
-        postData.stipend = correctedStipend;
+        patchData.ctc = correctedCtc;
+      } else {
+        patchData.stipend = correctedStipend;
       }
 
+      // Sending the PATCH request
       const responseData = await sendRequest(
-        `${import.meta.env.VITE_BACKEND_URL}/offers/post/${offerType}`,
-        'POST',
-        JSON.stringify(postData),
+        `${import.meta.env.VITE_BACKEND_URL}/offers/patch/${offerType}/${oid}`,
+        'PATCH',
+        JSON.stringify(patchData),
         {
           'Content-Type': 'application/json'
         }
       );
 
       if (responseData.ok === 1) {
-        console.log("Added new Offer");
-        alert(`Created new ${offerType} listing:\nHeading: ${inputHeading}\nLink: ${correctedLink}\nDomain: ${selectedDomain}\n${offerType === 'job' ? `CTC: ${correctedCtc}` : `Stipend: ${correctedStipend}`}`);
+        console.log("Edited Offer Successfully");
+        alert(`Edited ${offerType} listing:\nHeading: ${inputHeading}\nLink: ${correctedLink}\nDomain: ${selectedDomain}\n${offerType === 'job' ? `CTC: ${correctedCtc}` : `Stipend: ${correctedStipend}`}`);
       } else {
-        console.log("Creating new offer failed!");
+        console.log("Editing offer failed!");
       }
 
     } catch (err) {
-      console.log('ERROR Creating offer listing, ERROR: ' + err);
+      console.log('ERROR Editing offer listing, ERROR: ' + err);
     }
   };
 
-  const cancelOfferHandler = () => {
+  const resetOfferHandler = () => {
     setTimeout(() => {
       window.location.reload(false);
     }, 300);
@@ -111,21 +148,11 @@ function CreateOffer() {
       <div className="bg-blue-50 min-h-[500px] border-2 border-gray-300 p-8 rounded-xl">
 
         {/* Create Internship Offer */}
-        {projectDomains && (
+        {projectDomains && loadedOffer &&  (
           <div className="flex flex-col justify-center items-center w-1/2 mx-auto">
 
             {/* Heading */}
-            <p className="text-3xl my-8 font-bold">Create Offer Listing</p>
-
-            {/* Select offer type */}
-            <p className="text-lg mr-auto">Choose Offer Type</p>
-            <select
-              className="mb-4 h-10 w-full rounded-md p-2 bg-blue-100 px-2 border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-              onClickCapture={e => setOfferType(e.target.value)}
-            >
-              <option className="" value={'internship'}>Internship</option>
-              <option className="" value={'job'}>Job</option>
-            </select>
+            <p className="text-3xl my-8 font-bold">{`Edit ${offerType} Listing`}</p>
 
             {/* Form */}
             <div className="flex flex-col justify-center items-center w-full">
@@ -215,22 +242,29 @@ function CreateOffer() {
               <div className="flex gap-2 justify-center w-full">
                 <button
                   className="p-4 text-white bg-blue-500 hover:bg-blue-800 rounded-md w-[180px] text-xl"
-                  onClick={createOfferHandler}
-                >Create Offer</button>
+                  onClick={editOfferHandler}
+                >Edit Offer</button>
                 <button
                   className="p-4 text-white bg-gray-400 hover:bg-gray-600 rounded-md w-[180px] text-xl"
-                  onClick={cancelOfferHandler}
-                >Clear</button>
+                  onClick={resetOfferHandler}
+                >Reset</button>
               </div>
 
             </div>
           </div>
         )}
 
+        {!loadedOffer && (
+          <div className="flex flex-col justify-center items-center w-1/2 mx-auto">
+            <div className="text-3xl font-bold mt-8 mb-4">ERROR: Could not fetch offer with this ID</div>
+            <div className="text-lg">[Try Again Later]</div>
+          </div>
+        )}
+
         {!projectDomains && (
           <div className="flex flex-col justify-center items-center w-1/2 mx-auto">
             <div className="text-3xl font-bold mt-8 mb-4">ERROR: No Domains found</div>
-            <div className="text-lg mb-4">To create an offer listing, you need to create a domain!</div>
+            <div className="text-lg mb-4">To edit the offer listing, you need to create a domain!</div>
             <button className="rounded-xl bg-blue-500 hover:bg-blue-800 text-white p-4">
               <Link to={'/others'}>Create a domain</Link>
             </button>
@@ -241,4 +275,4 @@ function CreateOffer() {
   )
 }
 
-export default CreateOffer
+export default EditOffer

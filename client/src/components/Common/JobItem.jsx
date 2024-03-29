@@ -77,7 +77,7 @@ const JobItem=({id, stipend, ctc, heading, domain, date, isInternship, userIsAdm
         <p className="text-xl">{heading}</p>
 
         {/* Job Edit Button */}
-        <Link to={`/editoffer/${id}`}>
+        <Link to={`/edit-offer/${id}`}>
         <svg
           className="h-5 mt-1 cursor-pointer"
           xmlns="http://www.w3.org/2000/svg"
@@ -95,9 +95,9 @@ const JobItem=({id, stipend, ctc, heading, domain, date, isInternship, userIsAdm
 
         {/* Stipend / CTC */}
         {isInternship ? (
-          <p className="text-gray-400 text-sm">Stipend: ${stipend}</p>
+          <p className="text-gray-400 text-sm">{`${stipend==='-' ? `[No Stipend / Performance Based Bonus]` : `Stipend: ${stipend}`}`}</p>
         ) : (
-          <p className="text-gray-400 text-sm">CTC: ${ctc}</p>
+          <p className="text-gray-400 text-sm">{`${ctc==='-' ? `[CTC cannt be disclosed]` : `CTC: ${ctc}`}`}</p>
         )}
 
         {/* Domain */}

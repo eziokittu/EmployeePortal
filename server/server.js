@@ -65,6 +65,7 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || 'An unknown error occurred!' });
 });
 
+const port = process.env.DB_PORT || 5000;
 // MongoDB ATLAS
 // const uriDB = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.nmjiwwv.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`; 
 
@@ -120,8 +121,6 @@ mongoose
     // Set the employee count
     try {
       let count = await User.countDocuments({isEmployee: true, isTerminated: false});
-      let count2 = await User.countDocuments({isEmployee: true, isTerminated: true});
-      let count3 = await User.countDocuments({isAdmin: false});
       if (!count || count===0){
         count = 1;
         console.log("LOG - [no employees]");
@@ -131,16 +130,26 @@ mongoose
       }
       adminUser.employeeCount = count;
       await adminUser.save();
+    } catch (err) {
+      console.log("LOG - Some error occured: "+err);
+    }
 
-      // Logging the terminated employees 
+    // Logging the terminated employees 
+    try {
+      let count2 = await User.countDocuments({isEmployee: true, isTerminated: true});
       if (!count2 || count2===0){
         console.log("LOG - [no terminated employees]");
       }
       else {
         console.log("LOG - Terminated Employee count: "+count2);
       }
+    } catch (err) {
+      console.log("LOG - ERROR in fetching termination count!");
+    }
 
-      // Logging the registered users 
+    // Logging the registered users 
+    try {
+      let count3 = await User.countDocuments({isAdmin: false});
       if (!count3 || count3===0){
         console.log("LOG - [no registered users]");
       }
@@ -148,12 +157,12 @@ mongoose
         console.log("LOG - Registered User count: "+count3);
       }
     } catch (err) {
-      console.log("LOG - ERROR in fetching employee count!");
+      console.log("LOG - ERROR in fetching user count!");
     }
 
     // Start the server
-    app.listen(5000, () => {
-      console.log("LOG - Server running on port 5000");
+    app.listen(port, () => {
+      console.log(`LOG - Server running on port ${port}`);
     });
   })
   .catch(err => {

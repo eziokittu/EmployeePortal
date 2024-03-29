@@ -144,15 +144,12 @@ const getOffer = async (req, res, next) => {
   // console.log('DEBUG -- offer-controller.js -- 1: '+uid);
   let offer;
   try {
-    // user = await User.find();
     offer = await Offer.findById(oid);
-    // console.log('DEBUG -- offer-controller.js -- 2: ');
+    if (!offer){
+      res.json({ok:-1, message:"No offer found with this ID:",oid});
+    }
   } catch (err) {
-    const error = new HttpError(
-      'Fetching offer with offerId failed, please try again later.',
-      500
-    );
-    return next(error);
+    res.json({ok:-1, message:"Some error occured!",err});
   }
   res.json({ok:1, offer: offer, message:"Successful!"});
 };

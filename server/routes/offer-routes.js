@@ -7,6 +7,7 @@ const offerController = require('../controller/offer-controller');
 const router = express.Router();
 
 // router.get('/', offerController.getOffers);
+router.get('/get/offer/:oid', offerController.getOffer);
 router.get('/get/internships', offerController.getInternships);
 router.get('/get/internships/:domain', offerController.getInternshipsByDomain);
 router.get('/get/jobs', offerController.getJobs);
@@ -16,7 +17,6 @@ router.get('/get/internshipcount', offerController.getInternshipCount);
 router.get('/get/internshipcount/:domain', offerController.getInternshipCountByDomain);
 router.get('/get/jobcount', offerController.getJobCount);
 router.get('/get/jobcount/:domain', offerController.getJobCountByDomain);
-router.get('/get/offer/:oid', offerController.getOffer);
 
 // POST
 
