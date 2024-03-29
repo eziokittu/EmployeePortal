@@ -83,19 +83,19 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 
       // for project title
       if (editedProjectTitle===''){
-        editedProjectTitle = task.title;
+        setEditedProjectTitle(task.title);
       }
 			formData.append('title', editedProjectTitle);
 
       // for project description
       if (editedProjectDescription===''){
-        editedProjectDescription = task.description;
+        setEditedProjectDescription(task.description);
       }
 			formData.append('description', editedProjectDescription);
 
 			// for project link
       if (editedProjectLink===''){
-        editedProjectLink = task.link;
+        setEditedProjectLink(task.link);
 			}
 			formData.append('link', editedProjectLink);		
       formData.append('domain', editedProjectType);

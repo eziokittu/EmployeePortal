@@ -9,6 +9,9 @@
     "DB_USER_DEFAULT_CERTIFICATE": "uploads/certificates/defaultCertificate.pdf",
     "DB_USER_DEFAULT_RESUME": "uploads/resume/defaultResume.pdf",
     "DB_USER_DEFAULT_SRS": "uploads/srs/defaultSrs.pdf",
+    "DB_USER_DEFAULT_REF": "-",
+    "DB_USER_DEFAULT_PHONE": "91XXXXXXXX",
+    "DB_USER_DEFAULT_BIO": "Some Bio for the user",
 
     "DB_ADMIN_EMAIL": "admin@gmail.com",
     "DB_ADMIN_PASSWORD": "passme",

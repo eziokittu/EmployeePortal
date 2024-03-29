@@ -86,13 +86,21 @@ function ApplicationCard({isJob, data}) {
           {/* Buttons */}
           <div className='mt-5 flex ml-auto'>
             {/* Approve Button */}
-            {!data.isApproved && (<button 
-              type='button'
-              className="mr-2 px-6 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-gray-600"
-              onClick={approveUserHandler}
-            >
-              Approve
-            </button>
+            {(!data.isApproved && userData===import.meta.env.VITE_USER_DEFAULT_REF) && (
+              <button 
+                type='button'
+                className="mr-2 px-6 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-gray-600"
+                onClick={approveUserHandler}
+              >
+                Approve
+              </button>
+            )}
+            {(!data.isApproved && userData===import.meta.env.VITE_USER_DEFAULT_REF) && (
+              <div 
+                className="mr-2 px-6 py-2 bg-green-500 text-white rounded-md shadow hover:bg-gray-600 cursor-default"
+              >
+                Already an Employee
+              </div>
             )}
             {/* View Resume */}
             <button 

@@ -4,3 +4,5 @@
 
 4. project details page - assign new employees to project, view more details, rate assigned members, view srs
 5. offer add page - add offer listing
+
+if an employee is terminated and applied on an offer, then when admin approves, isTerminated status should be gone

@@ -27,6 +27,8 @@ const ProjectDetails = ({ task, taskDomain }) => {
         );
         if (responseData.ok === 1) {
           setLoadedProject(responseData.project);
+
+          // console.log(loadedProject.srs, import.meta.env.VITE_USER_DEFAULT_SRS_PATH);
         }
         else {
           console.log("No project found!");

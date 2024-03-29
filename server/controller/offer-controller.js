@@ -75,8 +75,8 @@ const getInternshipsByDomain = async (req, res, next) => {
   let allInternships;
   if (domain==='-' || !domain ){
     try {
-      allJobs = await Offer
-        .find({type: "job"})
+      allInternships = await Offer
+        .find({type: "internship"})
         .skip(page * internshipsPerPage)
         .limit(internshipsPerPage);
     } catch (err) {
@@ -90,10 +90,10 @@ const getInternshipsByDomain = async (req, res, next) => {
       return res.json({ok:-1, message: "Domain does not exist with this ID"});
     }
     try {
-      allJobs = await Offer
+      allInternships = await Offer
         .find({domain: existingDomain, type: "internship"})
-        .skip(page * jobsPerPage)
-        .limit(jobsPerPage);
+        .skip(page * internshipsPerPage)
+        .limit(internshipsPerPage);
     } catch (err) {
       return res.json({ok:-1, message:"Fetching offer with offerId failed, please try again later."})
     }
@@ -293,7 +293,7 @@ const createInternshipOffer = async (req, res, next) => {
 
   const createdOffer = new Offer({
     type: 'internship',
-    domain: domain,
+    domain: existingDomain,
     stipend: stipend,
     heading: heading,
     link: link
@@ -302,7 +302,7 @@ const createInternshipOffer = async (req, res, next) => {
   try {
     await createdOffer.save();
   } catch (err) {
-    res.status(201).json({ok:-1, message: "Creating new internship failed!"});
+    res.status(201).json({ok:-1, message: "Creating new internship failed!"+err});
   }
 
   res.status(201).json({ok:1, offer: createdOffer});

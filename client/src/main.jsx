@@ -18,6 +18,7 @@ import ProjectDetails from './components/Dashboard/ProjectDetails.jsx';
 import Termination from './components/Dashboard/Termination.jsx';
 import Internship from './components/Dashboard/Internship.jsx';
 import Jobs from './components/Dashboard/Jobs.jsx';
+import CreateOffer from './components/Dashboard/CreateOffer.jsx';
 import EditJob from './components/Dashboard/EditJob.jsx';
 import ContactForm from './components/Dashboard/ContactForm.jsx';
 import Certificates from './components/Dashboard/Certificates.jsx';
@@ -98,6 +99,7 @@ function App() {
               <Route exact path="/account-settings" element={<AccountSetting />} />
               <Route exact path="/change-password" element={<ChangePassword />} />
               <Route exact path="/delete-account" element={<DeleteAccount />} />
+              <Route exact path="/certificates" element={<Certificates />} />
             </Routes>
           )}
           {/* Employee as USER */}
@@ -134,6 +136,7 @@ function App() {
               <Route exact path="/termination" element={<Termination />} />
               <Route exact path="/internships" element={<Internship />} />
               <Route exact path="/jobs" element={<Jobs />} />
+              <Route exact path="/create-offer" element={<CreateOffer />} />
               <Route exact path="/editoffer/:oid" element={<EditJob />} />
               <Route exact path="/applications/:oid" element={<Applications />} />
               <Route exact path="/certificates" element={<Certificates />} />

@@ -11,10 +11,10 @@ const userSchema = new Schema({
     isEmployee: {type: Boolean, required: true, default: false },
     isAdmin: {type: Boolean, required: true, default: false },
     userName: { type: String, required: true, unique: true },
-    phone: {type: String, required: true, default: '91XXXXXXXX' },
-    bio: {type: String, required: true, default: '-' },
+    phone: {type: String, required: true, default: process.env.DB_USER_DEFAULT_PHONE },
+    bio: {type: String, required: true, default: process.env.DB_USER_DEFAULT_BIO },
 
-    ref: {type: String, required:true, default: "-"}, // RNPW/2024-25/WEB123DEV
+    ref: {type: String, required:true, default: process.env.DB_USER_DEFAULT_REF}, // RNPW/2024-25/WEB123DEV
     role: { type: String, ref: 'Domain', required: false },
     rating: {type: Number, required: true, default: 0 },
     certificates: [{type: String, minLength: 4 }],
@@ -26,7 +26,7 @@ const userSchema = new Schema({
     date: {type: Date, required: true, default: Date.now() },
     isTerminated: {type: Boolean, required: true, default: false },
 
-    employeeCount: {type: String, required: false }
+    employeeCount: {type: Number, required: false }
 });
 
 userSchema.plugin(uniqueValidator);

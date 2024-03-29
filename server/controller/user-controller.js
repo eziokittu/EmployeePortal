@@ -147,7 +147,7 @@ const getEmployeesByProjectId = async (req, res, next) => {
 const getEmployeeCount = async (req, res, next) => {
   let employeeCount;
   try {
-    employeeCount = await User.countDocuments({ isEmployee: true });
+    employeeCount = await User.countDocuments({ isEmployee: true, isTerminated: false  });
   } catch (err) {
     res.json({ ok:-1, message:"No Employees found" });
     return;
@@ -164,7 +164,7 @@ const getEmployees = async (req, res, next) => {
   let allEmployees;
   try {
     allEmployees = await User
-      .find({ isEmployee: true }, '-password')  // Adjust the query to filter by isEmployee
+      .find({ isEmployee: true, isTerminated: false }, '-password')  // Adjust the query to filter by isEmployee
       .skip(page * employeesPerPage)
       .limit(employeesPerPage);
   } catch (err) {
@@ -699,7 +699,8 @@ const terminateEmployeeByEmail = async (req, res, next) => {
     }
 
     existingUser.isTerminated = true;
-    existingUser.ref = '-';
+    // existingUser.isEmployee = false;
+    // existingUser.ref = '-';
     await existingUser.save();
 
     res.status(201).send(`Employee with email: ${email} has been terminated!`);
@@ -724,6 +725,7 @@ const unterminateEmployeeByEmail = async (req, res, next) => {
 
     // Set isTerminated back to true to un-terminate the employee
     existingUser.isTerminated = false;
+    existingUser.isEmployee = false
     await existingUser.save();
 
     res.status(200).send(`Employee with email: ${email} has been reinstated!`);

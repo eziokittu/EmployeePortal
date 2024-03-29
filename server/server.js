@@ -119,7 +119,9 @@ mongoose
 
     // Set the employee count
     try {
-      let count = await User.countDocuments({isEmployee: true});
+      let count = await User.countDocuments({isEmployee: true, isTerminated: false});
+      let count2 = await User.countDocuments({isEmployee: true, isTerminated: true});
+      let count3 = await User.countDocuments({isAdmin: false});
       if (!count || count===0){
         count = 1;
         console.log("LOG - [no employees]");
@@ -129,6 +131,22 @@ mongoose
       }
       adminUser.employeeCount = count;
       await adminUser.save();
+
+      // Logging the terminated employees 
+      if (!count2 || count2===0){
+        console.log("LOG - [no terminated employees]");
+      }
+      else {
+        console.log("LOG - Terminated Employee count: "+count2);
+      }
+
+      // Logging the registered users 
+      if (!count3 || count3===0){
+        console.log("LOG - [no registered users]");
+      }
+      else {
+        console.log("LOG - Registered User count: "+count3);
+      }
     } catch (err) {
       console.log("LOG - ERROR in fetching employee count!");
     }
