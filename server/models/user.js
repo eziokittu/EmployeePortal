@@ -17,7 +17,6 @@ const userSchema = new Schema({
     ref: {type: String, required:true, default: process.env.DB_USER_DEFAULT_REF}, // RNPW/2024-25/WEB123DEV
     role: { type: String, ref: 'Domain', required: false },
     rating: {type: Number, required: true, default: 0 },
-    certificates: [{type: String, minLength: 4 }],
     domain: { type: mongoose.Types.ObjectId, ref: 'Domain' },
     projects: [{ type: mongoose.Types.ObjectId, required: true, ref: 'Project' }],
     projects_complete: {type: Number, required: true, default: 0},

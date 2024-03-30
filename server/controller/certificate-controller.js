@@ -108,10 +108,10 @@ const getCertificateCountByUserId = async (req, res, next) => {
 
 const postCertificate = async (req, res, next) => {
   // Validate inputs
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
-  }
+  // const errors = validationResult(req);
+  // if (!errors.isEmpty()) {
+  //   return res.status(422).json({ errors: errors.array() });
+  // }
 
   const { domain, userId } = req.body;
 
@@ -158,6 +158,7 @@ const postCertificate = async (req, res, next) => {
     console.log("File path error:\n",err2);
   }
 
+  // updating certificate issued count in admin side
   if (createdCertificate){
     let adminUser;
     try {
