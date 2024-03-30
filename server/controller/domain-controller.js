@@ -5,9 +5,6 @@ const HttpError = require('../models/http-error');
 const Domain = require('../models/domains');
 const Project = require('../models/project');
 
-// Some data
-// const domains = ["WEBDEV", "APPDEV", "ML/AI", "UI/UX", "TEAMLEAD", "CYBERSECURITY", "GRAPHICSDESIGN", "VIDEOEDITOR", "MARKETING", "DIGITALMARKETING"];
-
 // GET
 
 const getDomains = async (req, res, next) => {

@@ -18,6 +18,7 @@ const offerRoutes = require('./routes/offer-routes');
 const appliedRoutes = require('./routes/applied-routes');
 const domainRoutes = require('./routes/domain-routes');
 const roleRoutes = require('./routes/role-routes');
+const certificateRoutes = require('./routes/certificate-routes');
 
 const HttpError = require('./models/http-error');
 
@@ -46,6 +47,7 @@ app.use('/api/offers', offerRoutes);
 app.use('/api/applied', appliedRoutes);
 app.use('/api/domains', domainRoutes);
 app.use('/api/roles', roleRoutes);
+app.use('/api/certificates', certificateRoutes);
 
 app.use((req, res, next) => {
   const error = new HttpError('Could not find this route. ['+req.body.url+']', 404);

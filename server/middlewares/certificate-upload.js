@@ -17,7 +17,7 @@ const MIME_TYPE_MAP = {
   'application/pdf': 'pdf'
 };
 
-const resumeUpload = multer({
+const certificateUpload = multer({
   limits: 500000,
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
@@ -36,4 +36,4 @@ const resumeUpload = multer({
   }
 });
 
-module.exports = resumeUpload;
+module.exports = certificateUpload;
