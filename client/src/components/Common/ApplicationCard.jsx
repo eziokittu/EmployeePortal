@@ -74,7 +74,7 @@ function ApplicationCard({isJob, data}) {
     <div className='mt-4 rounded-xl border-2 border-gray-300'>
       {userData && data && (
         <div 
-          className='grid grid-cols-12 bg-blue-100 justify-center rounded-xl p-2 items-center'
+          className='grid grid-cols-12 bg-blue-100 justify-center rounded-xl p-2 text-sm items-center'
           id={userData.id}
         >
 

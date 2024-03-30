@@ -27,3 +27,4 @@ mobile otp verification
 edit profile - frontend validation
 offer application page - frontend validation
 certificates - frontend backend integration
+in offer applications, have a way to approve all offers at once

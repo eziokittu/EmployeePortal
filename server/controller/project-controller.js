@@ -609,7 +609,7 @@ const addProjectMembersById = async (req, res, next) => {
   }
 
   try {
-    existingProject.employees = allValidEmployees;
+    existingProject.employees.push(...allValidEmployees);
     await existingProject.save();
     return res.status(201).json({ok:1, project: existingProject, message: "Successfully added employeeID to this existing project"});
   } catch (err) {
@@ -618,76 +618,76 @@ const addProjectMembersById = async (req, res, next) => {
   }
 }
 
-const addProjectMembersByEmail = async (req, res, next) => {
-  // console.log(req.body);
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return next(new HttpError('Invalid inputs passed, please check your data.', 422));
-  }
+// const addProjectMembersByEmail = async (req, res, next) => {
+//   // console.log(req.body);
+//   const errors = validationResult(req);
+//   if (!errors.isEmpty()) {
+//     return next(new HttpError('Invalid inputs passed, please check your data.', 422));
+//   }
 
-  // const { title, description } = req.body;
-  const { employees } = req.body;
-  const pid = req.params.pid;
+//   // const { title, description } = req.body;
+//   const { employees } = req.body;
+//   const pid = req.params.pid;
 
-  // Creating a new project
-  let existingProject
-  try {
-    existingProject = await Project.findOne({ _id: pid });
-    if (!existingProject){
-      res.json({ok:-1, message: "Project ID is INVALID!"});
-    }
-  } catch (err) {
-    return res.json({ok:-1, message: "Some error occured while dinsing project: ",err});
-  }
+//   // Creating a new project
+//   let existingProject
+//   try {
+//     existingProject = await Project.findOne({ _id: pid });
+//     if (!existingProject){
+//       res.json({ok:-1, message: "Project ID is INVALID!"});
+//     }
+//   } catch (err) {
+//     return res.json({ok:-1, message: "Some error occured while dinsing project: ",err});
+//   }
 
-  // if employees list is empty
-  if (employees.length === 0){
-    return res.json({ok:1, project: existingProject, message: "Project edit successful but added no employees!"});
-  }
+//   // if employees list is empty
+//   if (employees.length === 0){
+//     return res.json({ok:1, project: existingProject, message: "Project edit successful but added no employees!"});
+//   }
   
-  // Iterate over all employee IDs and save it if they exist
-  let allValidEmployees = [];
-  for (let email of employees) {
-    // Checking the existance of the emp ID
-    let existingUser;
-    try {
-      existingUser = await User.findOne({ email: email, isEmployee: true });
-      // console.log(email,"is valid");
-      if (!existingUser) {
-        continue; // Skip this user if they do not exist
-      }
-    } catch (error) {
-      // Log the error but do not stop processing the rest of the user IDs
-      console.error('Error finding user with ID: ', email, ", ERROR: ", error);
-      continue;
-    }
+//   // Iterate over all employee IDs and save it if they exist
+//   let allValidEmployees = [];
+//   for (let email of employees) {
+//     // Checking the existance of the emp ID
+//     let existingUser;
+//     try {
+//       existingUser = await User.findOne({ email: email, isEmployee: true });
+//       // console.log(email,"is valid");
+//       if (!existingUser) {
+//         continue; // Skip this user if they do not exist
+//       }
+//     } catch (error) {
+//       // Log the error but do not stop processing the rest of the user IDs
+//       console.error('Error finding user with ID: ', email, ", ERROR: ", error);
+//       continue;
+//     }
 
-    // Adding the project to the existing user
-    let userHasProject;
-    try {
-      existingUser.projects.push(existingProject);
-      existingUser.save();
-    } catch (err) {
-      console.error(`The employee with email: ${email} is already added to the project`)
-    }
+//     // Adding the project to the existing user
+//     let userHasProject;
+//     try {
+//       existingUser.projects.push(existingProject);
+//       existingUser.save();
+//     } catch (err) {
+//       console.error(`The employee with email: ${email} is already added to the project`)
+//     }
 
-    // Pushing the ID to the allValidEmployees Array
-    try {
-      allValidEmployees.push(email);
-    } catch (error) {
-      console.error('Error adding employee ID: ', email,", ERROR: ", error);
-    }
-  }
+//     // Pushing the ID to the allValidEmployees Array
+//     try {
+//       allValidEmployees.push(email);
+//     } catch (error) {
+//       console.error('Error adding employee ID: ', email,", ERROR: ", error);
+//     }
+//   }
 
-  try {
-    existingProject.employees = allValidEmployees;
-    await existingProject.save();
-    return res.status(201).json({ok:1, project: existingProject, message: "Successfully added employeeID to this existing project"});
-  } catch (err) {
-    console.error("Error saving project with updated valid employees:", err);
-    return res.json({ok:-1, message: "ERROR saving project with the updated valid employees: ", err});
-  }
-}
+//   try {
+//     existingProject.employees = allValidEmployees;
+//     await existingProject.save();
+//     return res.status(201).json({ok:1, project: existingProject, message: "Successfully added employeeID to this existing project"});
+//   } catch (err) {
+//     console.error("Error saving project with updated valid employees:", err);
+//     return res.json({ok:-1, message: "ERROR saving project with the updated valid employees: ", err});
+//   }
+// }
 
 const removeProjectMembersById = async (req, res, next) => {
   const errors = validationResult(req);
@@ -782,7 +782,7 @@ module.exports = {
   updateProjectAsCompleted,
   updateProjectAsOngoing,
   addProjectMembersById,
-  addProjectMembersByEmail,
+  // addProjectMembersByEmail,
   removeProjectMembersById,
 
   deleteProject

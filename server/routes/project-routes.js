@@ -99,18 +99,18 @@ router.patch(
   projectController.addProjectMembersById
 );
 
-router.patch(
-  '/patch/addemployees-email/:pid',
-  [
-    // check('title')
-    //   .not()
-    //   .isEmpty(),
-    // check('description')
-    //   .not()
-    //   .isEmpty()
-  ],
-  projectController.addProjectMembersByEmail
-);
+// router.patch(
+//   '/patch/addemployees-email/:pid',
+//   [
+//     // check('title')
+//     //   .not()
+//     //   .isEmpty(),
+//     // check('description')
+//     //   .not()
+//     //   .isEmpty()
+//   ],
+//   projectController.addProjectMembersByEmail
+// );
 
 router.patch(
   '/patch/remove/employee',

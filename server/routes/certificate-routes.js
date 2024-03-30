@@ -10,6 +10,7 @@ const router = express.Router();
 router.get('/get/', certificateController.getCertificates);
 router.get('/get/user/:uid', certificateController.getCertificateByUserId);
 router.get('/get/count/', certificateController.getCertificatesCount);
+router.get('/get/count/:uid', certificateController.getCertificateCountByUserId);
 
 // POST
 router.post(

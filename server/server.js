@@ -40,7 +40,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.use(express.urlencoded({extended: true}));
+// Routes
 app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/offers', offerRoutes);

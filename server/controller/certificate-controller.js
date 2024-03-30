@@ -73,6 +73,36 @@ const getCertificateByUserId = async (req, res, next) => {
   res.json({ok:1,  message: "Successfully Fetched all certificate", certificates: allCertificates});
 };
 
+const getCertificateCountByUserId = async (req, res, next) => {
+  const userId = req.params.uid;
+
+  // Check if user exists
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ _id: userId, isEmployee: true, isAdmin: false });
+    if (!existingUser) {
+      return res.json({ ok: -1, message: 'User does not exist with this userID:'+userId });
+    }
+  } catch (error) {
+    return res.json({ ok: -1, message: 'Some error occurred while checking User' });
+  }
+
+  let count;
+  try {
+    count = await Certificate.countDocuments({userId: userId});
+    if (!count || count.length === 0) {
+      return res.json({
+        ok: -1,
+        message: 'No certificate found!',
+        count: 0
+      });
+    }
+  } catch (err) {
+    return res.json({ok:-1, message: "Fetching certificate count failed!"});
+  }
+
+  res.json({ok:1,  message: "Successfully Fetched all certificates count", count: count});
+};
 
 // POST
 
@@ -140,7 +170,7 @@ const postCertificate = async (req, res, next) => {
     }
   }
 
-  res.json({ ok: 1, message: 'Domain successfully created', domain: createdDomain });
+  res.json({ ok: 1, message: 'Certificate successfully issued', certificate: createdCertificate });
 };
 
 
@@ -148,5 +178,6 @@ module.exports = {
   getCertificates,
   getCertificatesCount,
   getCertificateByUserId,
+  getCertificateCountByUserId,
   postCertificate
 };

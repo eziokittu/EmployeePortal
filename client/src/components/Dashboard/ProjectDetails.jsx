@@ -477,7 +477,6 @@ const ProjectDetails = () => {
                       <p className=" ">or Email and <span className='font-bold'>Assign!</span></p>
                     </div>
                     )}
-                    
                   </div>
 
                   {/* Employee Ref ID */}
