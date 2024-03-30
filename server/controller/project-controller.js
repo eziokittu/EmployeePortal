@@ -641,6 +641,44 @@ const addProjectMembersByEmail = async (req, res, next) => {
   }
 }
 
+const removeProjectMembersById = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(new HttpError('Invalid inputs passed, please check your data.', 422));
+  }
+
+  const { empId, projectId } = req.body;
+
+  // Getting existing project
+  let existingProject;
+  try {
+    existingProject = await Project.findById(projectId); // Simplified query
+    if (!existingProject) {
+      return res.json({ ok: -1, message: "Project ID is INVALID!" });
+    }
+  } catch (err) {
+    return res.json({ ok: -1, message: "Some error occurred while fetching project: ", err });
+  }
+
+  // Check if the employee exists in the project's employees list
+  const employeeIndex = existingProject.employees.findIndex(employee => employee.toString() === empId);
+  if (employeeIndex === -1) {
+    return res.json({ ok: -1, message: "Employee ID is INVALID! or Employee is not assigned to this project" });
+  }
+
+  // No need to fetch the existing employee separately
+  try {
+    // Directly remove the employee using the pull method
+    existingProject.employees.pull({ _id: empId });
+    await existingProject.save();
+    return res.status(201).json({ ok: 1, project: existingProject, message: "Successfully removed employee" });
+  } catch (err) {
+    console.error("Error saving project with deleted employee:", err);
+    return res.json({ ok: -1, message: "ERROR saving project with the updated employees: ", err });
+  }
+};
+
+
 // DELETE
 
 const deleteProject = async (req, res, next) => {
@@ -691,8 +729,11 @@ module.exports = {
   getCompletedProjectCountByEmployeeId,
 
   createProject,
+
   updateProjectInfo,
   addProjectMembersById,
   addProjectMembersByEmail,
+  removeProjectMembersById,
+
   deleteProject
 };

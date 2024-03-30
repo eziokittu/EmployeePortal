@@ -86,4 +86,17 @@ router.patch(
   projectController.addProjectMembersByEmail
 );
 
+router.patch(
+  '/patch/remove/employee',
+  [
+    // check('title')
+    //   .not()
+    //   .isEmpty(),
+    // check('description')
+    //   .not()
+    //   .isEmpty()
+  ],
+  projectController.removeProjectMembersById
+);
+
 module.exports = router;

@@ -16,6 +16,9 @@ router.get('/emp', userController.getEmployees);
 router.get('/emp/id/:uid', userController.getEmployeeById);
 router.get('/emp/email/:email', userController.getEmployeeByEmail);
 router.get('/emp/username/:username', userController.getEmployeeByUsername);
+router.get('/emp/ref/:ref', userController.getEmployeeByRef);
+router.get('/emp/search/email/:search_email', userController.searchEmployeeByEmail);
+router.get('/emp/search/ref/:search_ref', userController.searchEmployeeByRef);
 router.get('/empcount', userController.getEmployeeCount);
 
 router.get('/terminations', userController.getAllTerminations);

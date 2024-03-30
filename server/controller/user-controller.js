@@ -68,9 +68,9 @@ const getUserById = async (req, res, next) => {
 
 const getUserByEmail = async (req, res, next) => {
   const email = req.params['email'];
-  let employee;
+  let user;
   try {
-    employee = await User.find({ email: email }, '-password')
+    user = await User.find({ email: email }, '-password')
   } catch (err) {
     const error = new HttpError(
       'Fetching Employee failed, please try again later.',
@@ -79,14 +79,14 @@ const getUserByEmail = async (req, res, next) => {
     return next(error);
   }
 
-  res.json({employee: employee});
+  res.json({user: user});
 };
 
 const getUserByUsername = async (req, res, next) => {
   const username = req.params['username'];
-  let employee;
+  let user;
   try {
-    employee = await User.find({ userName: username }, '-password')
+    user = await User.find({ userName: username }, '-password')
   } catch (err) {
     const error = new HttpError(
       'Fetching Employee failed, please try again later.',
@@ -95,7 +95,7 @@ const getUserByUsername = async (req, res, next) => {
     return next(error);
   }
 
-  res.json({employee: employee});
+  res.json({user: user});
 };
 
 const getEmployeesByProjectId = async (req, res, next) => {
@@ -194,7 +194,7 @@ const getEmployeeById = async (req, res, next) => {
   const userId = req.params['uid'];
   let employee;
   try {
-    employee = await User.findOne({ _id: userId, isEmployee: true }, '-password')
+    employee = await User.findOne({ _id: userId, isEmployee: true, isTerminated: false }, '-password')
     if (!employee){
       return res.json({ok:-1, message:"Employee does not exist with userId: "+userId})
     }
@@ -209,10 +209,26 @@ const getEmployeeByEmail = async (req, res, next) => {
   const email = req.params['email'];
   let employee;
   try {
-    employee = await User.findOne({ email: email, isEmployee: true }, '-password')
+    employee = await User.findOne({ email: email, isEmployee: true, isTerminated: false }, '-password')
     if (!employee){
       return res.json({ok:-1, message:"Employee does not exist with email: "+email})
     }
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching Employee failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
+  res.json({employee: employee});
+};
+
+const getEmployeeByRef = async (req, res, next) => {
+  const ref = req.params['ref'];
+  let employee;
+  try {
+    employee = await User.findOne({ ref: ref, isEmployee: true, isTerminated: false }, '-password')
   } catch (err) {
     const error = new HttpError(
       'Fetching Employee failed, please try again later.',
@@ -242,6 +258,48 @@ const getEmployeeByUsername = async (req, res, next) => {
 
   res.json({employee: employee});
 };
+
+const searchEmployeeByEmail = async (req, res, next) => {
+  const search_email = req.params['search_email'];
+
+  let employee;
+  try {
+    // Use a regular expression to search for a user with an email that includes the searchQuery
+    // 'i' flag for case-insensitive search
+    employee = await User.findOne({ email: new RegExp(search_email, 'i'), isEmployee: true, isTerminated: false }, '-password');
+
+    if (!employee) {
+      return res.status(404).json({ ok:-1, message: 'No employee found matching the email query.' });
+    }
+
+  } catch (err) {
+    return res.json({ ok:-1, message: "Something went wrong!",err });
+  }
+
+  res.json({ ok:1, employee: employee });
+};
+
+const searchEmployeeByRef = async (req, res, next) => {
+  // Get the modified ref ID from request params
+  const modifiedRef = req.params['search_ref'];
+
+  // Convert ":" back to "/" to restore the original ref ID format
+  const originalRef = modifiedRef.replace(/:/g, '/');
+
+  let employee;
+  try {
+    employee = await User.findOne({ ref: new RegExp(originalRef, 'i'), isEmployee: true, isTerminated: false }, '-password');
+
+    if (!employee) {
+      return res.status(404).json({ ok:-1, message: 'No employee found matching the reference ID query.' });
+    }
+  } catch (err) {
+    return res.json({ ok:-1, message: "Something went wrong!",err });
+  }
+
+  res.json({ ok:1, employee: employee, message: "Successfully fetched the user with this referecne ID" });
+};
+
 
 const getAllTerminations = async (req, res, next) => {
   const page = req.query.page || 0;
@@ -828,6 +886,9 @@ module.exports = {
   getEmployeeById,
   getEmployeeByEmail,
   getEmployeeByUsername,
+  getEmployeeByRef,
+  searchEmployeeByEmail,
+  searchEmployeeByRef,
   
   getAllTerminations,
   getAllTerminationsCount,
