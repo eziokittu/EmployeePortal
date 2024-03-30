@@ -15,6 +15,7 @@ function ApplicationCard({isJob, data}) {
         if (responseData.ok === 1){
           setUserData(responseData.user);
           console.log(`Successful in fetching user details for ID: ${data.user}`);
+          console.log(`DEBUG: [${responseData.user.firstname} ${responseData.user.lastname}]-[${!data.isApproved}]-[${responseData.user.ref}]`);
         }
         else {
           console.log("Error in getting user details!");
@@ -70,46 +71,54 @@ function ApplicationCard({isJob, data}) {
   }
 
   return (
-    <div className='flex flex-col space-x-2'>
-      {userData && (
+    <div className='mt-4 rounded-xl border-2 border-gray-300'>
+      {userData && data && (
         <div 
-          className='flex text-center'
+          className='grid grid-cols-12 bg-blue-100 justify-center rounded-xl p-2 items-center'
           id={userData.id}
         >
 
           {/* User Details */}
-          <p className='mr-4'>Approved: {data.isApproved ? 'TRUE' : 'FALSE'}</p>
-          <p className='mr-4'>Name: {userData.firstname + ' ' + userData.lastname}</p>
-          <p className='mr-4'>Phone: {userData.phone}</p>
-          <p className='mr-4'>Email: {userData.email}</p>
+          <p className='col-span-1 font-bold'>{data.isApproved ? 'APPROVED' : 'NOT APPROVED'}</p>
+          <p className='col-span-2 flex flex-col'><p>{userData.firstname}</p><p>{userData.lastname}</p></p>
+          <p className='col-span-1'>{userData.phone}</p>
+          <p className='col-span-2'>{userData.email}</p>
+          <p className='col-span-2'>{userData.ref}</p>
 
           {/* Buttons */}
-          <div className='mt-5 flex ml-auto'>
+          <div className='col-span-4 flex justify-around'>
             {/* Approve Button */}
-            {(!data.isApproved && userData===import.meta.env.VITE_USER_DEFAULT_REF) && (
+            {(!data.isApproved && userData.ref === "-") && (
               <button 
                 type='button'
-                className="mr-2 px-6 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-gray-600"
+                className="mr-2 px-6 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-800"
                 onClick={approveUserHandler}
               >
                 Approve
               </button>
             )}
-            {(!data.isApproved && userData===import.meta.env.VITE_USER_DEFAULT_REF) && (
+            {(!data.isApproved && userData.ref !== "-") && (
               <div 
-                className="mr-2 px-6 py-2 bg-green-500 text-white rounded-md shadow hover:bg-gray-600 cursor-default"
+                className="mr-2 px-6 py-2 bg-green-500 text-white rounded-md shadow cursor-default"
               >
                 Already an Employee
               </div>
             )}
+            {(data.isApproved) && (
+              <div 
+                className="mr-2 px-6 py-2 bg-green-500 text-white rounded-md shadow cursor-default"
+              >
+                Already approved
+              </div>
+            )}
             {/* View Resume */}
-            <button 
+            <a 
               type='button'
-              className="px-6 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-gray-600"
-              onClick={viewResumeHandler}
+              className="px-6 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-800"
+              href={`${import.meta.env.VITE_ASSETS_URL}/${data.resume}`} target="_blank" rel="noopener noreferrer"
             >
               View Resume
-            </button>
+            </a>
           </div>
 
         </div>

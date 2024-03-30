@@ -9,8 +9,8 @@ import srs from '../../assets/project/srs.png'
 import document from '../../assets/project/document.png'
 import status from '../../assets/project/status.png'
 
-import { Viewer, Worker } from "@react-pdf-viewer/core";
-import "@react-pdf-viewer/core/lib/styles/index.css";
+// import { Viewer, Worker } from "@react-pdf-viewer/core";
+// import "@react-pdf-viewer/core/lib/styles/index.css";
 
 const ProjectDetails = ({ task, taskDomain }) => {
   const { sendRequest } = useHttpClient();

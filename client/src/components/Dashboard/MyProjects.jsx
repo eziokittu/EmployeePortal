@@ -256,10 +256,15 @@ const MyProjects = () => {
 
         {/* Ongoing Projects  */}
         {!auth.isAdmin ? (
-          <h2 className='font-bold text-3xl mb-4 text-center'>My Projects</h2>
+          <>
+            {!!projectsCount && (<h2 className='font-bold text-3xl mb-4 text-center'>My Projects</h2>)}
+          </>
         ) : (
-          <h2 className='font-bold text-3xl mb-4 text-center'>Their Projects</h2>
+          <>
+            {!!projectsCount && (<h2 className='font-bold text-3xl mb-4 text-center'>Their Projects</h2>)}
+          </>
         )}
+        {!projectsCount && (<h2 className='font-bold text-3xl mb-4 text-center'>No Projects to display</h2>)}
 
         {/* Displaying all projects */}
         {projects && projectsCount>0 && (
@@ -343,7 +348,7 @@ const MyProjects = () => {
         )}
 
         {/* If employee has no projects */}
-        {projectsCount===0 && (
+        {projectsCount===0 && !auth.isAdmin && (
           <div
             className='text-center text-xl'
           >
