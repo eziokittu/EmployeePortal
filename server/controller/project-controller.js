@@ -330,8 +330,6 @@ const getProjectsOngoingCount = async (req, res, next) => {
 // POST
 
 const createProject = async (req, res, next) => {
-  console.log(req.body);
-
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(new HttpError('Invalid inputs passed, please check your data.', 422));

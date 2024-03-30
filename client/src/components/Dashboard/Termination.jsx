@@ -29,7 +29,24 @@ const Termination = () => {
   }, []);
 
   const [inputEmail, setInputEmail] = useState("");
+
+  // function to check for invalid inputs and return the list of error message strings
+  const validateInput = () => {
+    let alerts = [];
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!inputEmail.trim() || !emailRegex.test(inputEmail)) {
+      alerts.push('Enter a valid email');
+    }
+		return alerts; // Return the alerts array directly
+	}
+
   const terminateEmployeeHandler = async () => {
+    // Checking for invalid input
+    const validationAlerts = validateInput()
+    if (validationAlerts.length > 0) {
+      alert(`Please correct the following input errors:\n- ${validationAlerts.join('\n- ')}`);
+      return;
+    }
     try {
       const responseData = await sendRequest(
         import.meta.env.VITE_BACKEND_URL+`/users/edit/terminate`,
@@ -41,7 +58,12 @@ const Termination = () => {
 					'Content-Type': 'application/json'
 				}
       );
-      console.log("Successfully terminated employee with email:", inputEmail);
+      if (responseData.ok===1){
+        alert("Successfully terminated employee with email:", inputEmail);
+      }
+      else {
+        alert(responseData.message)
+      }
     }
     catch (error) {
       console.log("Error while terminating employee!");

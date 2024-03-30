@@ -10,8 +10,36 @@ const Login = () => {
 	const { sendRequest } = useHttpClient();
 	const navigate = useNavigate();
 
+	// function to check for invalid inputs and return the list of error message strings
+  const validateInput = () => {
+    let alerts = [];
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!inputEmail.trim() || !emailRegex.test(inputEmail)) {
+      alerts.push('Enter a valid email');
+    }
+
+    // Password validation
+		// const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$/;
+    // if (!inputPassword.trim() || !passwordRegex.test(inputPassword)) {
+    if (!inputPassword.trim() || inputPassword.length < 8) {
+      alerts.push('Enter a Valid pasword [min length 8] --');
+    }
+
+    return alerts; // Return the alerts array directly
+  };
+
 	const authSubmitHandler = async event => {
-    event.preventDefault();
+		event.preventDefault();
+
+		// Checking for invalid input
+    const validationAlerts = validateInput()
+    if (validationAlerts.length > 0) {
+      alert(`Please correct the following input errors:\n- ${validationAlerts.join('\n- ')}`);
+      return;
+    }
+		
 		try {
 			const responseData = await sendRequest(
 				import.meta.env.VITE_BACKEND_URL+`/users/login`,
@@ -24,25 +52,30 @@ const Login = () => {
 					'Content-Type': 'application/json'
 				}
 			);
-			await auth.login(
-				responseData.userId, 
-				responseData.token, 
-				responseData.isEmployee, 
-				responseData.isAdmin, 
-				responseData.userName, 
+			if (responseData.ok===1){
+				await auth.login(
+					responseData.userId, 
+					responseData.token, 
+					responseData.isEmployee, 
+					responseData.isAdmin, 
+					responseData.userName, 
 
-				responseData.firstname, 
-				responseData.lastname, 
-				responseData.email, 
-				responseData.phone, 
-				responseData.bio, 
-				responseData.role,
-				responseData.image,
-				
-				false
-			);
-			console.log('Login successful!');
-			navigate('/dashboard');
+					responseData.firstname, 
+					responseData.lastname, 
+					responseData.email, 
+					responseData.phone, 
+					responseData.bio, 
+					responseData.role,
+					responseData.image,
+					
+					false
+				);
+				console.log('Login successful!');
+				navigate('/dashboard');
+			}
+			else {
+				alert(responseData.message);
+			}
 		} catch (err) {
 			console.log('ERROR logging in!');
 		}  

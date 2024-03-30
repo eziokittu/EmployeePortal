@@ -13,17 +13,51 @@ const Signup = () => {
 	const { sendRequest } = useHttpClient();
 	const navigate = useNavigate();
 
+	// function to check for invalid inputs and return the list of error message strings
+  const validateInput = () => {
+    let alerts = [];
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!inputEmail.trim() || !emailRegex.test(inputEmail)) {
+      alerts.push('Enter a valid email');
+    }
+
+    // Password validation
+		// const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$/;
+    // if (!inputPassword.trim() || !passwordRegex.test(inputPassword)) {
+    if (!inputPassword.trim() || inputPassword.length < 8) {
+      alerts.push('Enter a Valid pasword [min length 8] --');
+    }
+
+    // First name validation (only alphabets)
+    const nameRegex = /^[a-zA-Z]+$/;
+    if (!inputFirstname.trim() || !nameRegex.test(inputFirstname)) {
+      alerts.push('Enter a valid first name');
+    }
+
+    // Last name validation (only alphabets)
+    if (!inputLastname.trim() || !nameRegex.test(inputLastname)) {
+      alerts.push('Enter a valid last name');
+    }
+
+		if (inputConfirmPassword !== inputPassword){
+			alerts.push("Password does not match with confirm password!");
+		}
+
+    return alerts; // Return the alerts array directly
+  };
+
 	const authSubmitHandler = async event => {
     event.preventDefault();
 
-		if (inputConfirmPassword !== inputPassword){
-			console.log("Password does not match with confirm password!");
-			return;
-		}
+		// Checking for invalid input
+    const validationAlerts = validateInput()
+    if (validationAlerts.length > 0) {
+      alert(`Please correct the following input errors:\n- ${validationAlerts.join('\n- ')}`);
+      return;
+    }
 
-		// console.log(inputEmail, inputPassword, inputFirstname, inputLastname);
-
-		// console.log(import.meta.env.VITE_BACKEND_URL);
 		try {
 			const responseData = await sendRequest(
 				import.meta.env.VITE_BACKEND_URL+`/users/signup`,
@@ -77,7 +111,7 @@ const Signup = () => {
 
 							{/* First name */}
 							<div>
-								{/* <label for="first-name" className="block mb-2 text-sm font-medium text-gray-900 ">First Name</label> */}
+								<label for="first-name" className="block text-sm font-medium text-gray-900 ">First Name</label>
 								<input 
 									onChange={(event) => setInputFirstname(event.target.value)}
 									type="text" 
@@ -91,7 +125,7 @@ const Signup = () => {
 
 							{/* Last Name */}
 							<div>
-								{/* <label for="last-name" className="block mb-2 text-sm font-medium text-gray-900 ">Last Name</label> */}
+								<label for="last-name" className="block text-sm font-medium text-gray-900 ">Last Name</label>
 								<input 
 									onChange={(event) => setInputLastname(event.target.value)}
 									type="text" 
@@ -108,7 +142,7 @@ const Signup = () => {
 
 							{/* Email */}
 							<div>
-								{/* <label for="email" className="block mb-2 text-sm font-medium text-gray-900 ">Your email</label> */}
+								<label for="email" className="block text-sm font-medium text-gray-900 ">Your email</label>
 								<input 
 									onChange={(event) => setInputEmail(event.target.value)}
 									type="email" 
@@ -122,7 +156,7 @@ const Signup = () => {
 
 							{/* Password */}
 							<div>
-								{/* <label for="password" className="block mb-2 text-sm font-medium text-gray-900 ">Password</label> */}
+								<label for="password" className="block text-sm font-medium text-gray-900 ">Password</label>
 								<input 
 									onChange={(event) => setInputPassword(event.target.value)}
 									type="password" 
@@ -136,7 +170,7 @@ const Signup = () => {
 
 							{/* Confirm Password */}
 							<div>
-								{/* <label for="confirm-password" className="block mb-2 text-sm font-medium text-gray-900 ">Confirm password</label> */}
+								<label for="confirm-password" className="block text-sm font-medium text-gray-900 ">Confirm password</label>
 								<input 
 									onChange={(event) => setInputConfirmPassword(event.target.value)}
 									type="password" 

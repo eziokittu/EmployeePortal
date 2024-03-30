@@ -61,6 +61,7 @@ const Employee = () => {
   return (
     <div className="p-4 sm:ml-64 min-h-[500px]">
       
+      {employeeCount>0 && (
       <div className="px-4 border-2 bg-gray-100 border-gray-200 rounded-lg">
         <div>
           <h1 className="text-3xl font-bold text-center my-2">Employees</h1>
@@ -101,6 +102,7 @@ const Employee = () => {
           })}
         </div>
       </div>
+      )}
 
       {employeeCount > 0 && (
         <div className='flex justify-center items-center'>

@@ -169,8 +169,24 @@ const Projects = () => {
     setInputImage(pickedFile);
   };
 
+  // function to check for invalid inputs and return the list of error message strings
+  const validateInput = () => {
+    let alerts = [];
+    if (!text.trim()) {
+			alerts.push('Project Title cannot be empty');
+		}
+		return alerts; // Return the alerts array directly
+	}
+
   // function to add a new project
   const projectAddHandler = async event => {
+    // Checking for invalid input
+    const validationAlerts = validateInput()
+    if (validationAlerts.length > 0) {
+      alert(`Please correct the following input errors:\n- ${validationAlerts.join('\n- ')}`);
+      return;
+    }
+
 		try {
       const formData = new FormData();
       formData.append('srs', file);

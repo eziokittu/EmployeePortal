@@ -387,7 +387,7 @@ const signup = async (req, res, next) => {
     let existingUser = await User.findOne({ email: email });
 
     if (existingUser) {
-      return next(new HttpError('User exists already, please login instead.', 422));
+      return res.json({ok:-1, message: "User already exists with this email!. Please log in!"})
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -427,7 +427,7 @@ const signup = async (req, res, next) => {
     });
   } catch (err) {
     console.error(err); // Log the error for debugging
-    return next(new HttpError('Signing up failed, please try again later.', 500));
+    return res.json({ok:-1, message: "Signup failed! Try again later!"})
   }
 };
 
@@ -439,38 +439,23 @@ const login = async (req, res, next) => {
   try {
     existingUser = await User.findOne({ email: email });
   } catch (err) {
-    const error = new HttpError(
-      'Logging in failed, please try again later.',
-      500
-    );
-    return next(error);
+    return res.json({ok:-1, message: "Something went wrong while searching the email!"})
   }
 
   if (!existingUser) {
-    const error = new HttpError(
-      'Invalid credentials, could not log you in.',
-      403
-    );
-    return next(error);
+    
+    return res.json({ok:-1, message: "Invalid email! No user exists with this email!"})
   }
 
   let isValidPassword = false;
   try {
     isValidPassword = await bcrypt.compare(password, existingUser.password);
   } catch (err) {
-    const error = new HttpError(
-      'Could not log you in, please check your credentials and try again.',
-      500
-    );
-    return next(error);
+    return res.json({ok:-1, message: "Something went wrong while checking password!"})
   }
 
   if (!isValidPassword) {
-    const error = new HttpError(
-      'Invalid credentials, could not log you in.',
-      403
-    );
-    return next(error);
+    return res.json({ok:-1, message: "Invalid password! Could not log in!"})
   }
 
   let token;
@@ -481,14 +466,11 @@ const login = async (req, res, next) => {
       { expiresIn: '1h' }
     );
   } catch (err) {
-    const error = new HttpError(
-      'Logging in failed, please try again later.',
-      500
-    );
-    return next(error);
+    return res.json({ok:-1, message: "Logging in failed, please try again later."})
   }
 
   res.status(201).json({
+    ok: 1,
     userId: existingUser.id,
     userName: existingUser.userName,
     email: existingUser.email,
@@ -745,7 +727,7 @@ const updateEmployeeRole = async (req, res, next) => {
 const terminateEmployeeByEmail = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).send('Invalid inputs passed, please check your data.');
+    return res.json({ok:-1 , message: "invalid inputs passed!"});
   }
 
   const { email } = req.body;
@@ -753,7 +735,7 @@ const terminateEmployeeByEmail = async (req, res, next) => {
   try {
     const existingUser = await User.findOne({ email: email, isEmployee: true });
     if (!existingUser) {
-      return res.status(500).send("Could not find Employee with this email!");
+      return res.json({ok:-1, message: "Could not find Employee with this email!"});
     }
 
     existingUser.isTerminated = true;
@@ -761,9 +743,10 @@ const terminateEmployeeByEmail = async (req, res, next) => {
     // existingUser.ref = '-';
     await existingUser.save();
 
+    return res.json({ok:1, message: `Employee with email: ${email} has been terminated!`})
     res.status(201).send(`Employee with email: ${email} has been terminated!`);
   } catch (error) {
-    return res.status(500).send("Could not terminate employee");
+    return res.json({ok:-1, message: "Could not terminate employee with this email!"})
   }
 }
 

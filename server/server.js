@@ -91,6 +91,7 @@ mongoose
       await User.create({ 
         email: process.env.DB_ADMIN_EMAIL,
         password: hashedPassword,
+        // password: process.env.DB_ADMIN_PASSWORD,
         firstname: process.env.DB_ADMIN_FIRSTNAME,
         lastname: process.env.DB_ADMIN_LASTNAME,
         userName: process.env.DB_ADMIN_USERNAME,

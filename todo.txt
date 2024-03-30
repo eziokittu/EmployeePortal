@@ -6,3 +6,14 @@
 5. offer add page - add offer listing
 
 if an employee is terminated and applied on an offer, then when admin approves, isTerminated status should be gone
+
+DASHBOARD details -
+  total projects,
+  total ongoing projects,
+  total completed projects,
+  total registered users,
+  total employees,
+  total certifications issues
+  total applications
+  total job offers,
+  total internship offers
