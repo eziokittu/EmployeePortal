@@ -6,57 +6,20 @@ import profileImg from '../../assets/profile.png';
 
 const EditProfile = () => {
 	const { sendRequest } = useHttpClient();
-  const auth = useContext(AuthContext);
+	const auth = useContext(AuthContext);
 
-  // For updating the user information
-  const [inputFirstName, setInputFirstName] = useState(auth.firstname);
-  const [inputLastName, setInputLastName] = useState(auth.lastname);
-  const [inputUserName, setInputUserName] = useState(auth.userName);
-  const [inputPhone, setInputPhone] = useState(auth.phone);
-  const [inputEmail, setInputEmail] = useState(auth.email);
-  const [inputBio, setInputBio] = useState(auth.bio);
+	// For updating the user information
+	const [inputFirstName, setInputFirstName] = useState(auth.firstname);
+	const [inputLastName, setInputLastName] = useState(auth.lastname);
+	const [inputUserName, setInputUserName] = useState(auth.userName);
+	const [inputPhone, setInputPhone] = useState(auth.phone);
+	const [inputEmail, setInputEmail] = useState(auth.email);
+	const [inputBio, setInputBio] = useState(auth.bio);
 
-	// State to hold form errors
-	const [formErrors, setFormErrors] = useState({});
-
-	// State to hold error alert messages
-	const [errorAlerts, setErrorAlerts] = useState([]);
-	
-	// Validation function
-	// const validate = () => {
-	// 	let errors = {};
-	// 	let alerts = [];
-	// 	if (!inputFirstName.trim()) {
-	// 		errors.firstName = 'First name cannot be empty';
-	// 		alerts.push('First name cannot be empty');
-	// 	}
-	// 	if (!inputLastName.trim()) {
-	// 		errors.lastName = 'Last name cannot be empty';
-	// 		alerts.push('Last name cannot be empty');
-	// 	}
-	// 	// Add similar conditions for other inputs
-	// 	if (inputPhone.length !== 10) {
-	// 		errors.phone = 'Enter a valid phone number';
-	// 		alerts.push('Enter a valid phone number');
-	// 	}
-	// 	if (!inputEmail.includes('@')) {
-	// 		errors.email = 'Enter a valid email address';
-	// 		alerts.push('Enter a valid email address');
-	// 	}
-	// 	if (!inputBio.trim()) {
-	// 		errors.bio = 'Bio cannot be empty';
-	// 		alerts.push('Bio cannot be empty');
-	// 	}
-
-	// 	setFormErrors(errors);
-	// 	setErrorAlerts(alerts);
-	// 	// Return true if there are no errors
-	// 	return alerts.length === 0;
-	// }
 	const validate = () => {
-    let errors = {};
-    let alerts = [];
-    if (inputPhone.length <10 || inputPhone.length >13) {
+		let errors = {};
+		let alerts = [];
+		if (inputPhone.length < 10 || inputPhone.length > 13) {
 			errors.phone = 'Enter a valid phone number';
 			alerts.push('Enter a valid phone number');
 		}
@@ -64,28 +27,20 @@ const EditProfile = () => {
 	}
 
 	// Function to update user details
-  const userInfoUpdateHandler = async event => {
-    event.preventDefault();
-		// const isValid = validate(); // validate now returns the alerts directly
+	const userInfoUpdateHandler = async event => {
+		event.preventDefault();
 
-		// // Now validate function returns the alerts array directly
-		// if (!isValid) {
-		// 	// Directly use the alerts from the validation function
-		// 	alert(`Please correct the following errors:\n- ${errorAlerts.join('\n- ')}`);
-		// 	return;
-		// }
 		const validationAlerts = validate(); // This now directly receives the alerts array
-
-    if (validationAlerts.length > 0) {
-        // Show the alert with the immediate errors returned by the validate function
-        alert(`Please correct the following errors:\n- ${validationAlerts.join('\n- ')}`);
-        return; // Stop the function if there are errors
-    }
-    try {
-      const responseData = await sendRequest(
-        import.meta.env.VITE_BACKEND_URL+`/users/edit/info/${auth.userId}`,
-        'PATCH',
-        JSON.stringify({
+		if (validationAlerts.length > 0) {
+			// Show the alert with the immediate errors returned by the validate function
+			alert(`Please correct the following errors:\n- ${validationAlerts.join('\n- ')}`);
+			return; // Stop the function if there are errors
+		}
+		try {
+			const responseData = await sendRequest(
+				import.meta.env.VITE_BACKEND_URL + `/users/edit/info/${auth.userId}`,
+				'PATCH',
+				JSON.stringify({
 					email: inputEmail,
 					firstname: inputFirstName,
 					lastname: inputLastName,
@@ -96,129 +51,129 @@ const EditProfile = () => {
 				{
 					'Content-Type': 'application/json'
 				}
-      );
+			);
 			// console.log("DEBUG 1");
 			setTimeout(() => {
 				window.location.reload(false);
 			}, 2500);
 			// console.log("DEBUG 2");
 			await auth.updateUser(
-        inputUserName,
-        inputFirstName,
-        inputLastName,
-        inputEmail,
-        inputPhone,
-        inputBio,
+				inputUserName,
+				inputFirstName,
+				inputLastName,
+				inputEmail,
+				inputPhone,
+				inputBio,
 				auth.role,
 				auth.image,
 				false
-      );
+			);
 			// console.log("DEBUG 3");
-      console.log("User details updated successfully!");
-    } catch (err) {
-      console.log('ERROR updating user details!');
-    }
-  };
+			console.log("User details updated successfully!");
+		} catch (err) {
+			console.log('ERROR updating user details!');
+		}
+	};
 
-  // For updating the image
-  const [file, setFile] = useState();
-  const [previewUrl, setPreviewUrl] = useState(auth.image);
-  const [isValid, setIsValid] = useState(false);
-  const [inputImage, setInputImage] = useState(auth.image);
+	// For updating the image
+	const [file, setFile] = useState();
+	const [previewUrl, setPreviewUrl] = useState(auth.image);
+	const [isValid, setIsValid] = useState(false);
+	const [inputImage, setInputImage] = useState(auth.image);
 
-  const filePickerRef = useRef();
+	const filePickerRef = useRef();
 
 	// Function to update the preview image when the file changes
-  useEffect(() => {
-    // console.log('File:', file);
-    // console.log('Auth Image:', auth.image);
-    if (!file) {
-        setPreviewUrl(auth.image); // Reset to default image if no file is selected
-        return;
-    }
+	useEffect(() => {
+		// console.log('File:', file);
+		// console.log('Auth Image:', auth.image);
+		if (!file) {
+			setPreviewUrl(auth.image); // Reset to default image if no file is selected
+			return;
+		}
 
-    const fileReader = new FileReader();
-    fileReader.onload = () => {
-        // console.log('FileReader Result:', fileReader.result);
-        setPreviewUrl(fileReader.result); // Update previewUrl with the new image data URL
-    };
-    fileReader.readAsDataURL(file);
+		const fileReader = new FileReader();
+		fileReader.onload = () => {
+			// console.log('FileReader Result:', fileReader.result);
+			setPreviewUrl(fileReader.result); // Update previewUrl with the new image data URL
+		};
+		fileReader.readAsDataURL(file);
 	}, [file]);
 
-  const pickedHandler = event => {
-    let pickedFile;
-    if (event.target.files && event.target.files.length === 1) {
-      pickedFile = event.target.files[0];
-      setFile(pickedFile);
-      setIsValid(true);
-    } else {
-      setIsValid(false);
-    }
-    setInputImage(pickedFile);
-  };
+	const pickedHandler = event => {
+		let pickedFile;
+		if (event.target.files && event.target.files.length === 1) {
+			pickedFile = event.target.files[0];
+			setFile(pickedFile);
+			setIsValid(true);
+		} else {
+			setIsValid(false);
+		}
+		setInputImage(pickedFile);
+	};
 
 	// Function to update current user image
-  const userImageUpdateHandler = async event => {
-    event.preventDefault();
-    try {
-      const formData = new FormData();
-      formData.append('image', inputImage);
-      const responseData = await sendRequest(
-        import.meta.env.VITE_BACKEND_URL+`/users/edit/imageupdate/${auth.userId}`,
-        'PATCH',
-        formData
-      );
+	const userImageUpdateHandler = async event => {
+		event.preventDefault();
+		try {
+			const formData = new FormData();
+			formData.append('image', inputImage);
+			const responseData = await sendRequest(
+				import.meta.env.VITE_BACKEND_URL + `/users/edit/imageupdate/${auth.userId}`,
+				'PATCH',
+				formData
+			);
 			setTimeout(() => {
 				window.location.reload(false);
 			}, 1500);
 			await auth.updateUser(
-        auth.userName,
-        auth.firstname,
-        auth.lastname,
-        auth.email,
-        auth.phone,
-        auth.bio,
+				auth.userName,
+				auth.firstname,
+				auth.lastname,
+				auth.email,
+				auth.phone,
+				auth.bio,
 				auth.role,
 				responseData.user.image
-      );
-      console.log("User image updated successfully!",inputImage);
-    } catch (err) {
-      console.log('ERROR updating user image!');
-    }
-  };
+			);
+			console.log("User image updated successfully!", inputImage);
+		} catch (err) {
+			console.log('ERROR updating user image!');
+		}
+	};
 
 	// Function to remove current user image
 	const userImageRemoveHandler = async event => {
-    event.preventDefault();
-    try {
-      const responseData = await sendRequest(
-        import.meta.env.VITE_BACKEND_URL+`/users/edit/imagedelete/${auth.userId}`,
-        'PATCH',
-        []
-      );
-      console.log("User image deleted successfully!");
+		event.preventDefault();
+		try {
+			const responseData = await sendRequest(
+				import.meta.env.VITE_BACKEND_URL + `/users/edit/imagedelete/${auth.userId}`,
+				'PATCH',
+				[]
+			);
+			console.log("User image deleted successfully!");
 			setTimeout(() => {
 				// navigate('/')
 				window.location.reload(false);
 			}, 1500);
 
 			await auth.updateUser(
-        auth.userName,
-        auth.firstname,
-        auth.lastname,
-        auth.email,
-        auth.phone,
-        auth.bio,
+				auth.userName,
+				auth.firstname,
+				auth.lastname,
+				auth.email,
+				auth.phone,
+				auth.bio,
 				auth.role,
 				import.meta.env.VITE_USER_DEFAULT_IMAGE_PATH
 			);
 
 			setPreviewUrl(import.meta.env.VITE_USER_DEFAULT_IMAGE);
 			console.log(import.meta.env.VITE_USER_DEFAULT_IMAGE);
-    } catch (err) {
-      console.log('ERROR deleting user image!');
-    }
-  };
+		} catch (err) {
+			console.log('ERROR deleting user image!');
+		}
+	};
 
 	return (
 		<div className="p-4 sm:ml-64">
@@ -321,13 +276,13 @@ const EditProfile = () => {
 						</div>
 						{/* Save and Cancel Buttons */}
 						<div className="mt-5 flex justify-end">
-							<button 
-								onClick={()=>(console.log("CANCEL button clicked!"))}
+							<button
+								onClick={() => (console.log("CANCEL button clicked!"))}
 								className="px-6 py-2 mr-2 border-black-100 text-black rounded-md shadow hover:bg-gray-100"
 							>
 								Cancel
 							</button>
-							<button 
+							<button
 								onClick={userInfoUpdateHandler}
 								className="px-6 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-gray-600"
 							>
@@ -345,7 +300,7 @@ const EditProfile = () => {
 						<div className="mt-4 flex flex-row">
 							<div className="w-12 h-12 rounded-full object-cover bg-gray-100 text-sm" >
 								{/* {previewUrl && <img src={import.meta.env.VITE_ASSETS_URL+'/'+previewUrl} alt="Preview" />} */}
-								{previewUrl && 
+								{previewUrl &&
 									<img
 										src={
 											file
@@ -361,7 +316,7 @@ const EditProfile = () => {
 								<div className="flex flex-col">
 									<h1 className="ml-2">Edit your photo</h1>
 									<div className="flex flex-row">
-										<button 
+										<button
 											type='button'
 											onClick={userImageRemoveHandler}
 											className=" text-black px-2 py-1 rounded-full  "
@@ -384,7 +339,7 @@ const EditProfile = () => {
 								type="file"
 								accept=".jpg,.png,.jpeg"
 								onChange={pickedHandler}
-								// onClick={pickImageHandler}
+							// onClick={pickImageHandler}
 							/>
 						</div>
 
@@ -393,7 +348,7 @@ const EditProfile = () => {
 							<button className="px-6 py-2 mr-2 border-black-100 text-black rounded-md shadow hover:bg-gray-100">
 								Cancel
 							</button>
-							<button 
+							<button
 								type='button'
 								className="px-6 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-gray-600"
 								onClick={userImageUpdateHandler}

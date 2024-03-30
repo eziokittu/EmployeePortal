@@ -548,7 +548,7 @@ const updateUserPassword = async (req, res, next) => {
   try {
     existingUser = await User.findById({ _id: userId });
     if (!existingUser) {
-      return next(new HttpError('User not found, update failed.', 404));
+      return res.json({ok:-1, message: "User does not exist with this user ID"});
     }
   }
   catch (error) {
@@ -559,21 +559,21 @@ const updateUserPassword = async (req, res, next) => {
   try {
     isValidPassword = await bcrypt.compare(oldPassword, existingUser.password);
   } catch (err) {
-    return new HttpError('Some error occured!',500);
+    return res.json({ok:-1, message: "Some error occured while comparing passwords!"});
   }
 
   if (!isValidPassword) {
-    return next(new HttpError('The passwords dont match', 500));
+    return res.json({ok:-1, message: "The old password does not match!"});
   }
 
   try {
     const hashedPassword = await bcrypt.hash(newPassword, 12);
     existingUser.password = hashedPassword;
     await existingUser.save();
-    res.status(200).json({ user: existingUser.toObject({ getters: true }) });
+    res.json({ ok:1, message:"updated password", user: existingUser.toObject({ getters: true }) });
   } catch (err) {
     // Handle database or server errors
-    return next(new HttpError('Something went wrong[1], could not update user password.', 500));
+    return res.json({ok:-1, message: "Something went wrong, could not update user password!"});
   }
 };
 

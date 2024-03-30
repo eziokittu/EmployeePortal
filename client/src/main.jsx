@@ -22,6 +22,7 @@ import CreateOffer from './components/Dashboard/CreateOffer.jsx';
 import EditOffer from './components/Dashboard/EditOffer.jsx';
 import ContactForm from './components/Dashboard/ContactForm.jsx';
 import Certificates from './components/Dashboard/Certificates.jsx';
+import CertificateAdmin from './components/Dashboard/CertificateAdmin.jsx';
 import Others from './components/Dashboard/Others.jsx';
 import Activity from './components/Dashboard/Activity.jsx';
 // import Settings from './components/Dashboard/Settings.jsx';
@@ -139,7 +140,7 @@ function App() {
               <Route exact path="/create-offer" element={<CreateOffer />} />
               <Route exact path="/edit-offer/:oid" element={<EditOffer />} />
               <Route exact path="/applications/:oid" element={<Applications />} />
-              <Route exact path="/certificates" element={<Certificates />} />
+              <Route exact path="/certificates" element={<CertificateAdmin />} />
               <Route exact path="/others" element={<Others />} />
             </Routes>
           )}

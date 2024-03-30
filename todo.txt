@@ -7,6 +7,11 @@
 
 if an employee is terminated and applied on an offer, then when admin approves, isTerminated status should be gone
 
+
+
+
+TASKS that yet remain!
+
 DASHBOARD details -
   total projects,
   total ongoing projects,
@@ -17,3 +22,8 @@ DASHBOARD details -
   total applications
   total job offers,
   total internship offers
+
+mobile otp verification
+edit profile - frontend validation
+offer application page - frontend validation
+certificates - frontend backend integration

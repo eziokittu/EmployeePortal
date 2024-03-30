@@ -23,9 +23,33 @@ const ChangePassword = () => {
   const [inputNewPassword, setInputNewPassword] = useState(''); 
   const [inputNewConfirmPassword, setInputNewConfirmPassword] = useState(''); 
 
-  const userPasswordChangeHandler = async () => {
-		if (inputNewConfirmPassword !== inputNewPassword){
-			console.log("New Password does not match with confirm password!");
+	// function to check for invalid inputs and return the list of error message strings
+  const validateInput = () => {
+    let alerts = [];
+    if (!inputOldPassword.trim() || inputOldPassword.length<8) {
+			alerts.push('Invalid Old Password');
+		}
+    if (!inputNewPassword.trim() || inputNewPassword.length<8) {
+			alerts.push('Invalid new Password');
+		}
+		if (inputOldPassword === inputNewPassword) {
+			alerts.push('New Password cannot be same as old password!');
+		}
+		if (!inputNewConfirmPassword.trim() || inputNewConfirmPassword.length<8) {
+			alerts.push('Invalid new confirm Password');
+		}
+		if (inputNewConfirmPassword !== inputNewPassword) {
+			alerts.push('New Password and confirm new password does not match!');
+		}
+		return alerts; // Return the alerts array directly
+	}
+
+  const userPasswordChangeHandler = async (event) => {
+		event.preventDefault();
+
+		const validationAlerts = validateInput();
+		if (validationAlerts.length > 0) {
+			alert(`Please correct the following errors:\n- ${validationAlerts.join('\n- ')}`);
 			return;
 		}
 		try {
@@ -41,14 +65,14 @@ const ChangePassword = () => {
 				}
 			);
 	
-			if (responseData.user) {
+			if (responseData.ok===1) {
 				console.log("User account password changed successfully!");
 				setTimeout(() => {
 					navigate('/')
 					window.location.reload(false);
 				}, 1500);
 			} else {
-				console.log("User account password change failed");
+				alert(responseData.message);
 			}
 	
 		} catch (err) {
@@ -56,7 +80,6 @@ const ChangePassword = () => {
 			console.log('ERROR updating user password:', err);
 		}
 	};
-	
 
 	return (
 		<div className="p-4 sm:ml-64">
@@ -190,7 +213,6 @@ const ChangePassword = () => {
 								<button 
 									id='submit-button'
 									type="submit" 
-									// onClick={userPasswordChangeHandler}
 									className="w-full border-2 border-transparent text-white bg-primary-600 hover:bg-white hover:text-primary-600 hover:border-primary-600 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-xl text-sm px-5 py-2.5 text-center"
 								>Save</button>
 							</div>
