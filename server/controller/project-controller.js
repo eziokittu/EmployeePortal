@@ -492,6 +492,56 @@ const updateProjectInfo = async (req, res, next) => {
     });
 }
 
+const updateProjectAsCompleted = async (req, res, next) => {
+  const projectId = req.params.pid;
+
+  // Find the existing project by projectId
+  const existingProject = await Project.findById({ _id: projectId });
+  if (!existingProject) {
+    return res.json({ok:-1, message: `Project ID is invalid` });
+  }
+  
+  // Update project details
+  try {
+    existingProject.isCompleted = true
+    await existingProject.save();
+  } catch (err) {
+    return res.status(200).json({ ok:-1, message: `Same error occured while marking project as completed, ${err}` });
+  }
+
+  return res
+    .status(200)
+    .json({ 
+      ok:1, 
+      message: "Successfully marked the project as completed"
+    });
+}
+
+const updateProjectAsOngoing = async (req, res, next) => {
+  const projectId = req.params.pid;
+
+  // Find the existing project by projectId
+  const existingProject = await Project.findById({ _id: projectId });
+  if (!existingProject) {
+    return res.json({ok:-1, message: `Project ID is invalid` });
+  }
+  
+  // Update project details
+  try {
+    existingProject.isCompleted = false
+    await existingProject.save();
+  } catch (err) {
+    return res.status(200).json({ ok:-1, message: `Same error occured while marking project as ongoing, ${err}` });
+  }
+
+  return res
+    .status(200)
+    .json({ 
+      ok:1, 
+      message: "Successfully marked the project as ongoing"
+    });
+}
+
 const addProjectMembersById = async (req, res, next) => {
   // console.log(req.body);
   const errors = validationResult(req);
@@ -731,6 +781,8 @@ module.exports = {
   createProject,
 
   updateProjectInfo,
+  updateProjectAsCompleted,
+  updateProjectAsOngoing,
   addProjectMembersById,
   addProjectMembersByEmail,
   removeProjectMembersById,

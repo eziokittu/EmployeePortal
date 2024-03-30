@@ -69,7 +69,8 @@ const getInternshipsByDomain = async (req, res, next) => {
   const page = req.query.page || 0;
   const internshipsPerPage = 2;
 
-  const domain = req.params['domain'];
+  const modifiedDomain = req.params['domain'];
+  const domain = modifiedDomain.replace(/:/g, '/');
 
   let existingDomain;
   let allInternships;
@@ -106,7 +107,8 @@ const getJobsByDomain = async (req, res, next) => {
   const page = req.query.page || 0;
   const jobsPerPage = 2;
 
-  const domain = req.params['domain'];
+  const modifiedDomain = req.params['domain'];
+  const domain = modifiedDomain.replace(/:/g, '/');
 
   let existingDomain;
   let allJobs;
@@ -180,7 +182,8 @@ const getInternshipCount = async (req, res, next) => {
 };
 
 const getInternshipCountByDomain = async (req, res, next) => {
-  const domain = req.params['domain'];
+  const modifiedDomain = req.params['domain'];
+  const domain = modifiedDomain.replace(/:/g, '/');
 
   let existingDomain;
   try {
@@ -211,7 +214,8 @@ const getJobCount = async (req, res, next) => {
 };
 
 const getJobCountByDomain = async (req, res, next) => {
-  const domain = req.params['domain'];
+  const modifiedDomain = req.params['domain'];
+  const domain = modifiedDomain.replace(/:/g, '/');
 
   let existingDomain;
   try {

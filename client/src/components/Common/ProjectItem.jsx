@@ -133,10 +133,58 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 	function handleDetailsClick(projectId) {
 		navigate(`/project-details/${projectId}`);
 	}
-	// Button to handle the checkbox click
-	// function handleChange() {
-	// 	toggleCompleted(task.id);
-	// }
+
+	// Function to mark project as completed
+	const handleMarkAsCompleteClick = async (projectId) => {
+		try {
+			const responseData = await sendRequest(
+				import.meta.env.VITE_BACKEND_URL + `/projects/patch/mark-as-complete/${projectId}`,
+				'PATCH',
+				[],
+				{
+					'Content-Type': 'application/json'
+				}
+			);
+			if (responseData.ok === 1) {
+				console.log("Project marked as complete");
+				// Refreshes the page after 1 second
+				setTimeout(() => {
+					window.location.reload(false);
+				}, 1500);
+			}
+			else {
+				console.log(responseData.message)
+			}
+		} catch (err) {
+			console.log('ERROR marking project as complete');
+		}
+	}
+	
+	// Function to mark project as completed
+	const handleMarkAsOngoingClick = async (projectId) => {
+		try {
+			const responseData = await sendRequest(
+				import.meta.env.VITE_BACKEND_URL + `/projects/patch/mark-as-ongoing/${projectId}`,
+				'PATCH',
+				[],
+				{
+					'Content-Type': 'application/json'
+				}
+			);
+			if (responseData.ok === 1) {
+				console.log("Project marked as ongoing");
+				// Refreshes the page after 1 second
+				setTimeout(() => {
+					window.location.reload(false);
+				}, 1500);
+			}
+			else {
+				console.log(responseData.message)
+			}
+		} catch (err) {
+			console.log('ERROR marking project as ongoing');
+		}
+	}
 
 	// Function to get the domain name for the project
 	useEffect(() => {
@@ -206,13 +254,13 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 						<p className="text-gray-600 mb-4">{task.setPdfFile}</p>
 
 						{/* Edit and Delete Button */}
-						<div className="flex justify-between items-center">
+						<div className="flex flex-wrap justify-between items-center gap-3">
 
 							{/* Edit Button */}
 							{auth.isAdmin && (
 								<button
 									onClick={handleEditClick}
-									className="text-sm text-white bg-blue-500 w-20 py-2 mr-10 rounded-md hover:bg-blue-600"
+									className="text-sm text-white bg-blue-500 w-2/5 py-2 rounded-md hover:bg-blue-600"
 								>
 									Edit
 								</button>
@@ -221,16 +269,36 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 							{/* Details Button */}
 							<button
 								onClick={() => { handleDetailsClick(task._id) }}
-								className="text-sm text-white bg-gray-500 w-20 py-2 mr-10 rounded-md hover:bg-gray-600"
+								className="text-sm text-white bg-gray-500 w-2/5 py-2 rounded-md hover:bg-gray-600"
 							>
 								Details
 							</button>
+
+							{/* Mark as complete Button */}
+							{auth.isAdmin && !task.isCompleted && (
+							<button
+								onClick={() => { handleMarkAsCompleteClick(task._id) }}
+								className="text-sm text-white bg-gray-500 w-2/5 py-2 rounded-md hover:bg-gray-600"
+							>
+								Mark as Complete
+							</button>
+							)}
+
+							{/* Mark as ongoing Button */}
+							{auth.isAdmin && task.isCompleted && (
+							<button
+								onClick={() => { handleMarkAsOngoingClick(task._id) }}
+								className="text-sm text-white bg-gray-500 w-2/5 py-2 rounded-md hover:bg-gray-600"
+							>
+								Mark as Ongoing
+							</button>
+							)}
 
 							{/* Delete Button */}
 							{auth.isAdmin && (
 								<button
 									onClick={() => projectDeleteHandler()}
-									className="text-sm text-white bg-red-500 w-20 py-2 rounded-md hover:bg-red-600"
+									className="text-sm text-white bg-red-500 w-2/5 py-2 rounded-md hover:bg-red-600"
 								>
 									Delete
 								</button>

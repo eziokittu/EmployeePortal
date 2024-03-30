@@ -112,9 +112,10 @@ const Internship = () => {
   
   // function to fetch internships by domain
   const fetchInternshipsByDomain = async selectedDomain => {
+    let modifiedDomain = selectedDomain.replace(/\//g, ':');
     try {
       const responseData = await sendRequest(
-        import.meta.env.VITE_BACKEND_URL + `/offers/get/internships/${selectedDomain}?page=${page}`
+        import.meta.env.VITE_BACKEND_URL + `/offers/get/internships/${modifiedDomain}?page=${page}`
       );
       if (responseData.ok===1){
         setLoadedInternships(responseData.internships);
@@ -129,9 +130,10 @@ const Internship = () => {
 
   // function to fetch internship count by domain
   const fetchInternshipCountByDomain = async selectedDomain => {
+    let modifiedDomain = selectedDomain.replace(/\//g, ':');
     try {
       const responseData = await sendRequest(
-        import.meta.env.VITE_BACKEND_URL + `/offers/get/internshipcount/${selectedDomain}`
+        import.meta.env.VITE_BACKEND_URL + `/offers/get/internshipcount/${modifiedDomain}`
       );
       if (responseData.ok===1){
         setInternshipCount(responseData.count);

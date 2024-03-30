@@ -61,6 +61,32 @@ router.patch(
 );
 
 router.patch(
+  '/patch/mark-as-ongoing/:pid',
+  [
+    // check('title')
+    //   .not()
+    //   .isEmpty(),
+    // check('description')
+    //   .not()
+    //   .isEmpty()
+  ],
+  projectController.updateProjectAsOngoing
+);
+
+router.patch(
+  '/patch/mark-as-complete/:pid',
+  [
+    // check('title')
+    //   .not()
+    //   .isEmpty(),
+    // check('description')
+    //   .not()
+    //   .isEmpty()
+  ],
+  projectController.updateProjectAsCompleted
+);
+
+router.patch(
   '/patch/addemployees-id/:pid',
   [
     // check('title')

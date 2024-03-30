@@ -112,9 +112,10 @@ const Jobs = () => {
   
   // function to fetch jobs by domain
   const fetchJobsByDomain = async selectedDomain => {
+    let modifiedDomain = selectedDomain.replace(/\//g, ':');
     try {
       const responseData = await sendRequest(
-        import.meta.env.VITE_BACKEND_URL + `/offers/get/jobs/${selectedDomain}?page=${page}`
+        import.meta.env.VITE_BACKEND_URL + `/offers/get/jobs/${modifiedDomain}?page=${page}`
       );
       if (responseData.ok===1){
         setLoadedJobs(responseData.jobs);
@@ -129,9 +130,10 @@ const Jobs = () => {
 
   // function to fetch job count by domain
   const fetchJobCountByDomain = async selectedDomain => {
+    let modifiedDomain = selectedDomain.replace(/\//g, ':');
     try {
       const responseData = await sendRequest(
-        import.meta.env.VITE_BACKEND_URL + `/offers/get/jobcount/${selectedDomain}`
+        import.meta.env.VITE_BACKEND_URL + `/offers/get/jobcount/${modifiedDomain}`
       );
       if (responseData.ok===1){
         setJobCount(responseData.count);
