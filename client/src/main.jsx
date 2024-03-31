@@ -1,13 +1,12 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { BrowserRouter, RouterProvider, createBrowserRouter, Routes, Route } from 'react-router-dom'
-// import App from './App.jsx'
-import './index.css'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import './index.css';
+
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import Login from './components/Login/Login.jsx';
 import Signup from './components/Signin/Signup.jsx';
-import Layout from './Layout.jsx';
 import Sidebar from './components/Sidebar/Sidebar.jsx';
 import Dashboard from './components/Dashboard/Dashboard.jsx';
 import Employee from './components/Dashboard/Employee.jsx';
@@ -24,8 +23,6 @@ import ContactForm from './components/Dashboard/ContactForm.jsx';
 import Certificates from './components/Dashboard/Certificates.jsx';
 import CertificateAdmin from './components/Dashboard/CertificateAdmin.jsx';
 import Others from './components/Dashboard/Others.jsx';
-import Activity from './components/Dashboard/Activity.jsx';
-// import Settings from './components/Dashboard/Settings.jsx';
 import AccountSetting from './components/Dashboard/AccountSetting.jsx';
 import EditProfile from './components/Dashboard/EditProfile.jsx';
 import ChangePassword from './components/Dashboard/ChangePassword.jsx';
@@ -33,6 +30,7 @@ import DeleteAccount from './components/Dashboard/DeleteAccount.jsx';
 import Applynow from './components/Dashboard/Applynow.jsx';
 import Applications from './components/Dashboard/Applications.jsx';
 import Error from './components/Error/Error.jsx';
+import Test from './components/Test.jsx';
 
 import { AuthContext } from './components/Backend/context/auth-context.js'
 import { useAuth } from './components/Backend/hooks/auth-hook.js'
@@ -151,7 +149,9 @@ function App() {
           <Routes>
             <Route path="*" element={<Error isFullPage={true} />} />
             <Route exact path="/" element={<Login />} />
-            <Route exact path="signup" element={<Signup />} />
+            <Route exact path="/signup" element={<Signup />} />
+            {/* <Route exact path="/test" element={<Test />} /> */}
+            <Route exact path="/test" element={<Test />} />
           </Routes>
         )}</div> 
         
