@@ -29,10 +29,14 @@ const EditProfile = () => {
 			alerts.push('Enter a valid email address');
 		}
 
-		if (!inputPhone || !/^\d+$/.test(inputPhone)) {
-			alerts.push('Enter a valid phone number');
-		} else if (inputPhone.length < 10 || inputPhone.length > 13) {
-			alerts.push('Phone number should be between 10 and 13 digits');
+		// if (!inputPhone || !/^\d+$/.test(inputPhone)) {
+		// 	alerts.push('Enter a valid phone number');
+		// } else if (inputPhone.length < 10 || inputPhone.length > 13) {
+		// 	alerts.push('Phone number should be between 10 and 13 digits');
+		// }
+		const phoneRegex = /^\+?[0-9]{10}(?:[0-9]{2})?$/;
+		if (!inputPhone.trim() || !phoneRegex.test(inputPhone)) {
+			alerts.push('Enter a valid phone number (only numbers or \'+\' allowed, minimum length 10, maximum length 13)');
 		}
 
 		const nameRegex = /^[a-zA-Z]+$/;
@@ -44,10 +48,14 @@ const EditProfile = () => {
 
 	const validatePhone = () => {
 		let alerts = [];
-		if (!inputPhone || !/^\d+$/.test(inputPhone)) {
-			alerts.push('Enter a valid phone number');
-		} else if (inputPhone.length < 10 || inputPhone.length > 13) {
-			alerts.push('Phone number should be between 10 and 13 digits');
+		// if (!inputPhone || !/^\d+$/.test(inputPhone)) {
+		// 	alerts.push('Enter a valid phone number');
+		// } else if (inputPhone.length < 10 || inputPhone.length > 13) {
+		// 	alerts.push('Phone number should be between 10 and 13 digits');
+		// }
+		const phoneRegex = /^\+?[0-9]{10}(?:[0-9]{2})?$/;
+		if (!inputPhone.trim() || !phoneRegex.test(inputPhone)) {
+			alerts.push('Enter a valid phone number (only numbers or \'+\' allowed, minimum length 10, maximum length 13)');
 		}
 		return alerts; // Return the alerts array directly
 	}
@@ -78,6 +86,17 @@ const EditProfile = () => {
 			phoneNumberChanged = true;
 		}
 
+		let phoneNumber;
+		if (inputPhone.length === 10) {
+			phoneNumber = "+91" + inputPhone;
+		}
+		else if (inputPhone.length <= 13 && inputPhone[0]!=='+'){
+			phoneNumber = "+"+inputPhone;
+		}
+		else {
+			phoneNumber = inputPhone;
+		}
+
 		try {
 			const responseData = await sendRequest(
 				import.meta.env.VITE_BACKEND_URL + `/users/edit/info/${auth.userId}`,
@@ -87,7 +106,7 @@ const EditProfile = () => {
 					firstname: inputFirstName,
 					lastname: inputLastName,
 					userName: inputUserName,
-					phone: inputPhone,
+					phone: phoneNumber,
 					bio: inputBio
 				}),
 				{
@@ -101,7 +120,7 @@ const EditProfile = () => {
 					inputFirstName,
 					inputLastName,
 					inputEmail,
-					inputPhone,
+					phoneNumber,
 					inputBio,
 					auth.role,
 					auth.image,
@@ -253,6 +272,12 @@ const EditProfile = () => {
 		if (inputPhone.length === 10) {
 			phoneNumber = "+91" + inputPhone;
 		}
+		else if (inputPhone.length <= 13 && inputPhone[0]!=='+'){
+			phoneNumber = "+"+inputPhone;
+		}
+		else {
+			phoneNumber = inputPhone;
+		}
 		console.log(phoneNumber);
 		const appVerifier = window.recaptchaVerifier;
 		try {
@@ -323,6 +348,9 @@ const EditProfile = () => {
 					<div>
 						<h1 className=' text-4xl font-bold'>Edit Profile</h1>
 						<p className='mt-4'>Manage Your Account Preferences</p>
+						{!auth.isMobileOtpVerified && (
+							<p className='text-2xl my-4 text-red-500'>Verify your phone number with OTP</p>
+						)}
 					</div>
 				</div>
 				<div className="p-4 bg-gray-50">

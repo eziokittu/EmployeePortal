@@ -173,7 +173,16 @@ const JobItem=({id, stipend, ctc, heading, domain, date, isInternship, userIsAdm
         {!auth.isAdmin && !hasApplied && (
           <button 
             className="bg-violet-500 hover:bg-violet-800 p-2 pl-5 pr-5 rounded-lg text-white mb-4"
-            onClick={()=>{navigate('/apply/'+id)}}
+            onClick={() => {
+              if (!auth.isMobileOtpVerified) {
+                alert("Your Phone number should be OTP verified before you apply to any offer!");
+                setTimeout(() => {
+                  navigate('/edit-profile/');
+                }, 700);
+              } else {
+                navigate('/apply/' + id);
+              }
+            }}
           >Apply</button>
         )}
         {!auth.isAdmin && hasApplied && (
