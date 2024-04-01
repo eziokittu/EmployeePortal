@@ -169,6 +169,7 @@ const ProjectDetails = () => {
         setSearchedEmployee(responseData.employee);
       }
 		} catch (err) {
+      alert("No match found for any employee!")
 			console.log('ERROR in searching employee with email');
 		} 
   }
@@ -185,6 +186,7 @@ const ProjectDetails = () => {
         setSearchedEmployee(responseData.employee);
       }
 		} catch (err) {
+      alert("No match found for any employee!")
 			console.log('ERROR in searching employee with Ref ID');
 		} 
   }

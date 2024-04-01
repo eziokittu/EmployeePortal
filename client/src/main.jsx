@@ -29,6 +29,7 @@ import ChangePassword from './components/Dashboard/ChangePassword.jsx';
 import DeleteAccount from './components/Dashboard/DeleteAccount.jsx';
 import Applynow from './components/Dashboard/Applynow.jsx';
 import Applications from './components/Dashboard/Applications.jsx';
+import RecoverAccount from './components/Recover/RecoverAccount.jsx';
 import Error from './components/Error/Error.jsx';
 
 import { AuthContext } from './components/Backend/context/auth-context.js'
@@ -153,6 +154,7 @@ function App() {
             <Route path="*" element={<Error isFullPage={true} />} />
             <Route exact path="/" element={<Login />} />
             <Route exact path="/signup" element={<Signup />} />
+            <Route exact path="/recover" element={<RecoverAccount />} />
           </Routes>
         )}</div> 
         

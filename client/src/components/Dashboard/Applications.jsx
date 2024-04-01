@@ -70,10 +70,11 @@ function Applications() {
         {pageCount>0 ? (
           <div className='text-2xl font-bold text-center my-8'>View Applications</div>
         ) : (
-          <div className='text-4xl font-bold text-center'>No applications found!</div>
+          <div className='text-2xl font-bold text-center py-12'>No applications found!</div>
         )}
 
         {/* Content */}
+        {pageCount>0 && (
         <div className='flex flex-col text-center bg-blue-50 border-2 border-gray-300 rounded-lg p-4'>
           {/* Heading */}
           <div className='grid grid-cols-12 bg-blue-600 text-white rounded-lg p-4 w-full'>
@@ -96,6 +97,7 @@ function Applications() {
             );
           })}
         </div>
+        )}
 
         {/* Pagination */}
         {pageCount>0 && (

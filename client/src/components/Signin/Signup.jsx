@@ -102,7 +102,7 @@ const Signup = () => {
 			<div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
 				<div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
 					<div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-						<h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">
+						<h1 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">
 							Create an Account
 						</h1>
 						<form 
@@ -118,7 +118,7 @@ const Signup = () => {
 									type="text" 
 									name="first-name" 
 									id="first-name" 
-									className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-3xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" 
+									className="bg-gray-50 border border-gray-400 text-gray-900 sm:text-sm rounded-3xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" 
 									placeholder="First name" 
 									required="" 
 								/>
@@ -132,13 +132,13 @@ const Signup = () => {
 									type="text" 
 									name="last-name" 
 									id="last-name" 
-									className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-3xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" 
+									className="bg-gray-50 border border-gray-400 text-gray-900 sm:text-sm rounded-3xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" 
 									placeholder="Last name" 
 									required="" 
 								/>
 							</div>
 							{/* <div>
-								<input type="text" name="employee-id" id="employee-id" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-3xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Employee Id" required="" />
+								<input type="text" name="employee-id" id="employee-id" className="bg-gray-50 border border-gray-400 text-gray-900 sm:text-sm rounded-3xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" placeholder="Employee Id" required="" />
 							</div> */}
 
 							{/* Email */}
@@ -149,7 +149,7 @@ const Signup = () => {
 									type="email" 
 									name="email" 
 									id="email" 
-									className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-3xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" 
+									className="bg-gray-50 border border-gray-400 text-gray-900 sm:text-sm rounded-3xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" 
 									placeholder="E-mail" 
 									required="" 
 								/>
@@ -164,7 +164,7 @@ const Signup = () => {
 									name="password" 
 									id="password" 
 									placeholder="Password" 
-									className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-3xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" 
+									className="bg-gray-50 border border-gray-400 text-gray-900 sm:text-sm rounded-3xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" 
 									required="" 
 								/>
 							</div>
@@ -178,7 +178,7 @@ const Signup = () => {
 									name="confirm-password" 
 									id="confirm-password" 
 									placeholder="Confirm Password" 
-									className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-3xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" 
+									className="bg-gray-50 border border-gray-400 text-gray-900 sm:text-sm rounded-3xl focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5" 
 									required="" 
 								/>
 							</div>

@@ -70,6 +70,7 @@ const CertificateAdmin = () => {
         setSearchedEmployee(responseData.employee);
       }
 		} catch (err) {
+      alert("No match found for any employee!")
 			console.log('ERROR in searching employee with email');
 		} 
   }
@@ -91,6 +92,7 @@ const CertificateAdmin = () => {
         setSearchedEmployee(responseData.employee);
       }
 		} catch (err) {
+      alert("No match found for any employee!")
 			console.log('ERROR in searching employee with Ref ID');
 		} 
   }
@@ -153,7 +155,7 @@ const CertificateAdmin = () => {
         <div className="bg-white rounded-lg mb-4">
 
           {/* heading */}
-          <h1 className="text-4xl font-bold pb-8 pt-14 text-center">Issue a new Certificate</h1>
+          <h1 className="text-3xl font-bold pb-8 pt-14 text-center">Issue a new Certificate</h1>
 
           {/* Form input section */}
           <div className="flex justify-center items-center">
