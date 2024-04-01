@@ -17,7 +17,7 @@ const userSchema = new Schema({
     isMobileOtpVerified: {type: Boolean, required: true, default: false },
 
     ref: {type: String, required:true, default: process.env.DB_USER_DEFAULT_REF}, // RNPW/2024-25/WEB123DEV
-    role: { type: String, ref: 'Domain', required: false },
+    role: { type: String, ref: 'Role', required: false },
     rating: {type: Number, required: true, default: 0 },
     domain: { type: mongoose.Types.ObjectId, ref: 'Domain' },
     projects: [{ type: mongoose.Types.ObjectId, required: true, ref: 'Project' }],

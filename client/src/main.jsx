@@ -30,7 +30,6 @@ import DeleteAccount from './components/Dashboard/DeleteAccount.jsx';
 import Applynow from './components/Dashboard/Applynow.jsx';
 import Applications from './components/Dashboard/Applications.jsx';
 import Error from './components/Error/Error.jsx';
-import Test from './components/Test.jsx';
 
 import { AuthContext } from './components/Backend/context/auth-context.js'
 import { useAuth } from './components/Backend/hooks/auth-hook.js'
@@ -52,7 +51,8 @@ function App() {
     bio,
     role,
     image,
-    updateUser
+    updateUser,
+    updateIsMobileOtpVerified
   } = useAuth();
 
   return (
@@ -76,7 +76,8 @@ function App() {
 
         login: login,
         logout: logout,
-        updateUser: updateUser
+        updateUser: updateUser,
+        updateIsMobileOtpVerified: updateIsMobileOtpVerified
       }}
     >
       <BrowserRouter>
@@ -152,7 +153,6 @@ function App() {
             <Route path="*" element={<Error isFullPage={true} />} />
             <Route exact path="/" element={<Login />} />
             <Route exact path="/signup" element={<Signup />} />
-            <Route exact path="/test" element={<Test />} />
           </Routes>
         )}</div> 
         

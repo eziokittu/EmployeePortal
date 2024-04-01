@@ -98,7 +98,7 @@ export const useAuth = () => {
     localStorage.removeItem('userData');
   }, []);
 
-  const updateUser = useCallback((_userName, _firstname, _lastname, _email, _phone, _bio, _role, _image, _isMobileOtpVerified) => {
+  const updateUser = useCallback((_userName, _firstname, _lastname, _email, _phone, _bio, _role, _image) => {
     // Update state variables
     setUserName(_userName);
     setFirstname(_firstname);
@@ -108,7 +108,6 @@ export const useAuth = () => {
     setBio(_bio);
     setRole(_role);
     setImage(_image);
-    setIsMobileOtpVerified(_isMobileOtpVerified);
   
     // Update localStorage
     const storedData = JSON.parse(localStorage.getItem('userData'));
@@ -124,7 +123,23 @@ export const useAuth = () => {
           phone: _phone,
           bio: _bio,
           role: _role,
-          image: _image,
+          image: _image
+        })
+      );
+    }
+  }, []);  
+
+  const updateIsMobileOtpVerified = useCallback((_isMobileOtpVerified) => {
+    // Update state variables
+    setIsMobileOtpVerified(_isMobileOtpVerified);
+  
+    // Update localStorage
+    const storedData = JSON.parse(localStorage.getItem('userData'));
+    if (storedData) {
+      localStorage.setItem(
+        'userData',
+        JSON.stringify({
+          ...storedData,
           isMobileOtpVerified: _isMobileOtpVerified
         })
       );
@@ -185,6 +200,7 @@ export const useAuth = () => {
     role,
     image,
 
-    updateUser, // add updateUser to the returned object
+    updateUser,
+    updateIsMobileOtpVerified
   };
 };

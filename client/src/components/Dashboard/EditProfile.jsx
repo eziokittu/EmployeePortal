@@ -5,7 +5,7 @@ import { AuthContext } from '../Backend/context/auth-context';
 import profileImg from '../../assets/profile.png';
 
 import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
-import { firebaseAuth } from '../firebase/firebase-config'; 
+import { firebaseAuth } from '../firebase/firebase-config';
 
 const EditProfile = () => {
 	const { sendRequest } = useHttpClient();
@@ -16,10 +16,31 @@ const EditProfile = () => {
 	const [inputLastName, setInputLastName] = useState(auth.lastname);
 	const [inputUserName, setInputUserName] = useState(auth.userName);
 	const [inputPhone, setInputPhone] = useState(auth.phone);
-	const [inputOtp, setInputOtp] = useState(auth.phone);
+	const [inputOtp, setInputOtp] = useState();
 	const [inputEmail, setInputEmail] = useState(auth.email);
 	const [inputBio, setInputBio] = useState(auth.bio);
 	let confirmationResult = useRef(null);
+
+	const validate = () => {
+		let alerts = [];
+
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!inputEmail.trim() || !emailRegex.test(inputEmail)) {
+			alerts.push('Enter a valid email address');
+		}
+
+		if (!inputPhone || !/^\d+$/.test(inputPhone)) {
+			alerts.push('Enter a valid phone number');
+		} else if (inputPhone.length < 10 || inputPhone.length > 13) {
+			alerts.push('Phone number should be between 10 and 13 digits');
+		}
+
+		const nameRegex = /^[a-zA-Z]+$/;
+		if (!inputFirstName.trim() || !nameRegex.test(inputFirstName)) {
+			alerts.push('First name cannot be empty and must contain only english characters');
+		}
+		return alerts; // Return the alerts array directly
+	}
 
 	const validatePhone = () => {
 		let alerts = [];
@@ -35,9 +56,9 @@ const EditProfile = () => {
 		let alerts = [];
 		if (!inputOtp || !/^\d+$/.test(inputOtp)) {
 			alerts.push('Enter a valid OTP (only numbers)');
-	} else if (inputOtp.length !== 6) {
-		alerts.push('OTP should be exactly 6 digits');
-	}
+		} else if (inputOtp.length !== 6) {
+			alerts.push('OTP should be exactly 6 digits');
+		}
 		return alerts; // Return the alerts array directly
 	}
 
@@ -51,6 +72,12 @@ const EditProfile = () => {
 			alert(`Please correct the following errors:\n- ${validationAlerts.join('\n- ')}`);
 			return; // Stop the function if there are errors
 		}
+
+		let phoneNumberChanged = false;
+		if (auth.phone !== inputPhone){
+			phoneNumberChanged = true;
+		}
+
 		try {
 			const responseData = await sendRequest(
 				import.meta.env.VITE_BACKEND_URL + `/users/edit/info/${auth.userId}`,
@@ -61,31 +88,38 @@ const EditProfile = () => {
 					lastname: inputLastName,
 					userName: inputUserName,
 					phone: inputPhone,
-					bio: inputBio,
+					bio: inputBio
 				}),
 				{
 					'Content-Type': 'application/json'
 				}
 			);
-			// console.log("DEBUG 1");
-			setTimeout(() => {
-				window.location.reload(false);
-			}, 2500);
-			// console.log("DEBUG 2");
-			await auth.updateUser(
-				inputUserName,
-				inputFirstName,
-				inputLastName,
-				inputEmail,
-				inputPhone,
-				inputBio,
-				isMobileOtpVerified,
-				auth.role,
-				auth.image,
-				false
-			);
-			// console.log("DEBUG 3");
-			console.log("User details updated successfully!");
+			if (responseData.ok === 1) {
+				// updating the user details in local storage
+				await auth.updateUser(
+					inputUserName,
+					inputFirstName,
+					inputLastName,
+					inputEmail,
+					inputPhone,
+					inputBio,
+					auth.role,
+					auth.image,
+					false
+				);
+				// updating the user detail in loca storage for if mobil is OTP verified or not
+				await auth.updateIsMobileOtpVerified(
+					!phoneNumberChanged & auth.isMobileOtpVerified,
+					false
+				)
+				console.log("User details updated successfully!");
+				setTimeout(() => {
+					window.location.reload(false);
+				}, 1500);
+			}
+			else {
+				alert("Something went wrong! Could not save updated user! Try again!")
+			}
 		} catch (err) {
 			console.log('ERROR updating user details!');
 		}
@@ -192,18 +226,18 @@ const EditProfile = () => {
 	};
 
 	useEffect(() => {
-    configureCaptcha();
-  }, []);
+		configureCaptcha();
+	}, []);
 
 	const configureCaptcha = () => {
-    window.recaptchaVerifier = new RecaptchaVerifier(firebaseAuth, 'settings_phone', {
-      'size': 'invisible',
-      'callback': (response) => {
-        // reCAPTCHA solved, allow signInWithPhoneNumber.
-        onSignInSubmit();
-      }
-    }, firebaseAuth);
-  };
+		window.recaptchaVerifier = new RecaptchaVerifier(firebaseAuth, 'settings_phone', {
+			'size': 'invisible',
+			'callback': (response) => {
+				// reCAPTCHA solved, allow signInWithPhoneNumber.
+				onSignInSubmit();
+			}
+		}, firebaseAuth);
+	};
 
 	const generateOtp = async (e) => {
 		e.preventDefault();
@@ -216,41 +250,43 @@ const EditProfile = () => {
 		}
 
 		let phoneNumber;
-		if (inputPhone.length===10){
-    	phoneNumber = "+91" + inputPhone;
+		if (inputPhone.length === 10) {
+			phoneNumber = "+91" + inputPhone;
 		}
-    console.log(phoneNumber);
-    const appVerifier = window.recaptchaVerifier;
-    try {
-      confirmationResult.current = await signInWithPhoneNumber(firebaseAuth, phoneNumber, appVerifier);
-      console.log("OTP has been sent");
-			alert("Enter the OTP to verufy. OTP has been sent to this number: "+phoneNumber)
-    } catch (error) {
-      console.error("SMS not sent", error);
-    }
+		console.log(phoneNumber);
+		const appVerifier = window.recaptchaVerifier;
+		try {
+			confirmationResult.current = await signInWithPhoneNumber(firebaseAuth, phoneNumber, appVerifier);
+			console.log("OTP has been sent to the number: " + phoneNumber);
+			alert("Enter the OTP to verify. OTP has been sent to this number: " + phoneNumber)
+		} catch (error) {
+			console.error("SMS not sent", error);
+		}
 	}
-	
+
 	const verifyOtp = async (e) => {
 		e.preventDefault();
 
+		// validate user input for otp
 		const validationAlerts = validateOtp(); // This now directly receives the alerts array
 		if (validationAlerts.length > 0) {
 			alert(`Please correct the following errors:\n- ${validationAlerts.join('\n- ')}`);
 			return;
 		}
 
-		// console.log("DEBUG "+auth.userId, inputPhone, inputOtp);
-
+		// // Verify if the otp is correct
 		try {
-      const result = await confirmationResult.current.confirm(inputOtp);
-      const user = result.user;
-      // console.log(JSON.stringify(user));
-    } catch (error) {
+			const result = await confirmationResult.current.confirm(inputOtp);
+			const user = result.user;
+			// console.log(JSON.stringify(user));
+			console.log("Mobile OTP is now verified...");
+		} catch (error) {
 			alert("Wrong OTP entered OR auth code has expired! Try Again!")
-      console.error("User couldn't sign in (bad verification code?)", error);
+			console.error("User couldn't sign in (bad verification code?)", error);
 			return;
-    }
+		}
 
+		// Set user status for mobile otp verified to true
 		try {
 			const responseData = await sendRequest(
 				import.meta.env.VITE_BACKEND_URL + `/users/edit/mobile-verified`,
@@ -263,15 +299,19 @@ const EditProfile = () => {
 					'Content-Type': 'application/json'
 				}
 			);
-			if (responseData.ok===1){
-				alert("User is verified");
+			if (responseData.ok === 1) {
+				await auth.updateIsMobileOtpVerified(
+					true,
+					false
+				)
+				alert(responseData.message);
 				console.log(responseData.message);
 			}
-			else{
+			else {
 				console.log(responseData.message);
 			}
 		} catch (err) {
-			console.log("Some thing went wrong while verifying OTP! ERROR:", err);
+			console.log("Something went wrong while verifying OTP! ERROR:", err);
 		}
 	}
 
@@ -349,28 +389,36 @@ const EditProfile = () => {
 									{/* Get OTP Button */}
 									<div className='w-1/3 pl-2 pr-4 text-center mt-auto'
 									>
-										<button 
+										<button
 											onClick={generateOtp}
 											className='bg-blue-500 w-full py-2 text-white rounded-lg hover:bg-blue-700'
 										>Get OTP</button>
 									</div>
 
 									{/* Enter OTP input field */}
-									<div className='w-2/3'>
+									<div className='w-2/3 relative'>
 										<label htmlFor="number">Enter OTP</label>
 										<input
 											onChange={(event) => setInputOtp(event.target.value)}
-											type="text"
+											type="number"
 											id="settings_phone"
 											placeholder={inputOtp}
 											className="block w-full h-10 mt-1 bg-blue-100 pl-10 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 										/>
+										<svg
+											className="absolute left-3 top-10 h-4 w-4 text-gray-400"
+											fill="#000000" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"
+										>
+											<g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="Password">
+												<path d="M391,233.9478H121a45.1323,45.1323,0,0,0-45,45v162a45.1323,45.1323,0,0,0,45,45H391a45.1323,45.1323,0,0,0,45-45v-162A45.1323,45.1323,0,0,0,391,233.9478ZM184.123,369.3794a9.8954,9.8954,0,1,1-9.8964,17.1387l-16.33-9.4287v18.8593a9.8965,9.8965,0,0,1-19.793,0V377.0894l-16.33,9.4287a9.8954,9.8954,0,0,1-9.8964-17.1387l16.3344-9.4307-16.3344-9.4306a9.8954,9.8954,0,0,1,9.8964-17.1387l16.33,9.4282V323.9487a9.8965,9.8965,0,0,1,19.793,0v18.8589l16.33-9.4282a9.8954,9.8954,0,0,1,9.8964,17.1387l-16.3344,9.4306Zm108,0a9.8954,9.8954,0,1,1-9.8964,17.1387l-16.33-9.4287v18.8593a9.8965,9.8965,0,0,1-19.793,0V377.0894l-16.33,9.4287a9.8954,9.8954,0,0,1-9.8964-17.1387l16.3344-9.4307-16.3344-9.4306a9.8954,9.8954,0,0,1,9.8964-17.1387l16.33,9.4282V323.9487a9.8965,9.8965,0,0,1,19.793,0v18.8589l16.33-9.4282a9.8954,9.8954,0,0,1,9.8964,17.1387l-16.3344,9.4306Zm108,0a9.8954,9.8954,0,1,1-9.8964,17.1387l-16.33-9.4287v18.8593a9.8965,9.8965,0,0,1-19.793,0V377.0894l-16.33,9.4287a9.8954,9.8954,0,0,1-9.8964-17.1387l16.3344-9.4307-16.3344-9.4306a9.8954,9.8954,0,0,1,9.8964-17.1387l16.33,9.4282V323.9487a9.8965,9.8965,0,0,1,19.793,0v18.8589l16.33-9.4282a9.8954,9.8954,0,0,1,9.8964,17.1387l-16.3344,9.4306Z" />
+												<path d="M157.8965,143.9487a98.1035,98.1035,0,1,1,196.207,0V214.147h19.793V143.9487a117.8965,117.8965,0,0,0-235.793,0V214.147h19.793Z" /></g> </g>
+										</svg>
 									</div>
 
 									{/* Verify OTP Button */}
 									<div className='w-1/3 pl-2 text-center mt-auto'
 									>
-										<button 
+										<button
 											onClick={verifyOtp}
 											className='bg-blue-500 w-full py-2 text-white rounded-lg hover:bg-blue-700'
 										>Verify OTP</button>

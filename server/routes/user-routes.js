@@ -166,7 +166,7 @@ router.patch(
       .isEmpty(),
     check('phone')
       .not()
-      .isEmpty(),
+      .isEmpty()
   ],
   userController.setmobileOtpVerificationTrue
 );

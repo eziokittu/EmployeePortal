@@ -497,7 +497,7 @@ const updateUserInfo = async (req, res, next) => {
   if (!errors.isEmpty()) {
     return next(new HttpError('Invalid inputs passed, please check your data.', 422));
   }
-
+  
   const { firstname, lastname, userName, email, phone, bio } = req.body;
 
   const userId = req.params.uid;
@@ -528,10 +528,11 @@ const updateUserInfo = async (req, res, next) => {
     existingUser.bio = bio;
 
     // if mobile OTP was verified on the previous phone
-    if (existingUser.phone !== phone){
-      existingUser.isMobileOtpVerified = false;
-      existingUser.phone = phone;
-    }
+    // if (existingUser.phone !== phone){
+    //   existingUser.isMobileOtpVerified = false;
+    //   existingUser.phone = phone;
+    // }
+    existingUser.phone = phone;
 
     // Save the updated user
     await existingUser.save();
