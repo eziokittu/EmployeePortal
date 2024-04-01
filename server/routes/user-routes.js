@@ -157,6 +157,20 @@ router.patch(
   userController.unterminateEmployeeByEmail
 );
 
+// PATCH: set user mobile verified status to true
+router.patch(
+  '/edit/mobile-verified',
+  [
+    check('userId')
+      .not()
+      .isEmpty(),
+    check('phone')
+      .not()
+      .isEmpty(),
+  ],
+  userController.setmobileOtpVerificationTrue
+);
+
 // DELETE user
 router.delete(
   '/delete/:uid',

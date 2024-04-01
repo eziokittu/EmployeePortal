@@ -77,6 +77,7 @@ const Signup = () => {
 				responseData.token, 
 				responseData.isEmployee, 
 				responseData.isAdmin,
+				responseData.isMobileOtpVerified,
 
 				responseData.userName, 
 				responseData.firstname, 

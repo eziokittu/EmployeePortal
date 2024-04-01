@@ -14,8 +14,8 @@ function ApplicationCard({isJob, data}) {
         );
         if (responseData.ok === 1){
           setUserData(responseData.user);
-          console.log(`Successful in fetching user details for ID: ${data.user}`);
-          console.log(`DEBUG: [${responseData.user.firstname} ${responseData.user.lastname}]-[${!data.isApproved}]-[${responseData.user.ref}]`);
+          // console.log(`Successful in fetching user details for ID: ${data.user}`);
+          // console.log(`DEBUG: [${responseData.user.firstname} ${responseData.user.lastname}]-[${!data.isApproved}]-[${responseData.user.ref}]`);
         }
         else {
           console.log("Error in getting user details!");
@@ -65,11 +65,6 @@ function ApplicationCard({isJob, data}) {
     }
   }
 
-  // Function to approve the current user for the offer
-  const viewResumeHandler = async () => {
-    console.log("Admin can view User's Resume!")
-  }
-
   return (
     <div className='mt-4 rounded-xl border-2 border-gray-300'>
       {userData && data && (
@@ -81,9 +76,8 @@ function ApplicationCard({isJob, data}) {
           {/* User Details */}
           <p className='col-span-1 font-bold'>{data.isApproved ? 'APPROVED' : 'NOT APPROVED'}</p>
           <p className='col-span-2 flex flex-col'><p>{userData.firstname}</p><p>{userData.lastname}</p></p>
-          <p className='col-span-1'>{userData.phone}</p>
           <p className='col-span-2'>{userData.email}</p>
-          <p className='col-span-2'>{userData.ref}</p>
+          <p className='col-span-3'>{userData.ref}</p>
 
           {/* Buttons */}
           <div className='col-span-4 flex justify-around'>

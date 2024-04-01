@@ -4,6 +4,7 @@ export const AuthContext = createContext({
   isLoggedIn: false,
   isEmployee: false,
   isAdmin: false,
+  isMobileOtpVerified: false,
   userId: null,
   token: null,
 

@@ -1,21 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { initializeApp } from 'firebase/app';
-import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
+import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
+import { firebaseAuth } from './firebase/firebase-config';
 
-// Firebase config - replace with your own config
-const firebaseConfig = {
-  apiKey: "AIzaSyCb9uireOMfRCFfJpWWr1WmKdP629rNcCk",
-  authDomain: "trial-34ed7.firebaseapp.com",
-  projectId: "trial-34ed7",
-  storageBucket: "trial-34ed7.appspot.com",
-  messagingSenderId: "71628620493",
-  appId: "1:71628620493:web:7c44729da8f9c541e55f84",
-  measurementId: "G-N9GPF8ZQMZ"
-};
+// import { initializeApp } from 'firebase/app';
+// import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
 
-// Initialize Firebase App
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+// // Firebase config - replace with your own config
+// const firebaseConfig = {
+//   apiKey: "AIzaSyCb9uireOMfRCFfJpWWr1WmKdP629rNcCk",
+//   authDomain: "trial-34ed7.firebaseapp.com",
+//   projectId: "trial-34ed7",
+//   storageBucket: "trial-34ed7.appspot.com",
+//   messagingSenderId: "71628620493",
+//   appId: "1:71628620493:web:7c44729da8f9c541e55f84",
+//   measurementId: "G-N9GPF8ZQMZ"
+// };
+
+// // Initialize Firebase App
+// const app = initializeApp(firebaseConfig);
+// const auth = getAuth(app);
 
 function Test() {
   const [mobile, setMobile] = useState('');
@@ -36,14 +39,13 @@ function Test() {
   };
 
   const configureCaptcha = () => {
-
-    window.recaptchaVerifier = new RecaptchaVerifier(auth, 'sign-in-button', {
+    window.recaptchaVerifier = new RecaptchaVerifier(firebaseAuth, 'sign-in-button', {
       'size': 'invisible',
       'callback': (response) => {
         // reCAPTCHA solved, allow signInWithPhoneNumber.
         onSignInSubmit();
       }
-    }, auth);
+    }, firebaseAuth);
   };
 
   const onSignInSubmit = async (e) => {
@@ -52,7 +54,7 @@ function Test() {
     console.log(phoneNumber);
     const appVerifier = window.recaptchaVerifier;
     try {
-      confirmationResult.current = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+      confirmationResult.current = await signInWithPhoneNumber(firebaseAuth, phoneNumber, appVerifier);
       console.log("OTP has been sent");
     } catch (error) {
       console.error("SMS not sent", error);

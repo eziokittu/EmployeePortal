@@ -43,6 +43,7 @@ function App() {
     userId, 
     isEmployee, 
     isAdmin, 
+    isMobileOtpVerified, 
     userName,
     firstname,
     lastname,
@@ -63,6 +64,7 @@ function App() {
         userName: userName,
         isEmployee: isEmployee,
         isAdmin: isAdmin,
+        isMobileOtpVerified: isMobileOtpVerified,
 
         firstname: firstname,
         lastname: lastname,
@@ -150,7 +152,6 @@ function App() {
             <Route path="*" element={<Error isFullPage={true} />} />
             <Route exact path="/" element={<Login />} />
             <Route exact path="/signup" element={<Signup />} />
-            {/* <Route exact path="/test" element={<Test />} /> */}
             <Route exact path="/test" element={<Test />} />
           </Routes>
         )}</div> 

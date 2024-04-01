@@ -416,6 +416,7 @@ const signup = async (req, res, next) => {
       token: token,
       isEmployee: createdUser.isEmployee,
       isAdmin: createdUser.isAdmin,
+      isMobileOtpVerified: createdUser.isMobileOtpVerified,
 
       firstname: createdUser.firstname,
       lastname: createdUser.lastname,
@@ -477,6 +478,7 @@ const login = async (req, res, next) => {
     token: token,
     isEmployee: existingUser.isEmployee,
     isAdmin: existingUser.isAdmin,
+    isMobileOtpVerified: existingUser.isMobileOtpVerified,
 
     firstname: existingUser.firstname,
     lastname: existingUser.lastname,
@@ -502,10 +504,10 @@ const updateUserInfo = async (req, res, next) => {
 
   let existingUser;
   try {
-    // Find the existing user by email
+    // Find the existing user by userId
     existingUser = await User.findById({ _id: userId });
     if (!existingUser) {
-      return next(new HttpError('User not found, update failed.', 404));
+      res.json({ok:-1, message:"Username needs to be unique! Try again!" });
     }
 
     // Check if the updated userName already exists
@@ -522,16 +524,22 @@ const updateUserInfo = async (req, res, next) => {
     existingUser.firstname = firstname;
     existingUser.lastname = lastname;
     existingUser.userName = userName;
-    existingUser.phone = phone;
+    existingUser.email = email;
     existingUser.bio = bio;
+
+    // if mobile OTP was verified on the previous phone
+    if (existingUser.phone !== phone){
+      existingUser.isMobileOtpVerified = false;
+      existingUser.phone = phone;
+    }
 
     // Save the updated user
     await existingUser.save();
     
-    res.status(200).json({ user: existingUser.toObject({ getters: true }) });
+    res.status(200).json({ok:1, user: existingUser.toObject({ getters: true }) });
   } catch (err) {
     // Handle database or server errors
-    return next(new HttpError('Something went wrong[1], could not update user.', 500));
+    res.status(200).json({ok:-1, message:"Something went wrong! could not save user details!" });
   }
 };
 
@@ -814,6 +822,27 @@ const giveRating = async (req, res, next) => {
   return res.json({ok:1, message: "Successfully updated employee rating"})
 }
 
+const setmobileOtpVerificationTrue = async (req, res, next) => {
+  const { userId, phone } = req.body;
+  
+  let existingUser;
+  try {
+    existingUser = await User.findById({_id: userId});
+  } catch (err) {
+    res.status(404).json({ok:-1, message:"User not found with this userId"});
+  }
+
+  try {
+    existingUser.phone = phone;
+    existingUser.isMobileOtpVerified = true;
+    existingUser.save();
+  } catch (err) {
+    res.json({ok:-1, message:"Something went wrong while saving user, ERROR:",err});
+  }
+
+  res.json({ok:1, message:"The User has mobile OTP verified!"});
+}
+
 // DELETE
 
 const deleteUser = async (req, res, next) => {
@@ -896,6 +925,7 @@ module.exports = {
   updateEmployeeAsUser,
   updateUserAsEmployee,
   giveRating,
+  setmobileOtpVerificationTrue,
 
   terminateEmployeeByEmail,
   unterminateEmployeeByEmail,

@@ -79,9 +79,8 @@ function Applications() {
           <div className='grid grid-cols-12 bg-blue-600 text-white rounded-lg p-4 w-full'>
             <div className='col-span-1 border-r-2'>Status</div>
             <div className='col-span-2 border-r-2'>Name</div>
-            <div className='col-span-1 border-r-2'>Phone</div>
             <div className='col-span-2 border-r-2'>Email</div>
-            <div className='col-span-2 border-r-2'>Reference ID</div>
+            <div className='col-span-3 border-r-2'>Reference ID</div>
             <div className='col-span-4'>Actions</div>
           </div>
           

@@ -14,7 +14,7 @@ const userSchema = new Schema({
     phone: {type: String, required: true, default: process.env.DB_USER_DEFAULT_PHONE },
     bio: {type: String, required: true, default: process.env.DB_USER_DEFAULT_BIO },
 
-    otpVerified: {type: Boolean, required: true, default: false },
+    isMobileOtpVerified: {type: Boolean, required: true, default: false },
 
     ref: {type: String, required:true, default: process.env.DB_USER_DEFAULT_REF}, // RNPW/2024-25/WEB123DEV
     role: { type: String, ref: 'Domain', required: false },

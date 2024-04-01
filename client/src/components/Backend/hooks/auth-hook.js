@@ -6,6 +6,7 @@ export const useAuth = () => {
   const [token, setToken] = useState(false);
   const [isEmployee, setIsEmployee] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isMobileOtpVerified, setIsMobileOtpVerified] = useState(false);
   const [tokenExpirationDate, setTokenExpirationDate] = useState();
   const [userId, setUserId] = useState(false);
 
@@ -23,6 +24,7 @@ export const useAuth = () => {
       token, 
       isEmployee, 
       isAdmin, 
+      isMobileOtpVerified, 
 
       userName, 
       firstname, 
@@ -38,6 +40,7 @@ export const useAuth = () => {
     setToken(token);
     setIsEmployee(isEmployee);
     setIsAdmin(isAdmin);
+    setIsMobileOtpVerified(isMobileOtpVerified);
     setUserId(uid);
 
     setUserName(userName);
@@ -59,6 +62,7 @@ export const useAuth = () => {
         token: token,
         isEmployee: isEmployee,
         isAdmin: isAdmin,
+        isMobileOtpVerified: isMobileOtpVerified,
 
         userName: userName,
         firstname: firstname,
@@ -80,6 +84,7 @@ export const useAuth = () => {
     setUserId(null);
     setIsEmployee(false);
     setIsAdmin(false);
+    setIsMobileOtpVerified(false);
 
     setUserName(null);
     setFirstname(null);
@@ -93,7 +98,7 @@ export const useAuth = () => {
     localStorage.removeItem('userData');
   }, []);
 
-  const updateUser = useCallback((_userName, _firstname, _lastname, _email, _phone, _bio, _role, _image) => {
+  const updateUser = useCallback((_userName, _firstname, _lastname, _email, _phone, _bio, _role, _image, _isMobileOtpVerified) => {
     // Update state variables
     setUserName(_userName);
     setFirstname(_firstname);
@@ -103,6 +108,7 @@ export const useAuth = () => {
     setBio(_bio);
     setRole(_role);
     setImage(_image);
+    setIsMobileOtpVerified(_isMobileOtpVerified);
   
     // Update localStorage
     const storedData = JSON.parse(localStorage.getItem('userData'));
@@ -118,7 +124,8 @@ export const useAuth = () => {
           phone: _phone,
           bio: _bio,
           role: _role,
-          image: _image
+          image: _image,
+          isMobileOtpVerified: _isMobileOtpVerified
         })
       );
     }
@@ -145,6 +152,7 @@ export const useAuth = () => {
         storedData.token, 
         storedData.isEmployee, 
         storedData.isAdmin, 
+        storedData.isMobileOtpVerified, 
 
         storedData.userName, 
         storedData.firstname, 
@@ -166,6 +174,7 @@ export const useAuth = () => {
     userId, 
     isEmployee, 
     isAdmin,
+    isMobileOtpVerified,
 
     userName,
     firstname,
