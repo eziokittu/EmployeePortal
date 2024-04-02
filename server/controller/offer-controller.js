@@ -4,6 +4,7 @@ const { validationResult } = require('express-validator');
 const HttpError = require('../models/http-error');
 const Offer = require('../models/offer');
 const Domain = require('../models/domains');
+const Applied = require('../models/applied');
 
 // GET
 
@@ -441,21 +442,116 @@ const editInternshipOffer = async (req, res, next) => {
 // DELETE
 
 const deleteOffer = async (req, res, next) => {  
+  const oid = req.params['oid'];
+
+  // getting the existing offer with ID
+  let existingOffer;
+  try {
+    existingOffer = await Offer.findById(oid);
+    if (!existingOffer){
+      return res.json({ok:-1, message:"No offer found with this ID"});
+    }
+  } catch (err) {
+    return res.json({ok:-1, message: "Something went wrong while fetching the offer!",err});
+  }
+  
+  // Delete all the applications to this offer
+  let allApplications;
+  try {
+    allApplications = await Applied.find({offer: existingOffer});
+    const applicationIds = allApplications.map(application => application._id);
+    await Applied.deleteMany({ _id: { $in: applicationIds } });
+  } catch (err) {
+    return res.json({ok:-1, message: `Something went wrong while trying to delete the applications linked to the offer! ${err}`});
+  }
+
+  // Delete the offer
+  try {
+    await Offer.deleteOne(existingOffer);
+  } catch (err) {
+    return res.json({ ok:-1, message: `Something went wrong! ${err}`});
+  }
+
+  return res.json({ ok:1, message: 'Offer deleted successfully.' });
+};
+
+const deleteOffers = async (req, res, next) => {  
   try {
     // Find offers with date_end older than current date
     const currentDate = new Date();
     const offersToDelete = await Offer.find({ date_end: { $lt: currentDate } });
 
-    // Delete the offers
-    await Offer.deleteMany({ _id: { $in: offersToDelete.map(offer => offer._id) } });
+    if (offersToDelete.length > 0) {
+      // Extract offer IDs
+      const offerIds = offersToDelete.map(offer => offer._id);
 
-    res.status(200).json({ ok:1, message: 'Old Offers deleted successfully.' });
+      // Delete all applications associated with these offers
+      await Applied.deleteMany({ offer: { $in: offerIds } });
+
+      // Delete the offers
+      await Offer.deleteMany({ _id: { $in: offerIds } });
+      
+      res.status(200).json({ ok:1, message: 'Old offers and their applications deleted successfully.' });
+    } else {
+      res.status(200).json({ ok:1, message: 'No old offers to delete.' });
+    }
   } catch (error) {
-    console.error('Error deleting offers:', error);
-    res.status(500).json({ ok:-1, message: 'Something went wrong, could not delete offers.' });
+    console.error('Error deleting offers and applications:', error);
+    res.status(500).json({ ok:-1, message: 'Something went wrong, could not delete offers and their applications.' });
   }
 };
 
+const deleteJobs = async (req, res, next) => {  
+  try {
+    // Find offers with date_end older than current date
+    const currentDate = new Date();
+    const offersToDelete = await Offer.find({ date_end: { $lt: currentDate }, type: 'job' });
+
+    if (offersToDelete.length > 0) {
+      // Extract offer IDs
+      const offerIds = offersToDelete.map(offer => offer._id);
+
+      // Delete all applications associated with these offers
+      await Applied.deleteMany({ offer: { $in: offerIds } });
+
+      // Delete the offers
+      await Offer.deleteMany({ _id: { $in: offerIds } });
+      
+      res.status(200).json({ ok:1, message: 'Old offers and their applications deleted successfully.' });
+    } else {
+      res.status(200).json({ ok:1, message: 'No old offers to delete.' });
+    }
+  } catch (error) {
+    console.error('Error deleting offers and applications:', error);
+    res.status(500).json({ ok:-1, message: 'Something went wrong, could not delete offers and their applications.' });
+  }
+};
+
+const deleteInternships = async (req, res, next) => {  
+  try {
+    // Find offers with date_end older than current date
+    const currentDate = new Date();
+    const offersToDelete = await Offer.find({ date_end: { $lt: currentDate }, type: 'internship' });
+
+    if (offersToDelete.length > 0) {
+      // Extract offer IDs
+      const offerIds = offersToDelete.map(offer => offer._id);
+
+      // Delete all applications associated with these offers
+      await Applied.deleteMany({ offer: { $in: offerIds } });
+
+      // Delete the offers
+      await Offer.deleteMany({ _id: { $in: offerIds } });
+      
+      res.status(200).json({ ok:1, message: 'Old offers and their applications deleted successfully.' });
+    } else {
+      res.status(200).json({ ok:1, message: 'No old offers to delete.' });
+    }
+  } catch (error) {
+    console.error('Error deleting offers and applications:', error);
+    res.status(500).json({ ok:-1, message: 'Something went wrong, could not delete offers and their applications.' });
+  }
+};
 
 module.exports = {
   getOffer,
@@ -477,5 +573,8 @@ module.exports = {
   editInternshipOffer,
   editJobOffer,
 
-  deleteOffer
+  deleteOffer,
+  deleteOffers,
+  deleteInternships,
+  deleteJobs
 };

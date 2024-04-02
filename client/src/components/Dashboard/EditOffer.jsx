@@ -137,6 +137,36 @@ function EditOffer() {
     }
   };
 
+  const deleteOfferHandler = async event => {
+    event.preventDefault();
+
+    try {
+      const responseData = await sendRequest(
+        `${import.meta.env.VITE_BACKEND_URL}/offers/delete/offer/${oid}`,
+        'DELETE',
+        [],
+        {
+          'Content-Type': 'application/json'
+        }
+      );
+
+      if (responseData.ok === 1) {
+        alert("Deleted Offer Successfully");
+        console.log("Deleted Offer Successfully");
+        setTimeout(() => {
+					navigate(`/${offerType}s`)
+				}, 500);
+      } else {
+        alert("deleting offer failed!");
+        console.log("deleting offer failed!");
+      }
+
+    } catch (err) {
+      alert('ERROR deleting offer listing, ERROR: ' + err);
+      console.error('ERROR deleting offer listing, ERROR: ' + err);
+    }
+  };
+
   const resetOfferHandler = () => {
     setTimeout(() => {
       window.location.reload(false);
@@ -239,15 +269,21 @@ function EditOffer() {
               </div>
 
               {/* Buttons */}
-              <div className="flex gap-2 justify-center w-full">
+              <div className="flex flex-col space-y-4">
+                <div className="flex gap-2 justify-center w-full">
+                  <button
+                    className="px-4 py-2 text-white bg-blue-500 hover:bg-blue-800 rounded-md w-[180px] text-xl"
+                    onClick={editOfferHandler}
+                  >Edit Offer</button>
+                  <button
+                    className="px-4 py-2 text-white bg-gray-400 hover:bg-gray-600 rounded-md w-[180px] text-xl"
+                    onClick={resetOfferHandler}
+                  >Reset</button>
+                </div>
                 <button
-                  className="p-4 text-white bg-blue-500 hover:bg-blue-800 rounded-md w-[180px] text-xl"
-                  onClick={editOfferHandler}
-                >Edit Offer</button>
-                <button
-                  className="p-4 text-white bg-gray-400 hover:bg-gray-600 rounded-md w-[180px] text-xl"
-                  onClick={resetOfferHandler}
-                >Reset</button>
+                  className="px-4 py-2 text-white bg-red-500 hover:bg-gray-800 rounded-md w-[180px] text-xl mx-auto"
+                  onClick={deleteOfferHandler}
+                >Delete Offer</button>
               </div>
 
             </div>

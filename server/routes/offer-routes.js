@@ -94,9 +94,27 @@ router.patch(
 // DELETE
 
 router.delete(
-  '/delete',
+  '/delete/all',
+  [],
+  offerController.deleteOffers
+)
+
+router.delete(
+  '/delete/offer/:oid',
   [],
   offerController.deleteOffer
+)
+
+router.delete(
+  '/delete/internships',
+  [],
+  offerController.deleteInternships
+)
+
+router.delete(
+  '/delete/jobs',
+  [],
+  offerController.deleteJobs
 )
 
 module.exports = router;
