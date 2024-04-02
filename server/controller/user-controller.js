@@ -11,6 +11,24 @@ const Role = require('../models/role');
 
 // GET
 
+const getUserCount = async (req, res, next) => {
+  let count;
+  try {
+    count = await User.countDocuments({isAdmin:false});
+    if (!count || count===0) {
+      return res.json({
+        ok: 1,
+        message: 'No users found!',
+        count: 0
+      });
+    }
+  } catch (err) {
+    return res.json({ok:-1, message: "Fetching all user count failed!"});
+  }
+
+  res.json({ok:1, message: "Successfully Fetched user count", count: count});
+};
+
 const getUsers = async (req, res, next) => {
   const page = req.query.page || 0;
   const usersPerPage = 10;
@@ -908,6 +926,7 @@ module.exports = {
   getTerminationStatusById,
   getTerminationStatusByEmail,
 
+  getUserCount,
 	getUsers,
   getUser,
   getUserById,

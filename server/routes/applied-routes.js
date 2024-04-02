@@ -11,6 +11,7 @@ const router = express.Router();
 // router.get('/', offerController.getOffers);
 router.get('/get/internships', appliedController.getAppliedInternship);
 router.get('/get/jobs', appliedController.getAppliedJobs);
+router.get('/get/count/applications', appliedController.getApplicationCount);
 router.get('/get/count/internships', appliedController.getAppliedInternshipCount);
 router.get('/get/count/jobs', appliedController.getAppliedJobCount);
 router.get('/get/count/job/applied/:oid', appliedController.getAppliedUsersInJob);

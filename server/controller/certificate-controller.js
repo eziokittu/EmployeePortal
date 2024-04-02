@@ -31,7 +31,7 @@ const getCertificatesCount = async (req, res, next) => {
     certificatesCount = await Certificate.countDocuments();
     if (!certificatesCount || certificatesCount===0) {
       return res.json({
-        ok: -1,
+        ok: 1,
         message: 'No certificate found!',
         count: 0
       });

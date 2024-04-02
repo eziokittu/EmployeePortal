@@ -7,6 +7,7 @@ const imageUpload = require('../middlewares/image-upload');
 const router = express.Router();
 
 router.get('/', userController.getUsers);
+router.get('/count', userController.getUserCount);
 router.get('/user/id/:uid', userController.getUserById);
 router.get('/user/email/:email', userController.getUserByEmail);
 router.get('/user/username/:username', userController.getUserByUsername);

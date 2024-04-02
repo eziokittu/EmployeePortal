@@ -12,6 +12,20 @@ let uniqueRefIDCounter = 1;
 
 // GET
 
+const getApplicationCount = async (req, res, next) => {
+  let count;
+  try {
+    count = await Applied.countDocuments();
+    if (!count || count===0){
+      count = 0;
+    }
+  } catch (err){
+    console.error("Something went wrong while fetching applications count!");
+    res.json({ok:-1, count:0, message: "Failed to get application count!"});
+  }
+  res.json({ok:1, count: count, message: "Successfully fetched application count!"});
+}
+
 const getAppliedInternship = async (req, res, next) => {
   const page = req.query.page || 0;
   const internshipsPerPage = 2;
@@ -549,6 +563,7 @@ const deleteOffer = async (req, res, next) => {
 };
 
 module.exports = {
+  getApplicationCount,
   getAppliedInternship,
   getAppliedJobs,
   getAppliedInternshipCount,
