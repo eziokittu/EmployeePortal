@@ -136,21 +136,6 @@ mongoose
       console.log("LOG - Some error occured: "+err);
     }
 
-    // Set the certificates issued count
-    try {
-      let count1 = await adminUser.certificatesIssued;
-      if (!count1 || count1===0){
-        console.log("LOG - [no certificates issued]");
-        adminUser.certificatesIssued = 0;
-        adminUser.save();
-      }
-      else {
-        console.log("LOG - Certificates Issued: "+count1);
-      }
-    } catch (err) {
-      console.log("LOG - Some error occured: "+err);
-    }
-
     // Logging the terminated employees 
     try {
       let count2 = await User.countDocuments({isEmployee: true, isTerminated: true});

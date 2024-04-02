@@ -158,19 +158,6 @@ const postCertificate = async (req, res, next) => {
     console.log("File path error:\n",err2);
   }
 
-  // updating certificate issued count in admin side
-  if (createdCertificate){
-    let adminUser;
-    try {
-      adminUser = await User.findOne({isAdmin:true});
-      let count = adminUser.certificatesIssued + 1;
-      adminUser.certificatesIssued = count;
-      adminUser.save();
-    } catch (err) {
-      return res.json({ok:-1, message: "Error in fetching total employee count!"+ err});
-    }
-  }
-
   res.json({ ok: 1, message: 'Certificate successfully issued', certificate: createdCertificate });
 };
 

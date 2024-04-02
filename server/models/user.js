@@ -28,7 +28,6 @@ const userSchema = new Schema({
     isTerminated: {type: Boolean, required: true, default: false },
 
     employeeCount: {type: Number, required: false },
-    certificatesIssued: {type: Number, required: false }
 });
 
 userSchema.plugin(uniqueValidator);
