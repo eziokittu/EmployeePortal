@@ -136,6 +136,7 @@ function App() {
               <Route exact path="/projects" element={<Projects />} />
               <Route exact path="/:uid/projects" element={<MyProjects />} />
               <Route exact path="/project-details/:pid" element={<ProjectDetails />} />
+              <Route exact path="/employee-details/:eid" element={<EmployeeDetails />} />
               <Route exact path="/termination" element={<Termination />} />
               <Route exact path="/internships" element={<Internship />} />
               <Route exact path="/jobs" element={<Jobs />} />

@@ -6,6 +6,7 @@ import { AuthContext } from '../Backend/context/auth-context';
 const DeleteAccount = () => {
 	let navigate = useNavigate()
 	const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+	const [noOfClicks, setNoOfClicks] = useState(0);
 
 	function togglePasswordVisibility() {
 		setIsPasswordVisible((prevState) => !prevState);
@@ -17,9 +18,31 @@ const DeleteAccount = () => {
   // For updating the user information
   const [inputPassword, setInputPassword] = useState(''); 
 
+	// function to check for invalid inputs and return the list of error message strings
+  const validateInput = () => {
+    let alerts = [];
+    if (!inputPassword.trim() || inputPassword.length<6) {
+			alerts.push('Invalid Old Password [Min Length should be 6]');
+		}
+		return alerts; // Return the alerts array directly
+	}
+
   const userDeleteHandler = async event => {
+		// event.preventDefault();
+
+		const validationAlerts = validateInput();
+		if (validationAlerts.length > 0) {
+			alert(`Please correct the following errors:\n- ${validationAlerts.join('\n- ')}`);
+			return;
+		}
+
+		if (noOfClicks === 0){
+			alert('Are you sure? \n- !!!Account cannot be recovered once deleted!!!\n- You sure want to delete you account?');
+			return;
+		}
+
     try {
-      const responseData = await sendRequest(
+			const responseData = await sendRequest(
         import.meta.env.VITE_BACKEND_URL+`/users/delete/${auth.userId}`,
         'DELETE',
         JSON.stringify({
@@ -29,19 +52,38 @@ const DeleteAccount = () => {
 					'Content-Type': 'application/json'
 				}
       );
-      console.log("User account deleted successfully!");
+			if (responseData.ok===1){
+				console.log("User account deleted successfully!");
 
-			// Redirects to homepage after 1 second
-      setTimeout(() => {
-				auth.logout();
-				// window.location.reload(false);
-        navigate('/')
-      }, 1000);
-
+				// Redirects to homepage after 1 second
+				setTimeout(() => {
+					auth.logout();
+					// window.location.reload(false);
+					navigate('/')
+				}, 1000);
+			}
+			else {
+				alert(responseData.message);
+			}
     } catch (err) {
-      console.log('ERROR updating user details!');
+			alert('ERROR deleting user account!')
+      console.log('ERROR deleting user account!\nERROR: '+err);
     }
   };
+
+	const cancelHandler = () => {
+		setInputPassword('');
+		setNoOfClicks(0);
+	}
+
+	const clickAgainHandler = event => {
+		const validationAlerts = validateInput();
+		if (validationAlerts.length > 0) {
+			alert(`Please correct the following errors:\n- ${validationAlerts.join('\n- ')}`);
+			return;
+		}
+		setNoOfClicks(1);
+	}
 
 	return (
 		<div className="p-4 sm:ml-64">
@@ -105,15 +147,24 @@ const DeleteAccount = () => {
 							<div className='flex justify-center items-center py-4 mb-20'>
 								<button 
 									type="reset" 
-									onClick={()=>{console.log("Clicked on cancel button!")}}
+									onClick={()=>{cancelHandler()}}
 									className="w-full border-2 border-transparent text-white bg-primary-600 hover:bg-white hover:text-primary-600 hover:border-primary-600 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-xl text-sm px-5 py-2.5 text-center mr-3"
 								>Cancel</button>
 								<button 
 									type="submit" 
-									onClick={() => {userDeleteHandler()}}
+									onClick={
+										noOfClicks===1 ? (
+											() => userDeleteHandler()
+										) : (
+											() => clickAgainHandler()
+										)
+									}
 									className="w-full border-2 border-transparent text-white bg-primary-600 hover:bg-white hover:text-primary-600 hover:border-primary-600 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-xl text-sm px-5 py-2.5 text-center"
 								>Delete</button>
 							</div>
+							{noOfClicks===1 && (
+								<div className='text-lg py-4 text-red-700'>Are you sure you want to delete your account? Clikc DELETE again to confirm</div>
+							)}
 						</div>
 					</div>
 				</div>

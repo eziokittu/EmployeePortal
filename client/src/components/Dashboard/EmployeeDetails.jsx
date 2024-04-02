@@ -1,12 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useHttpClient } from '../Backend/hooks/http-hook';
 import { AuthContext } from '../Backend/context/auth-context';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const EmployeeDetails = () => {
 	const navigate = useNavigate();
 	const { sendRequest } = useHttpClient();
   const auth = useContext(AuthContext);
+
+	let userId = auth.userId;
+  if (auth.isAdmin === true){
+    const { eid } = useParams();
+    userId = eid;
+  }
 
 	// fetching the employee details
   const [employeeDetails, setEmployeeDetails] = useState();
@@ -14,7 +20,7 @@ const EmployeeDetails = () => {
     const fetchEmployeeDetais = async () => {
       try {
         const responseData = await sendRequest(
-          import.meta.env.VITE_BACKEND_URL+`/users/emp/id/${auth.userId}`
+          import.meta.env.VITE_BACKEND_URL+`/users/emp/id/${userId}`
         );
         if (responseData.ok === 1) {
           setEmployeeDetails(responseData.employee);
@@ -27,12 +33,13 @@ const EmployeeDetails = () => {
         console.log("Some error occured: "+err);
       }
     };
-    fetchEmployeeDetais();
+		fetchEmployeeDetais();
   }, []);
 	
   const [employeeDomain, setEmployeeDomain] = useState("-");
+  const [employeeProjects, setEmployeeProjects] = useState();
 	useEffect(() => {
-    const fetchEmployeeDomain = async () => {
+		const fetchEmployeeDomain = async () => {
       try {
         const responseData = await sendRequest(
           import.meta.env.VITE_BACKEND_URL+`/domains/get/${employeeDetails.domain}`
@@ -48,16 +55,10 @@ const EmployeeDetails = () => {
         console.log("Some error occured: "+err);
       }
     };
-    fetchEmployeeDomain();
-    // fetchEmployeeProjects();
-  }, [employeeDetails]);
-
-  const [employeeProjects, setEmployeeProjects] = useState();
-	useEffect(() => {
     const fetchEmployeeProjects = async () => {
       try {
         const responseData = await sendRequest(
-          import.meta.env.VITE_BACKEND_URL+`/projects/emp/all/${auth.userId}`
+          import.meta.env.VITE_BACKEND_URL+`/projects/emp/all/${userId}`
         );
         if (responseData.ok === 1) {
           setEmployeeProjects(responseData.projects);
@@ -70,7 +71,8 @@ const EmployeeDetails = () => {
         console.log("Some error occured: "+err);
       }
     };
-    fetchEmployeeProjects();
+		fetchEmployeeProjects();
+		fetchEmployeeDomain();
   }, [employeeDetails]);
 
 	const openProject = () => {
@@ -86,13 +88,13 @@ const EmployeeDetails = () => {
 				<h1 className='text-center p-4 mb-2 font-bold text-3xl'>Employee Details</h1>
 
 				{/* card starts */}
-				<div className="grid grid-cols-3 p-4 mb-8 rounded bg-gray-100 dark:bg-gray-800">
+				<div className="grid grid-cols-3 p-4 mb-8 rounded bg-gray-700 dark:bg-gray-800">
 
 					{/* Employee Image */}
 					<div className="flex items-start h-72 w-100 mr-4 bg-white border border-gray-200 rounded-lg shadow justify-between text-center">
 						<div className="w-full max-w-sm ">
 							<div className="flex flex-col items-center justify-center pb-5 pt-5">
-								<img className="w-48 h-48 mb-3 mt-3 rounded-full shadow-lg" src={`${import.meta.env.VITE_ASSETS_URL}/${auth.image}`} alt="employee image" />
+								<img className="w-48 h-48 mb-3 mt-3 rounded-full shadow-lg" src={`${import.meta.env.VITE_ASSETS_URL}/${employeeDetails.image}`} alt="employee image" />
 							</div>
 						</div>
 					</div>
@@ -102,8 +104,8 @@ const EmployeeDetails = () => {
 
 						{/* name */}
 						<h5 className="ml-8 mt-8 mb-4 text-2xl lg:text-3xl font-bold">
-							<span>{auth.firstname}</span>
-							<span className='pl-4'>{auth.lastname}</span>
+							<span>{employeeDetails.firstname}</span>
+							<span className='pl-4'>{employeeDetails.lastname}</span>
 						</h5>
 
 						{/* Role / Designation  */}
@@ -126,7 +128,7 @@ const EmployeeDetails = () => {
 						{/* Email */}
 						<button href="#" className="flex justify-between items-center ml-8 mt-2 px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 ">
 							<svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 128 96" id="Email"><g data-name="Layer 2" fill="#ffffff" className="color000000 svgShape"><path d="M0 11.283V8a8 8 0 0 1 8-8h112a8 8 0 0 1 8 8v3.283l-64 40zm66.12 48.11a4.004 4.004 0 0 1-4.24 0L0 20.717V88a8 8 0 0 0 8 8h112a8 8 0 0 0 8-8V20.717z" fill="#ffffff" className="color000000 svgShape"></path></g></svg>
-							<span className='ms-3 text-md'> {auth.email}</span>
+							<span className='ms-3 text-md'> {employeeDetails.email}</span>
 						</button>
 					</div>
 

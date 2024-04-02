@@ -26,8 +26,8 @@ const Signup = () => {
     // Password validation
 		// const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$/;
     // if (!inputPassword.trim() || !passwordRegex.test(inputPassword)) {
-    if (!inputPassword.trim() || inputPassword.length < 8) {
-      alerts.push('Enter a Valid pasword [min length 8] --');
+    if (!inputPassword.trim() || inputPassword.length < 6) {
+      alerts.push('Enter a Valid pasword [min length 6] --');
     }
 
     // First name validation (only alphabets)

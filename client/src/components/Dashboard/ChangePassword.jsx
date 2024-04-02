@@ -26,17 +26,17 @@ const ChangePassword = () => {
 	// function to check for invalid inputs and return the list of error message strings
   const validateInput = () => {
     let alerts = [];
-    if (!inputOldPassword.trim() || inputOldPassword.length<8) {
-			alerts.push('Invalid Old Password');
+    if (!inputOldPassword.trim() || inputOldPassword.length<6) {
+			alerts.push('Invalid Old Password [Min Length should be 6]');
 		}
-    if (!inputNewPassword.trim() || inputNewPassword.length<8) {
-			alerts.push('Invalid new Password');
+    if (!inputNewPassword.trim() || inputNewPassword.length<6) {
+			alerts.push('Invalid new Password [Min Length should be 6]');
 		}
 		if (inputOldPassword === inputNewPassword) {
 			alerts.push('New Password cannot be same as old password!');
 		}
-		if (!inputNewConfirmPassword.trim() || inputNewConfirmPassword.length<8) {
-			alerts.push('Invalid new confirm Password');
+		if (!inputNewConfirmPassword.trim() || inputNewConfirmPassword.length<6) {
+			alerts.push('Invalid new confirm Password [Min Length should be 6]');
 		}
 		if (inputNewConfirmPassword !== inputNewPassword) {
 			alerts.push('New Password and confirm new password does not match!');
@@ -52,6 +52,7 @@ const ChangePassword = () => {
 			alert(`Please correct the following errors:\n- ${validationAlerts.join('\n- ')}`);
 			return;
 		}
+
 		try {
 			const responseData = await sendRequest(
 				import.meta.env.VITE_BACKEND_URL + `/users/edit/password/${auth.userId}`,
@@ -69,7 +70,8 @@ const ChangePassword = () => {
 				console.log("User account password changed successfully!");
 				setTimeout(() => {
 					navigate('/')
-					window.location.reload(false);
+					alert("Password is updated!");
+					// window.location.reload(false);
 				}, 1500);
 			} else {
 				alert(responseData.message);
@@ -96,7 +98,7 @@ const ChangePassword = () => {
 							<div className="relative w-full container mx-auto">
 								<input 
 									id='old-password'
-									type="text" 
+									type="password" 
 									placeholder="Enter current password" 
 									className="w-full px-4 py-2 text-base border border-gray-300 rounded-xl outline-none focus:ring-blue-500 focus:border-blue-500 focus:ring-1"
 									value={inputOldPassword} // Connect input field with state

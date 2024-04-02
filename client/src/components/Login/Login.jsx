@@ -23,8 +23,8 @@ const Login = () => {
     // Password validation
 		// const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$/;
     // if (!inputPassword.trim() || !passwordRegex.test(inputPassword)) {
-    if (!inputPassword.trim() || inputPassword.length < 8) {
-      alerts.push('Enter a Valid pasword [min length 8] --');
+    if (!inputPassword.trim() || inputPassword.length < 6) {
+      alerts.push('Enter a Valid pasword [min length 6] --');
     }
 
     return alerts; // Return the alerts array directly
@@ -97,7 +97,7 @@ const Login = () => {
 								onSubmit={authSubmitHandler}
 							>
 								<div>
-								<label for="login-input-password" className="block text-sm font-medium text-gray-900 ">Email</label>
+								<label htmlFor="login-input-password" className="block text-sm font-medium text-gray-900 ">Email</label>
 									<input 
 										onChange={(event) => setInputEmail(event.target.value)}
 										type="text" 
@@ -109,7 +109,7 @@ const Login = () => {
 									/>
 								</div>
 								<div>
-								<label for="login-input-password" className="block text-sm font-medium text-gray-900 ">Password</label>
+								<label htmlFor="login-input-password" className="block text-sm font-medium text-gray-900 ">Password</label>
 									<input 
 										onChange={(event) => setInputPassword(event.target.value)}
 										type="password" 

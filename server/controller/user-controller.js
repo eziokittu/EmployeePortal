@@ -7,7 +7,9 @@ const { v4: uuidv4 } = require('uuid');
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
 const Project = require('../models/project');
+const Applied = require('../models/applied');
 const Role = require('../models/role');
+const { Console } = require('console');
 
 // GET
 
@@ -864,52 +866,104 @@ const setmobileOtpVerificationTrue = async (req, res, next) => {
 
 // DELETE
 
-const deleteUser = async (req, res, next) => {
+// const deleteUser = async (req, res, next) => {
+//   const userId = req.params.uid;
+
+//   let existingUser;
+//   try {
+//     existingUser = await User.findById({_id: userId});
+//   } catch (err) {
+//     res.status(500).json({ok:-1, message:"Something went wrong, could not find user"});
+//   }
+
+//   let imagPath;
+//   try {
+//     imagePath = existingUser.image;
+//   } catch (err) {
+//     console.log("Image path does not exist for this user");
+//   }
+
+//   const password = req.body.password;
+//   let isValidPassword = false;
+//   try {
+//     isValidPassword = await bcrypt.compare(password, existingUser.password);
+//   } catch (err) {
+//     return res.status(500).json({ok:-1, message:"Could not match the passwords"});
+//   }
+
+//   if (!isValidPassword) {
+//     return res.status(500).json({ok:-1, message:"Could not delete Account! Passwords do not match"});
+//   }
+
+//   try {
+//     await User.deleteOne(existingUser);
+//   } catch (err) {
+//     return res.status(500).json({ok:-1, message:"Could not delete Account! Something went wrong!"});
+//   }
+
+//   if (imagePath !== process.env.DB_USER_DEFAULT_IMAGE){
+//     fs.unlink(imagePath, err => {
+//       console.log("Successfully deleted the image file for the user");
+//     })
+//   };
+
+//   res.status(200).json({ok:1, message:"User account deleted successfully!"});
+// };
+
+const deleteUser = async (req, res) => {
   const userId = req.params.uid;
 
+  // checking the existance of the user with the user ID
   let existingUser;
   try {
-    existingUser = await User.findById({_id: userId});
+    existingUser = await User.findById(userId);
   } catch (err) {
-    return new HttpError('Something went wrong, could not find user',500);
+    return res.status(500).json({ok:-1, message:"Something went wrong, could not find user"});
   }
-  // console.log(req);
-  // if (userId !== req.userData.userId) {
-  //   return new HttpError(`You are not allowed to delete this user, ERROR: ${req.userData}`,401);
-  // }
 
-  const imagePath = existingUser.image;
+  // getting the user's image path
+  let imagePath = existingUser.image; // Corrected variable name
 
+  // checking if the passwords match
   const password = req.body.password;
-  let isValidPassword = false;
   try {
-    isValidPassword = await bcrypt.compare(password, existingUser.password);
+    const isValidPassword = await bcrypt.compare(password, existingUser.password);
+    if (!isValidPassword) {
+      return res.status(401).json({ok:-1, message:"Could not delete Account! Passwords do not match"});
+    }
   } catch (err) {
-    return new HttpError('Could not match the passwords',500);
+    return res.status(500).json({ok:-1, message:"Could not match the passwords"});
   }
 
-  if (!isValidPassword) {
-    return new HttpError('Could not delete Account! Passwords do not match',500);
-  }
-
+  // deleting all the applications linked to user
   try {
-    await User.deleteOne(existingUser);
+    const allApplied = await Applied.find({user: userId});
+    await Applied.deleteMany(allApplied);
   } catch (err) {
-    const error = new HttpError(
-      'Something went wrong, could not delete user.',
-      500
-    );
-    return next(error);
+    console.log("Error in deleting applications for the user!");
   }
 
-  if (imagePath !== process.env.DB_USER_DEFAULT_IMAGE){
+  // deleting the user
+  try {
+    await User.deleteOne({ _id: userId });
+  } catch (err) {
+    return res.status(500).json({ok:-1, message:"Could not delete Account! Something went wrong!"});
+  }
+
+  // unlinking the image file ffrom the database 
+  if (imagePath !== process.env.DB_USER_DEFAULT_IMAGE) {
     fs.unlink(imagePath, err => {
-      console.log("Successfully deleted the image file for the user");
-    })
-  };
+      if (err) {
+        console.log("Failed to delete the image file for the user");
+      } else {
+        console.log("Successfully deleted the image file for the user");
+      }
+    });
+  }
 
-  res.status(200).json({ message: 'Deleted user.' });
+  res.status(200).json({ok:1, message:"User account deleted successfully!"});
 };
+
 
 module.exports = {
   getEmployeeCount,

@@ -48,8 +48,8 @@ const RecoverAccount = () => {
 		}
 
     // Password validation
-    if (!inputPassword.trim() || inputPassword.length < 8) {
-      alerts.push('Enter a Valid pasword [min length 8] --');
+    if (!inputPassword.trim() || inputPassword.length < 6) {
+      alerts.push('Enter a Valid pasword [min length 6] --');
     }
 
     return alerts; // Return the alerts array directly
