@@ -49,6 +49,15 @@ const Certificate = () => {
     fetchCertificateCount();
   }, []);
 
+  // Function to format timestamp to DD/MM/YYYY
+  const formatDate = (timestamp) => {
+    const date = new Date(parseInt(timestamp, 10)); // Ensure the timestamp is parsed as an integer
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Month is zero-based, so add 1
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
   return (
     <div className="p-4 sm:ml-64">
       <div className="p-4 border-2 border-gray-200 bg-slate-100 rounded-lg ">
@@ -77,7 +86,7 @@ const Certificate = () => {
                 </div>
                 <h3 className="font-semibold text-xl mb-2">Certification Name</h3>
                 <p className="text-large text-gray-800">Issued By: RnPSoft</p>
-                <p className="text-large text-gray-800">{`Issued Date: ${c.issueDate}`}</p>
+                <p className="text-large text-gray-800">{`Issued Date: ${ formatDate(c.issueDate)}`}</p>
               </a>
               ))}
               

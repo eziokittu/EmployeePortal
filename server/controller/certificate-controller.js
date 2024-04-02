@@ -59,7 +59,7 @@ const getCertificateByUserId = async (req, res, next) => {
 
   let allCertificates;
   try {
-    allCertificates = await Certificate.find({userId: userId});
+    allCertificates = await Certificate.find({user: userId});
     if (!allCertificates || allCertificates.length === 0) {
       return res.json({
         ok: -1,
@@ -89,7 +89,7 @@ const getCertificateCountByUserId = async (req, res, next) => {
 
   let count;
   try {
-    count = await Certificate.countDocuments({userId: userId});
+    count = await Certificate.countDocuments({user: userId});
     if (!count || count.length === 0) {
       return res.json({
         ok: -1,
