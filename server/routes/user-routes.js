@@ -46,7 +46,40 @@ router.post(
 
 router.post('/login', userController.login);
 
+router.post(
+  '/recovery/verify-details',
+  [
+    check('email')
+      .not()
+      .isEmpty(),
+    check('phone')
+      .not()
+      .isEmpty()
+      .isLength({ min: 10 })
+  ],
+  userController.verifyUserDetailsOnRecovery
+);
+
 // PATCH: Update user info
+
+router.patch(
+  '/recovery/generate-password',
+  [
+    check('email')
+      .not()
+      .isEmpty(),
+    check('phone')
+      .not()
+      .isEmpty()
+      .isLength({ min: 10 }),
+    check('password')
+      .not()
+      .isEmpty()
+      .isLength({ min: 6 })
+  ],
+  userController.updateUserPasswordOnRecovery
+);
+
 router.patch(
   '/edit/password/:uid',
   [

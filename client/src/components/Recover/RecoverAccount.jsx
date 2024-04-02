@@ -1,16 +1,21 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useHttpClient } from '../Backend/hooks/http-hook';
 import { AuthContext } from '../Backend/context/auth-context';
+
+import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
+import { firebaseAuth } from '../firebase/firebase-config';
 
 const RecoverAccount = () => {
 	const { sendRequest } = useHttpClient();
 	const auth = useContext(AuthContext);
 	const navigate = useNavigate();
+	let confirmationResult = useRef(null);
 
 	const [inputEmail, setInputEmail] = useState('');
 	const [inputPhone, setInputPhone] = useState('');
 	const [inputPassword, setInputPassword] = useState('');
+	const [isPasswordUpdated, SetsPasswordUpdated] = useState(false);
 
   const [clickedOnGeneratePassword, setClickedOnGeneratePassword] = useState(false);
 
@@ -55,6 +60,20 @@ const RecoverAccount = () => {
     return alerts; // Return the alerts array directly
   };
 
+	useEffect(() => {
+		configureCaptcha();
+	}, []);
+
+	const configureCaptcha = () => {
+		window.recaptchaVerifier = new RecaptchaVerifier(firebaseAuth, 'phone', {
+			'size': 'invisible',
+			'callback': (response) => {
+				// reCAPTCHA solved, allow signInWithPhoneNumber.
+				onSignInSubmit();
+			}
+		}, firebaseAuth);
+	};
+
   const generatePasswordHandler = async event => {
     event.preventDefault();
 
@@ -65,29 +84,120 @@ const RecoverAccount = () => {
       return;
     }
 
-    setClickedOnGeneratePassword(true);
-    alert("OTP is sent to you phone number")
-    // try {
-		// 	const responseData = await sendRequest(
-		// 		import.meta.env.VITE_BACKEND_URL+`/users/signup`,
-		// 		'POST',
-		// 		JSON.stringify({
-		// 			email: inputEmail,
-		// 			password: inputPassword,
-		// 			firstname: inputFirstname,
-		// 			lastname: inputLastname,
-		// 		}),
-		// 		{
-		// 			'Content-Type': 'application/json'
-		// 		}
-		// 	);
-		// 	console.log('Generated password');
-		// } catch (err) {
-		// 	console.log('ERROR verifying details');
-		// }
-  }
+		// Verify if the credentials are correct!
+		try {
+			const responseData = await sendRequest(
+				import.meta.env.VITE_BACKEND_URL+`/users/recovery/verify-details`,
+				'POST',
+				JSON.stringify({
+					email: inputEmail,
+					phone: inputPhone,
+				}),
+				{
+					'Content-Type': 'application/json'
+				}
+			);
+			if (responseData.ok===1){
+				console.log('User Details are correct');
+				alert(`${responseData.message}\n... Generating OTP ...`);
+			}
+			else {
+				alert(responseData.message);
+			}
+		} catch (err) {
+			console.log('ERROR verifying details');
+		}
 
-	const authSubmitHandler = async event => {
+		// getting the phoneNumber
+		let phoneNumber;
+		if (inputPhone.length === 10) {
+			phoneNumber = "+91" + inputPhone;
+		}
+		else if (inputPhone.length <= 13 && inputPhone[0]!=='+'){
+			phoneNumber = "+"+inputPhone;
+		}
+		else {
+			phoneNumber = inputPhone;
+		}
+
+		try {
+			const appVerifier = window.recaptchaVerifier;
+			confirmationResult.current = await signInWithPhoneNumber(firebaseAuth, phoneNumber, appVerifier);
+			console.log("OTP has been sent to the number: " + phoneNumber);
+			alert("Enter the OTP sent to this number: " + phoneNumber);
+			setClickedOnGeneratePassword(true);
+		} catch (error) {
+			console.error("SMS not sent", error);
+			return; // Stop execution on error
+		}
+		// console.log(confirmationResult.current.verificationId.toString())
+	};
+
+	const updatePassword = async event => {
+		try {
+			const responseData = await sendRequest(
+				`${import.meta.env.VITE_BACKEND_URL}/users/recovery/generate-password`,
+				'PATCH',
+				JSON.stringify({
+					email: inputEmail,
+					phone: inputPhone,
+					password: inputPassword
+				}),
+				{
+					'Content-Type': 'application/json'
+				}
+			);
+	
+			if (responseData.ok === 1) {
+				console.log(`Password is updated as OTP to database`);
+				SetsPasswordUpdated(true);
+			} else {
+				console.error('ERROR generating and saving password');
+			}
+		} catch (err) {
+			console.error('ERROR generating and saving password');
+		}
+	}
+
+	const login = async event => {
+		try {
+			const responseData = await sendRequest(
+				import.meta.env.VITE_BACKEND_URL+`/users/login`,
+				'POST',
+				JSON.stringify({
+					email: inputEmail,
+					password: inputPassword,
+				}),
+				{
+					'Content-Type': 'application/json'
+				}
+			);
+			auth.login(
+				responseData.userId, 
+				responseData.token, 
+				responseData.isEmployee, 
+				responseData.isAdmin,
+				responseData.isMobileOtpVerified,
+
+				responseData.userName, 
+				responseData.firstname, 
+				responseData.lastname, 
+				responseData.email, 
+				responseData.phone, 
+				responseData.bio, 
+				responseData.role,
+				responseData.image,
+
+				false
+			);
+			console.log('Sign in successful!');
+			navigate('/dashboard');
+		} catch (err) {
+			console.log('ERROR logging in!');
+		}
+	}
+	
+	const otpSubmitHandler = async event => {
     event.preventDefault();
 
 		// Checking for invalid input
@@ -97,44 +207,25 @@ const RecoverAccount = () => {
       return;
     }
 
-		// try {
-		// 	const responseData = await sendRequest(
-		// 		import.meta.env.VITE_BACKEND_URL+`/users/signup`,
-		// 		'POST',
-		// 		JSON.stringify({
-		// 			email: inputEmail,
-		// 			password: inputPassword,
-		// 			firstname: inputFirstname,
-		// 			lastname: inputLastname,
-		// 		}),
-		// 		{
-		// 			'Content-Type': 'application/json'
-		// 		}
-		// 	);
-		// 	auth.login(
-		// 		responseData.userId, 
-		// 		responseData.token, 
-		// 		responseData.isEmployee, 
-		// 		responseData.isAdmin,
-		// 		responseData.isMobileOtpVerified,
-
-		// 		responseData.userName, 
-		// 		responseData.firstname, 
-		// 		responseData.lastname, 
-		// 		responseData.email, 
-		// 		responseData.phone, 
-		// 		responseData.bio, 
-		// 		responseData.role,
-		// 		responseData.image,
-
-		// 		false
-		// 	);
-		// 	console.log('Sign in successful!');
-		// 	navigate('/dashboard');
-		// } catch (err) {
-		// 	console.log('ERROR logging in!');
-		// }
+		// Verify if the otp is correct
+		try {
+			const result = await confirmationResult.current.confirm(inputPassword);
+			console.log("OTP is verified");
+			alert("OTP is verified");
+			updatePassword();
+		} catch (error) {
+			alert("Wrong OTP entered OR auth code has expired! Try Again!")
+			console.error("User couldn't sign in (bad verification code?)", error);
+			return;
+		}
   };
+
+	useEffect(() => {
+		if (isPasswordUpdated) {
+			login();
+		}
+	}, [isPasswordUpdated]);
+	
 	
 	return (
 		<div className="bg-primary-800 min-h-[500px]">
@@ -204,7 +295,7 @@ const RecoverAccount = () => {
 
               {clickedOnGeneratePassword && (
                 <button 
-                  onClick={authSubmitHandler}
+                  onClick={otpSubmitHandler}
                   className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-3xl text-sm px-5 py-2.5 text-center"
                 >
                   Login with generated OTP as password

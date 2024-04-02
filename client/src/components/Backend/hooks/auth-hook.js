@@ -129,8 +129,9 @@ export const useAuth = () => {
     }
   }, []);  
 
-  const updateIsMobileOtpVerified = useCallback((_isMobileOtpVerified) => {
+  const updateIsMobileOtpVerified = useCallback((_phone, _isMobileOtpVerified) => {
     // Update state variables
+    setPhone(_phone);
     setIsMobileOtpVerified(_isMobileOtpVerified);
   
     // Update localStorage
@@ -140,7 +141,8 @@ export const useAuth = () => {
         'userData',
         JSON.stringify({
           ...storedData,
-          isMobileOtpVerified: _isMobileOtpVerified
+          isMobileOtpVerified: _isMobileOtpVerified,
+          phone: _phone
         })
       );
     }

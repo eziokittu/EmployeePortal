@@ -127,6 +127,7 @@ const EditProfile = () => {
 				);
 				// updating the user detail in loca storage for if mobil is OTP verified or not
 				await auth.updateIsMobileOtpVerified(
+					inputPhone,
 					!phoneNumberChanged & auth.isMobileOtpVerified,
 					false
 				)
@@ -298,7 +299,7 @@ const EditProfile = () => {
 			return;
 		}
 
-		// // Verify if the otp is correct
+		// Verify if the otp is correct
 		try {
 			const result = await confirmationResult.current.confirm(inputOtp);
 			const user = result.user;
@@ -325,6 +326,7 @@ const EditProfile = () => {
 			);
 			if (responseData.ok === 1) {
 				await auth.updateIsMobileOtpVerified(
+					inputPhone,
 					true,
 					false
 				)

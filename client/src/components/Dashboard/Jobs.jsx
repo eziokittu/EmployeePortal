@@ -6,7 +6,7 @@ import { AuthContext } from '../Backend/context/auth-context';
 import { useNavigate } from "react-router-dom";
 
 const Jobs = () => {
-  const navigate = useNavigate;
+  const navigate = useNavigate();
   const { sendRequest } = useHttpClient();
   const auth = useContext(AuthContext);
   const jobsDisplayedPerPage = 3;

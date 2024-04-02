@@ -864,6 +864,81 @@ const setmobileOtpVerificationTrue = async (req, res, next) => {
   res.json({ok:1, message:"The User has mobile OTP verified!"});
 }
 
+const verifyUserDetailsOnRecovery = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+
+  const { email, phone } = req.body;
+
+  // Checking the user's existance with email ID
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ email: email, isAdmin: false });
+  } catch (err) {
+    return res.json({ok:-1, message: "This email does not exist!"})
+  }
+
+  // Checking if user has Mobile OTP enabled
+  try {
+    if (existingUser.isMobileOtpVerified === false){
+      return res.json({ok:-1, message: "Mobile number is not verified with this email account!"});
+    } 
+    else if (existingUser.phone !== phone){
+      return res.json({ok:-1, message: "Wrong Mobile number entered!"});
+    }
+  } catch (err) {
+    return res.json({ok:-1, message: "Something went wrong while trying to verify user details!"});
+  }
+
+  // If user is verified
+  res.json({ok:1, message: "Email and Verified Mobile Match Found!"})
+};
+
+const updateUserPasswordOnRecovery = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+
+  const { email, phone, password } = req.body;
+
+  // Checking the user's existance with email ID
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ email: email, isAdmin: false });
+  } catch (err) {
+    return res.json({ok:-1, message: "This email does not exist!"})
+  }
+
+  // Checking if user has Mobile OTP enabled
+  try {
+    if (existingUser.isMobileOtpVerified === false){
+      return res.json({ok:-1, message: "Mobile number is not verified with this email account!"});
+    } 
+    else if (existingUser.phone !== phone){
+      return res.json({ok:-1, message: "Wrong Mobile number entered!"});
+    }
+  } catch (err) {
+    return res.json({ok:-1, message: `Something went wrong while trying to verify user details! ${err}`});
+  }
+
+  // If user is verified
+  try {
+    const hashedPassword = await bcrypt.hash(password, 12);
+    existingUser.password = hashedPassword;
+    await existingUser.save();
+  } catch (err) {
+    return res.json({ok:-1, message: `Something went wrong while trying to update password ${err}`});
+  }
+  res.json({ok:1, message: "Email and Verified Mobile Match Found! Password updated!"})
+};
+
 // DELETE
 
 // const deleteUser = async (req, res, next) => {
@@ -1003,6 +1078,9 @@ module.exports = {
 
   terminateEmployeeByEmail,
   unterminateEmployeeByEmail,
+
+  verifyUserDetailsOnRecovery,
+  updateUserPasswordOnRecovery,
   
   deleteUser
 };
