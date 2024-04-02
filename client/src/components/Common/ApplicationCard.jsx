@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { useHttpClient } from '../Backend/hooks/http-hook';
 
-function ApplicationCard({isJob, data}) {
+function ApplicationCard({isJob, data, handleCheckboxChange, isChecked}) {
 	const { sendRequest } = useHttpClient();
 
   // fetching all the user details from the mongoDB database
@@ -65,14 +65,17 @@ function ApplicationCard({isJob, data}) {
     }
   }
 
+  const handleChange = () => {
+    handleCheckboxChange(data.user);
+  };
+
   return (
     <div className='mt-4 rounded-xl border-2 border-gray-300'>
       {userData && data && (
         <div 
-          className='grid grid-cols-12 bg-blue-100 justify-center rounded-xl p-2 text-sm items-center'
+          className='grid grid-cols-12 bg-blue-100 justify-center rounded-xl p-2 text-[13px] items-center'
           id={userData.id}
         >
-
           {/* User Details */}
           <p className='col-span-1 font-bold'>{data.isApproved ? 'APPROVED' : 'NOT APPROVED'}</p>
           <p className='col-span-2 flex flex-col'><p>{userData.firstname}</p><p>{userData.lastname}</p></p>
@@ -83,26 +86,31 @@ function ApplicationCard({isJob, data}) {
           <div className='col-span-4 flex justify-around'>
             {/* Approve Button */}
             {(!data.isApproved && userData.ref === "-") && (
-              <button 
-                type='button'
-                className="mr-2 px-6 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-800"
-                onClick={approveUserHandler}
-              >
-                Approve
-              </button>
+              // <button 
+              //   type='button'
+              //   className="mr-2 px-6 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-800"
+              //   onClick={approveUserHandler}
+              // >
+              //   Approve
+              // </button>
+              <input
+                type="checkbox"
+                checked={isChecked}
+                onChange={handleChange}
+              />
             )}
             {(!data.isApproved && userData.ref !== "-") && (
               <div 
-                className="mr-2 px-6 py-2 bg-green-500 text-white rounded-md shadow cursor-default"
+                className="mr-2 px-2 py-1 bg-green-500 text-white rounded-md shadow cursor-default text-sm content-center"
               >
-                Already an Employee
+                <p>An Employee</p>
               </div>
             )}
             {(data.isApproved) && (
               <div 
-                className="mr-2 px-6 py-2 bg-green-500 text-white rounded-md shadow cursor-default"
+                className="mr-2 px-2 py-1 bg-green-500 text-white rounded-md shadow cursor-default text-sm content-center"
               >
-                Already approved
+                Approved
               </div>
             )}
             {/* View Resume */}

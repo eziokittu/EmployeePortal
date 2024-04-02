@@ -11,7 +11,7 @@ const offerSchema = new Schema({
   domain: { type: mongoose.Types.ObjectId, required: true, ref: 'Domain' },
   date_posting: {type: Date, required: true, default: Date.now() },
   date_start: {type: Date, required: true, default: Date.now() + 1000*60*60*24*8 }, // start date after 8 days
-  date_end: {type: Date, required: true, default: Date.now() + 1000*60*60*24*7 } // end date after 7 days
+  date_end: {type: Date, required: true, default: Date.now() } // end date after 7 days
 });
 
 offerSchema.plugin(uniqueValidator);

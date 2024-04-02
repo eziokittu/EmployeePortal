@@ -10,7 +10,7 @@ const Applied = require('../models/applied');
 
 const getInternships = async (req, res, next) => {
   const page = req.query.page || 0;
-  const internshipsPerPage = 2;
+  const internshipsPerPage = 3;
 
   let allOffers;
   try {
@@ -39,7 +39,7 @@ const getInternships = async (req, res, next) => {
 
 const getJobs = async (req, res, next) => {
   const page = req.query.page || 0;
-  const jobsPerPage = 2;
+  const jobsPerPage = 3;
 
   let allOffers;
   try {
@@ -68,7 +68,7 @@ const getJobs = async (req, res, next) => {
 
 const getInternshipsByDomain = async (req, res, next) => {
   const page = req.query.page || 0;
-  const internshipsPerPage = 2;
+  const internshipsPerPage = 3;
 
   const modifiedDomain = req.params['domain'];
   const domain = modifiedDomain.replace(/:/g, '/');
@@ -106,7 +106,7 @@ const getInternshipsByDomain = async (req, res, next) => {
 
 const getJobsByDomain = async (req, res, next) => {
   const page = req.query.page || 0;
-  const jobsPerPage = 2;
+  const jobsPerPage = 3;
 
   const modifiedDomain = req.params['domain'];
   const domain = modifiedDomain.replace(/:/g, '/');
@@ -245,7 +245,7 @@ const createOffer = async (req, res, next) => {
     );
   }
 
-  const { type, heading, link, domain } = req.body;
+  const { type, heading, link, domain, days } = req.body;
 
   let existingDomain;
   try {
@@ -257,11 +257,13 @@ const createOffer = async (req, res, next) => {
     return res.json({ok:-1, message: "Some Error occured"});
   }
 
+  let endingDate = Date.now() + 1000*60*60*24*days;
   const createdOffer = new Offer({
     domain: domain,
     type: type,
     heading: heading,
-    link: link
+    link: link,
+    date_end: endingDate
   });
 
   try {
@@ -281,7 +283,7 @@ const createInternshipOffer = async (req, res, next) => {
     );
   }
 
-  const { stipend, heading, link, domain } = req.body;
+  const { stipend, heading, link, domain, days } = req.body;
 
   let existingDomain;
   try {
@@ -293,12 +295,14 @@ const createInternshipOffer = async (req, res, next) => {
     return res.json({ok:-1, message: "Some Error occured"});
   }
 
+  let endingDate = Date.now() + 1000*60*60*24*days;
   const createdOffer = new Offer({
     type: 'internship',
     domain: existingDomain,
     stipend: stipend,
     heading: heading,
-    link: link
+    link: link,
+    date_end: endingDate
   });
 
   try {
@@ -318,7 +322,7 @@ const createJobOffer = async (req, res, next) => {
     );
   }
 
-  const { ctc, heading, link, domain } = req.body;
+  const { ctc, heading, link, domain, days } = req.body;
 
   let existingDomain;
   try {
@@ -330,6 +334,7 @@ const createJobOffer = async (req, res, next) => {
     return res.json({ok:-1, message: "Some Error occured"});
   }
 
+  let endingDate = Date.now() + 1000*60*60*24*days;
   let createdOffer;
   try {
     createdOffer = new Offer({
@@ -337,7 +342,8 @@ const createJobOffer = async (req, res, next) => {
       domain: existingDomain,
       ctc: ctc,
       heading: heading,
-      link: link
+      link: link,
+      date_end: endingDate
     });
     await createdOffer.save();
   } catch (err) {
@@ -357,7 +363,7 @@ const editJobOffer = async (req, res, next) => {
     );
   }
 
-  const  {ctc, heading, link, domain} = req.body;
+  const  {ctc, heading, link, domain, days} = req.body;
   const offerId = req.params.oid;
 
   let existingOffer;
@@ -382,10 +388,12 @@ const editJobOffer = async (req, res, next) => {
     return res.json({ok:-1, message: "Some Error occured while finind domain!"});
   }
 
+  let endingDate = new Date(existingOffer.date_end.getTime() + 1000*60*60*24*days);
   try {
     existingOffer.ctc = ctc;
     existingOffer.heading = heading;
     existingOffer.link = link;
+    existingOffer.date_end = endingDate;
     existingOffer.domain = existingDomain;
     await existingOffer.save();
     res.status(200).json({ok:1, offer: existingOffer.toObject({ getters: true }) })
@@ -402,7 +410,7 @@ const editInternshipOffer = async (req, res, next) => {
     );
   }
 
-  const  {stipend, heading, link, domain} = req.body;
+  const  {stipend, heading, link, domain, days} = req.body;
   const offerId = req.params.oid;
 
   let existingOffer;
@@ -427,10 +435,12 @@ const editInternshipOffer = async (req, res, next) => {
     return res.json({ok:-1, message: "Some Error occured while finind domain!"});
   }
 
+  const endingDate = new Date(existingOffer.date_end.getTime() + 1000*60*60*24*days);
   try {
     existingOffer.stipend = stipend;
     existingOffer.heading = heading;
     existingOffer.link = link;
+    existingOffer.date_end = endingDate;
     existingOffer.domain = existingDomain;
     await existingOffer.save();
     res.status(200).json({ok:1, offer: existingOffer.toObject({ getters: true }) })

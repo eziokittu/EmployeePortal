@@ -13,6 +13,7 @@ function CreateOffer() {
   const [inputStipend, setInputStipend] = useState('');
   const [inputCtc, setInputCtc] = useState('');
   const [inputLink, setInputLink] = useState('');
+  const [inputDays, setInputDays] = useState(7);
 
   // Initial fetch
   useEffect(() => {
@@ -65,12 +66,14 @@ function CreateOffer() {
       const correctedStipend = inputStipend.trim() ? inputStipend : '-';
       const correctedCtc = inputCtc.trim() ? inputCtc : '-';
       const correctedLink = inputLink.trim() ? inputLink : '-';
+      const correctedDays = inputDays>0 ? inputDays: 7;
 
       // Setting the data to be sent based on the offer type
       let postData = {
         heading: inputHeading,
         link: correctedLink,
-        domain: selectedDomain
+        domain: selectedDomain,
+        days: correctedDays
       };
 
       if (offerType === 'job') {
@@ -207,6 +210,19 @@ function CreateOffer() {
                   id="create_link"
                   value={inputLink}
                   placeholder={'Enter offer link (if any)'}
+                  className="block w-full h-10 mt-1 bg-blue-100 px-2 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                />
+              </div>
+
+              {/* Offer Days */}
+              <div className="mb-4 w-full relative">
+                <label className="text-lg" htmlFor="create_days">Apply Before (in days)</label>
+                <input
+                  onChange={(event) => setInputDays(event.target.value)}
+                  type="number"
+                  id="create_days"
+                  value={inputDays}
+                  placeholder={'Enter number of days till offer expires'}
                   className="block w-full h-10 mt-1 bg-blue-100 px-2 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 />
               </div>

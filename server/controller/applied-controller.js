@@ -496,6 +496,7 @@ const approveOffers = async (req, res, next) => {
         // const uniqueRefIDNumber = Math.floor(Math.random() * 1000); // Generate a random number
         const uniqueRefIDNumber = totalEmployeeCount.toString().padStart(3, '0');
 
+        // updaing the employee count in for admin user
         try {
           totalEmployeeCount++;
           adminUser.employeeCount = totalEmployeeCount;

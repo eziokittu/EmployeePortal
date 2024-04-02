@@ -9,7 +9,7 @@ const Internship = () => {
   const navigate = useNavigate();
   const { sendRequest } = useHttpClient();
   const auth = useContext(AuthContext);
-  const internshipsDisplayedPerPage = 2;
+  const internshipsDisplayedPerPage = 3;
 
   // declaring states
   const [selectedDomain, setSelectedDomain] = useState("-"); // "-" refers to all the domains
@@ -258,7 +258,7 @@ const Internship = () => {
         )}
 
         {/* Internship Opportunities */}
-        <div className="flex">
+        <div className="flex justify-center">
           <div className="mr-5">
 
             {/* All Internship */}

@@ -9,7 +9,7 @@ const Jobs = () => {
   const navigate = useNavigate;
   const { sendRequest } = useHttpClient();
   const auth = useContext(AuthContext);
-  const jobsDisplayedPerPage = 2;
+  const jobsDisplayedPerPage = 3;
 
   // declaring states
   const [selectedDomain, setSelectedDomain] = useState("-"); // "-" refers to all the domains
@@ -258,7 +258,7 @@ const Jobs = () => {
         )}
 
         {/* Job Opportunities */}
-        <div className="flex">
+        <div className="flex justify-center">
           <div className="mr-5">
 
             {/* All Jobs */}

@@ -9,6 +9,24 @@ function Applications() {
 	const { sendRequest } = useHttpClient();
   const applicationsDisplayedPerPage = 3;
 
+  const [userIdsSelected, setUserIdsSelected] = useState([]);
+
+  const handleCheckboxChange = (userId) => {
+    setUserIdsSelected((prevUserIdsSelected) => {
+      if (prevUserIdsSelected.includes(userId)) {
+        // If userId already exists, remove it
+        return prevUserIdsSelected.filter((id) => id !== userId);
+      } else {
+        // If userId doesn't exist, add it
+        return [...prevUserIdsSelected, userId];
+      }
+    });
+  };
+
+  const handlePrintIds = () => {
+    console.log(userIdsSelected);
+  };
+
   // fetching the no. of applications from mongoDB database for that offer
   const [appliedCount, setAppliedCount] = useState(null);
   const [pageCount, setPageCount] = useState(0);
@@ -63,6 +81,33 @@ function Applications() {
     fetchApplications();
   }, [sendRequest, page]);
 
+  const approveAll = async () => {
+    try {
+      const responseData = await sendRequest(
+        import.meta.env.VITE_BACKEND_URL+`/applied/patch/approve/offers`,
+        'PATCH',
+        JSON.stringify({
+					oid: oid,
+					alluid: userIdsSelected
+				}),
+				{
+					'Content-Type': 'application/json'
+				}
+      );
+      if (responseData.ok === 1){
+        setTimeout(() => {
+          window.location.reload(false);
+        }, 700);
+        console.log("All selected users are now Employees!");
+      }
+      else {
+        console.log("Some error occurred!");
+      }
+    } catch (err) {
+      console.log("Error in response!"+err);
+    }
+  }
+
   return (
     <div className="p-4 sm:ml-64 min-h-[500px]">
       <div className='px-4 border-2 bg-gray-100 border-gray-200 rounded-lg'>
@@ -71,6 +116,19 @@ function Applications() {
           <div className='text-2xl font-bold text-center my-8'>View Applications</div>
         ) : (
           <div className='text-2xl font-bold text-center py-12'>No applications found!</div>
+        )}
+        
+        {/* Approve all Button */}
+        {pageCount>0 && (
+          <div className='ml-auto mr-4 text-center w-fit my-4'>
+            <button 
+              disabled={userIdsSelected.length===0}
+              onClick={approveAll}
+              className='bg-blue-500 hover:bg-blue-800 disabled:bg-gray-500 text-white rounded-lg px-4 py-2'
+            >
+              Approve all selected
+            </button> 
+          </div>
         )}
 
         {/* Content */}
@@ -91,7 +149,9 @@ function Applications() {
               <div key={application.id}>
                 <ApplicationCard 
                   isJob = {isaJob}
-                  data = {application}
+                  data={application}
+                  handleCheckboxChange={handleCheckboxChange}
+                  isChecked={userIdsSelected.includes(application.user)}
                 />
               </div>
             );
@@ -119,6 +179,7 @@ function Applications() {
           />
         </div>
         )}
+
       </div>
     </div>
   )

@@ -34,6 +34,9 @@ router.post(
       .isEmpty(),
     check('domain')
       .not()
+      .isEmpty(),
+    check('days')
+      .not()
       .isEmpty()
   ],
   offerController.createOffer
@@ -53,6 +56,9 @@ router.post(
       .isEmpty(),
     check('domain')
       .not()
+      .isEmpty(),
+    check('days')
+      .not()
       .isEmpty()
   ],
   offerController.createInternshipOffer
@@ -71,6 +77,9 @@ router.post(
       .not()
       .isEmpty(),
     check('domain')
+      .not()
+      .isEmpty(),
+    check('days')
       .not()
       .isEmpty()
   ],
