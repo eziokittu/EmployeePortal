@@ -200,7 +200,11 @@ const Dashboard = () => {
 					<Card name='Completed Project' value={completedProjectsCount} imgValue={completedProjects} bgColor='bg-green-100' />
 				</div>
 				<div className="grid grid-cols-2 gap-4 mb-4">
-					<Card name={'Total Registered Users'} value={userCount} imgValue={totalUser} bgColor='bg-yellow-200' />
+					<Card name={'Total Registered Users'} 
+						value={(userCount<1000 ? (userCount<100 ? 'less than 100' : '100+') : (userCount<10000 ? '1000+' : '10,000+'))} 
+						imgValue={totalUser} 
+						bgColor='bg-yellow-200' 
+					/>
 					<Card name={'Total Employees'} value={employeeCount} imgValue={totalEmployees} bgColor='bg-purple-300' />
 				</div>
 				<div className="grid grid-cols-2 gap-4 mb-4 rounded bg-gray-50 dark:bg-gray-800">

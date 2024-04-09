@@ -23,6 +23,7 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 			);
 			if (responseData.ok === 1) {
 				console.log("Deleted project");
+				alert("Deleted project");
 
 				// Refreshes the page after 1 second
 				setTimeout(() => {
@@ -30,10 +31,11 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 				}, 1500);
 			}
 			else {
-				console.log(responseData.message)
+				console.log(responseData.message);
 			}
 		} catch (err) {
 			console.log('ERROR deleting project, ID:', project.id);
+			alert('ERROR deleting project, ID:', project.id);
 		}
 	};
 
@@ -109,6 +111,7 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 			);
 			if (responseData.ok === 1) {
 				console.log("Updated project details");
+				alert("Updated project details");
 
 				// Refreshes the page after 1 second
 				setTimeout(() => {
@@ -116,10 +119,11 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 				}, 1500);
 			}
 			else {
-				console.log(responseData.message)
+				console.log(responseData.message);
 			}
 		} catch (err) {
 			console.log('ERROR deleting project, ID:', project.id);
+			alert('ERROR deleting project, ID:', project.id);
 		}
 	};
 
@@ -147,6 +151,7 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 			);
 			if (responseData.ok === 1) {
 				console.log("Project marked as complete");
+				alert("Project marked as complete");
 				// Refreshes the page after 1 second
 				setTimeout(() => {
 					window.location.reload(false);
@@ -157,6 +162,7 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 			}
 		} catch (err) {
 			console.log('ERROR marking project as complete');
+			alert('ERROR marking project as complete');
 		}
 	}
 	
@@ -173,6 +179,7 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 			);
 			if (responseData.ok === 1) {
 				console.log("Project marked as ongoing");
+				alert("Project marked as ongoing");
 				// Refreshes the page after 1 second
 				setTimeout(() => {
 					window.location.reload(false);
@@ -180,6 +187,7 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 			}
 			else {
 				console.log(responseData.message)
+				alert(responseData.message)
 			}
 		} catch (err) {
 			console.log('ERROR marking project as ongoing');
@@ -199,6 +207,7 @@ const ProjectItem = ({ task, toggleCompleted, projectDomains }) => {
 				}
 				else {
 					console.log("Error in setting domain");
+					alert("Error in setting domain");
 				}
 			} catch (err) {
 				console.log("Error in fetching domain " + err);

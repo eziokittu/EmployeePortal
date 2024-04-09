@@ -99,6 +99,7 @@ function Applications() {
           window.location.reload(false);
         }, 700);
         console.log("All selected users are now Employees!");
+        alert("All selected users are now Employees!");
       }
       else {
         console.log("Some error occurred!");

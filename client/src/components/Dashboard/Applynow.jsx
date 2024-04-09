@@ -100,10 +100,13 @@ const Applynow = () => {
       }
       else if (responseData.ok == 1){
         console.log("Successfully applied to the "+ loadedOffer.type+"!");
+        alert("Successfully applied to the "+ loadedOffer.type+"!");
+        navigate('/'+loadedOffer.type+'s');
       }
-      setTimeout(() => {
-        window.location.reload(false);
-      }, 1500);
+      // setTimeout(() => {
+      //   window.location.reload(false);
+      // }, 1500);
+
     } catch (err) {
       console.log("ERROR applying for this "+ loadedOffer.type+"!");
     }

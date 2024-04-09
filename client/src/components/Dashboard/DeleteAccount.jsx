@@ -60,6 +60,7 @@ const DeleteAccount = () => {
 					auth.logout();
 					// window.location.reload(false);
 					navigate('/')
+					alert("Sorry to see you go! Your account is now deleted!");
 				}, 1000);
 			}
 			else {
@@ -83,6 +84,7 @@ const DeleteAccount = () => {
 			return;
 		}
 		setNoOfClicks(1);
+		setInputPassword('')
 	}
 
 	return (
@@ -163,7 +165,7 @@ const DeleteAccount = () => {
 								>Delete</button>
 							</div>
 							{noOfClicks===1 && (
-								<div className='text-lg py-4 text-red-700'>Are you sure you want to delete your account? Clikc DELETE again to confirm</div>
+								<div className='text-lg py-4 text-red-700'>Are you sure you want to delete your account? Click DELETE again to confirm</div>
 							)}
 						</div>
 					</div>

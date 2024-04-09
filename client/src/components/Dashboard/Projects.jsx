@@ -7,10 +7,12 @@ import { useHttpClient } from '../Backend/hooks/http-hook';
 import { AuthContext } from '../Backend/context/auth-context';
 import Card from '../Common/Card'
 import { Element, scroller } from "react-scroll";
+import { useNavigate } from 'react-router-dom';
 
 const Projects = () => {
   const { sendRequest } = useHttpClient();
   const auth = useContext(AuthContext);
+  const navigate = useNavigate();
 
   // onChange={e => setText(e.target.value)}
 
@@ -187,6 +189,11 @@ const Projects = () => {
       return;
     }
 
+    if (!projectDomains){
+      alert('No domain has been selected!');
+      return;
+    }
+
     try {
       const formData = new FormData();
       formData.append('srs', file);
@@ -226,6 +233,7 @@ const Projects = () => {
       );
       if (responseData.ok === 1) {
         console.log("Added new project");
+        alert("Successfully added a new project");
         // Refreshes the page after 1.5 second
         setTimeout(() => {
           window.location.reload(false);
@@ -360,23 +368,28 @@ const Projects = () => {
               required
             /> <br />
             {/* Project Type dropdown */}
+            {!projectDomains && (
+              <div 
+                onClick={()=>navigate('/others')}
+                className='border-2 w-1/2 border-gray-200 rounded-lg px-3 py-1.5 mb-2 flex justify-center items-center bg-gray-400 hover:bg-gray-700 text-white'>Create Domain!</div>
+            )}
+            {projectDomains && (
             <div
               className='border-2 w-1/2 border-gray-200 rounded-lg px-3 py-1.5 mb-2 flex justify-center items-center'
             >
               <div className=''>Select Project Domain</div>
-              {projectDomains && (
-                <select
-                  className='border-2 w-3/4 border-gray-200 rounded-lg m-2 p-2'
-                  defaultValue={projectDomains[0]}
-                  value={selectedDomain}
-                  onChange={e => setSelectedDomain(e.target.value)}
-                >
-                  {projectDomains.map(d => (
-                    <option key={d.id} value={d.name}>{d.name}</option>
-                  ))}
-                </select>
-              )}
+              <select
+                className='border-2 w-3/4 border-gray-200 rounded-lg m-2 p-2'
+                defaultValue={projectDomains[0]}
+                value={selectedDomain}
+                onChange={e => setSelectedDomain(e.target.value)}
+              >
+                {projectDomains.map(d => (
+                  <option key={d.id} value={d.name}>{d.name}</option>
+                ))}
+              </select>
             </div>
+            )}
             <br />
 
             {/* Start and End Date */}

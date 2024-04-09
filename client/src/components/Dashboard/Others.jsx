@@ -51,7 +51,7 @@ function Others() {
 				}
 			);
       console.log("Added new domain");
-
+      alert(`Added new domain '${domainName}'`)
       // Refreshes the page after 1 second
       setTimeout(() => {
         window.location.reload(false);
@@ -84,7 +84,7 @@ function Others() {
 				}
 			);
       console.log(`Deleted domain '${name}'`);
-
+      alert(`Deleted domain '${name}'`)
       // Refreshes the page after 1.5 second
       setTimeout(() => {
         window.location.reload(false);
@@ -151,6 +151,7 @@ function Others() {
 				}
 			);
       console.log("Added new role");
+      alert(`Added new role '${roleName}'`)
 
       // Refreshes the page after 1 second
       setTimeout(() => {
@@ -182,6 +183,7 @@ function Others() {
 				}
 			);
       console.log(`Deleted role '${name}'`);
+      alert(`Deleted role '${name}'`);
 
       // Refreshes the page after 1.5 second
       setTimeout(() => {

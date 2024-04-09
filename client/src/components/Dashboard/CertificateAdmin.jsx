@@ -116,6 +116,7 @@ const CertificateAdmin = () => {
 			);
       if (responseData.ok===1){
         console.log("Issued new certificate!");
+        alert("Issued new certificate!");
         setTimeout(() => {
           window.location.reload(false);
         }, 1500);

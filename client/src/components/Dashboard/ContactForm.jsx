@@ -21,7 +21,7 @@ function ContactForm() {
   // Function to submit mail using formspree
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formAction = 'https://formspree.io/f/mjvnwzko'; // replace with other id
+    const formAction = (import.meta.env.VITE_APP_FORMSPREE_URL); // replace with other id
     fetch(formAction, {
       method: 'POST',
       body: JSON.stringify(state),

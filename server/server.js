@@ -101,7 +101,7 @@ mongoose
         role: "ADMIN",
         tenure: "permanent",
         isTerminated: false,
-        employeeCount: 0,
+        employeeCount: 1,
       });
       console.log("LOG - Admin user created successfully");
     } else {
