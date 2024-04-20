@@ -81,7 +81,6 @@ const EmployeeDetails = () => {
 
 	const [isEditingRef, setIsEditingRef] = useState(false);
 	const [editedIdNumber, setEditedIdNumber] = useState(0);
-
 	const editEmployeeRef = async () => {
 		if (editedIdNumber<1){
 			alert("INVALID ID number entered!\nNumber must be greater than 0");
@@ -156,7 +155,9 @@ const EmployeeDetails = () => {
 
 						{/* Role / Designation  */}
 						{employeeDomain && (
-							<h2 className="ml-8 mb-4 text-2xl font bold">Domain: {employeeDomain.name}</h2>
+							<>
+								<h2 className="ml-8 mb-4 text-2xl font bold">Domain: {employeeDomain.name}</h2>
+							</>
 						)}
 
 						{/* Joining Date */}
@@ -179,7 +180,7 @@ const EmployeeDetails = () => {
 										<input 
 											onChange={(event) => setEditedIdNumber(event.target.value)} 
 											type='number' 
-											className='text-black px-2 ml-1 w-20'
+											className='text-black px-2 ml-2 w-20'
 											value={editedIdNumber}
 										/>
 									</span>
@@ -188,14 +189,20 @@ const EmployeeDetails = () => {
 							{auth.isAdmin && (
 								<span>
 									{isEditingRef && (
-										<button 
-											className="ml-2 px-4 py-1 text-white  bg-blue-700 rounded-lg"
-											onClick={()=>editEmployeeRef()}
-										>Save</button>
+										<>
+											<button 
+												className="ml-2 px-4 py-1 text-white bg-blue-700 hover:bg-blue-900 rounded-lg"
+												onClick={()=>editEmployeeRef()}
+											>Save</button>
+											<button 
+												className="ml-2 px-4 py-1 text-white bg-red-500 hover:bg-red-700 rounded-lg"
+												onClick={()=>{setIsEditingRef(!isEditingRef)}}
+											>Cancel</button>
+										</>
 									)}
 									{!isEditingRef && (
 										<button 
-											className="ml-2 px-4 py-1 text-white  bg-blue-700 rounded-lg"
+											className="ml-2 px-4 py-1 text-white bg-blue-700 hover:bg-blue-900 rounded-lg"
 											onClick={()=>{setIsEditingRef(!isEditingRef)}}
 										>Edit</button>
 									)}
