@@ -104,8 +104,29 @@ mongoose
         employeeCount: 1,
       });
       console.log("LOG - Admin user created successfully");
-    } else {
-      console.log("LOG - Admin user already exists");
+    } 
+    else {
+      let isValidPassword = false;
+      try {
+        isValidPassword = await bcrypt.compare(process.env.DB_ADMIN_PASSWORD, adminUser.password);
+      } catch (err) {
+        console.log("Some error occured while comparing passwords!"+err);
+      }
+
+      // is password does not match, update password
+      if (!isValidPassword) {
+        try {
+          const hashedPassword = await bcrypt.hash(process.env.DB_ADMIN_PASSWORD, 12);
+          adminUser.password = hashedPassword;
+        } catch (e) {
+          console.log("Some error occured while updating ADMIN password!"+e);
+        }
+        console.log("LOG - Admin user already exists. Password is updated!");
+      }
+
+      else {
+        console.log("LOG - Admin user already exists");
+      }
     }
 
     // Check if "member" role exists
@@ -132,6 +153,21 @@ mongoose
       }
       adminUser.employeeCount = count;
       await adminUser.save();
+    } catch (err) {
+      console.log("LOG - Some error occured: "+err);
+    }
+
+    // Set the certificates issued count
+    try {
+      let count1 = await adminUser.certificatesIssued;
+      if (!count1 || count1===0){
+        console.log("LOG - [no certificates issued]");
+        adminUser.certificatesIssued = 0;
+        adminUser.save();
+      }
+      else {
+        console.log("LOG - Certificates Issued: "+count1);
+      }
     } catch (err) {
       console.log("LOG - Some error occured: "+err);
     }

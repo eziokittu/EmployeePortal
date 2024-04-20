@@ -1,0 +1,2 @@
+Reference ID creation needs to be more dynamic
+On deleting user account, the resume file on the offer application should also be deleted

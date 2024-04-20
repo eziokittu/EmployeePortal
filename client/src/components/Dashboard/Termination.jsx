@@ -70,96 +70,35 @@ const Termination = () => {
     }
   }
 
-  // const [loadedTerminations, setLoadedTerminations] = useState();
-  // const fetchTerminations = async () => {
-  //   try {
-  //     const responseData = await sendRequest(
-  //       import.meta.env.VITE_BACKEND_URL + `/users/terminations?page=${page}`
-  //     );
-  //     setLoadedTerminations(responseData.terminations);
-  //   } catch (err) {
-  //     console.error(`ERROR fetching terminations`, err);
-  //   }
-  // };
-  // const [terminationCount, setTerminationCount] = useState(0);
-  // const fetchTerminationsCount = async () => {
-  //   try {
-  //     const responseData = await sendRequest(
-  //       import.meta.env.VITE_BACKEND_URL + `/users/terminationcount`
-  //     );
-  //     setTerminationCount(responseData.count);
-  //     setPageCount(Math.ceil(responseData.count / terminationsDisplayedPerPage));
-  //   } catch (err) {
-  //     console.error(`ERROR fetching terminations count`, err);
-  //   }
-  // };
-
-  // handling the pagination
-  // const [pageCount, setPageCount] = useState(0);
-  // const [page, setPage] = useState(0);
-  // const handlePageClick = (num) => {
-  //   setPage(num);
-  // };
-
-  // const terminationsDisplayedPerPage = 2;
-  // const [terminationCount, setTerminationCount] = useState(null);
-  // Initially fetches all the terminations
-  // useEffect(() => {
-  //   fetchTerminationsCount();
-  //   fetchTerminations();
-  // }, [sendRequest, page]);
-
-  // return (
-  //   <div className=" h-full">
-  //     <div className="p-4 ml-64 bg-blue-50">
-
-  //       {/* Heading */}
-  //       <h1 className="font-semibold text-3xl">Termination Status</h1>
-
-  //       {/* Card for Terminations starts */}
-
-  //       {/* <div className="grid grid-cols-2 gap-4 mb-4">
-  //         {loadedTerminations && (
-  //           loadedTerminations.map((item)=>(
-  //             <div key={item.id}>
-  //               <TerminationItem item={item}/>
-  //             </div>
-  //           ))
-  //         )}
-  //       </div> */}
-
-  //       {/* Card for Terminations end */}
-
-  //     </div>
-  //     {/* Pagination starts */}
-  //     {/* <div className='flex justify-center items-center'>
-  //       <ReactPaginate
-  //         previousLabel={"previous"}
-  //         nextLabel={"next"}
-  //         breakLabel={"..."}
-  //         pageCount={pageCount}
-  //         marginPagesDisplayed={2}
-  //         pageRangeDisplayed={3}
-  //         onPageChange={(selected) => handlePageClick(selected.selected)}
-  //         containerClassName={"flex items-center mt-10 mr-4 justify-end"}
-  //         pageLinkClassName={
-  //           "flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-blue-100 hover:text-blue-700 focus:bg-blue-100 focus:text-blue-700"
-  //         }
-  //         previousLinkClassName={
-  //           "flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-blue-100 hover:text-blue-700"
-  //         }
-  //         nextClassName={"page-item"}
-  //         nextLinkClassName={
-  //           "flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-blue-100 hover:text-blue-700"
-  //         }
-  //         breakLinkClassName={
-  //           "flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-blue-100 hover:text-blue-700 "
-  //         }
-  //       />
-  //     </div> */}
-  //     {/* Pagination ends */}
-  //   </div>
-  // );
+  const unterminateEmployeeHandler = async () => {
+    // Checking for invalid input
+    const validationAlerts = validateInput()
+    if (validationAlerts.length > 0) {
+      alert(`Please correct the following input errors:\n- ${validationAlerts.join('\n- ')}`);
+      return;
+    }
+    try {
+      const responseData = await sendRequest(
+        import.meta.env.VITE_BACKEND_URL+`/users/edit/unterminate`,
+        'PATCH',
+        JSON.stringify({
+					email: inputEmail
+				}),
+				{
+					'Content-Type': 'application/json'
+				}
+      );
+      if (responseData.ok===1){
+        alert("Successfully unterminated employee with email:", inputEmail);
+      }
+      else {
+        alert(responseData.message)
+      }
+    }
+    catch (error) {
+      console.log("Error while unterminating employee!");
+    }
+  }
 
   if (!auth.isAdmin) {
     return (
@@ -212,13 +151,17 @@ const Termination = () => {
             >
               Terminate
             </button>
+            <button 
+              onClick={unterminateEmployeeHandler}
+              className="ml-4 px-6 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-gray-600"
+            >
+              Unterminate
+            </button>
           </div>
         </div>
       </div>
     )
   }
 };
-
-
 
 export default Termination;

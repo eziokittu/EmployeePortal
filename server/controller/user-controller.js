@@ -827,12 +827,9 @@ const terminateEmployeeByEmail = async (req, res, next) => {
     }
 
     existingUser.isTerminated = true;
-    // existingUser.isEmployee = false;
-    // existingUser.ref = '-';
     await existingUser.save();
 
     return res.json({ok:1, message: `Employee with email: ${email} has been terminated!`})
-    res.status(201).send(`Employee with email: ${email} has been terminated!`);
   } catch (error) {
     return res.json({ok:-1, message: "Could not terminate employee with this email!"})
   }
@@ -841,7 +838,7 @@ const terminateEmployeeByEmail = async (req, res, next) => {
 const unterminateEmployeeByEmail = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).send('Invalid inputs passed, please check your data.');
+    return res.json({ok:-1 , message: "invalid inputs passed!"});
   }
 
   const { email } = req.body;
@@ -849,17 +846,15 @@ const unterminateEmployeeByEmail = async (req, res, next) => {
   try {
     const existingUser = await User.findOne({ email: email, isEmployee: true });
     if (!existingUser) {
-      return res.status(500).send("Could not find Employee with this email!");
+      return res.json({ok:-1, message: "Could not find Employee with this email!"});
     }
 
-    // Set isTerminated back to true to un-terminate the employee
     existingUser.isTerminated = false;
-    existingUser.isEmployee = false
     await existingUser.save();
 
-    res.status(200).send(`Employee with email: ${email} has been reinstated!`);
+    return res.json({ok:1, message: `Employee with email: ${email} has been unterminated!`})
   } catch (error) {
-    return res.status(500).send("Could not reinstate employee");
+    return res.json({ok:-1, message: "Could not unterminate employee with this email!"})
   }
 }
 
@@ -1047,31 +1042,45 @@ const updateUserPasswordOnRecovery = async (req, res, next) => {
 const deleteUser = async (req, res) => {
   const userId = req.params.uid;
 
-  // checking the existance of the user with the user ID
+  // checking the existence of the user with the user ID
   let existingUser;
   try {
     existingUser = await User.findById(userId);
   } catch (err) {
-    return res.status(500).json({ok:-1, message:"Something went wrong, could not find user"});
+    return res.status(500).json({ ok: -1, message: "Something went wrong, could not find user" });
   }
 
   // getting the user's image path
-  let imagePath = existingUser.image; // Corrected variable name
+  let imagePath = existingUser.image;
 
   // checking if the passwords match
   const password = req.body.password;
   try {
     const isValidPassword = await bcrypt.compare(password, existingUser.password);
     if (!isValidPassword) {
-      return res.status(401).json({ok:-1, message:"Could not delete Account! Passwords do not match"});
+      return res.status(401).json({ ok: -1, message: "Could not delete Account! Passwords do not match" });
     }
   } catch (err) {
-    return res.status(500).json({ok:-1, message:"Could not match the passwords"});
+    return res.status(500).json({ ok: -1, message: "Could not match the passwords" });
   }
 
-  // deleting all the applications linked to user
+  // deleting all the applications linked to the user
   try {
-    await Applied.deleteMany({ user: userId }); // Corrected the deleteMany usage
+    const applications = await Applied.find({ user: userId });
+    for (let existingApplied of applications) {
+      let resumePath = existingApplied.resume;
+      if (resumePath !== process.env.DB_USER_DEFAULT_RESUME) {
+        try {
+          await fs.promises.unlink(resumePath);
+          console.log("Successfully deleted the resume file for the user's application");
+        } catch (err) {
+          console.log("Failed to delete the resume file for the user's application");
+        }
+      }
+    }
+
+    // Deleting all the applications
+    await Applied.deleteMany({ user: userId });
   } catch (err) {
     console.log("Error in deleting applications for the user:", err);
   }
@@ -1080,23 +1089,21 @@ const deleteUser = async (req, res) => {
   try {
     await User.deleteOne({ _id: userId });
   } catch (err) {
-    return res.status(500).json({ok:-1, message:"Could not delete Account! Something went wrong!"});
+    return res.status(500).json({ ok: -1, message: "Could not delete Account! Something went wrong!" });
   }
 
-  // unlinking the image file ffrom the database 
+  // unlinking the image file from the database
   if (imagePath !== process.env.DB_USER_DEFAULT_IMAGE) {
-    fs.unlink(imagePath, err => {
-      if (err) {
-        console.log("Failed to delete the image file for the user");
-      } else {
-        console.log("Successfully deleted the image file for the user");
-      }
-    });
+    try {
+      await fs.promises.unlink(imagePath);
+      console.log("Successfully deleted the image file for the user");
+    } catch (err) {
+      console.log("Failed to delete the image file for the user");
+    }
   }
 
-  res.status(200).json({ok:1, message:"User account deleted successfully!"});
+  res.status(200).json({ ok: 1, message: "User account deleted successfully!" });
 };
-
 
 module.exports = {
   getEmployeeCount,

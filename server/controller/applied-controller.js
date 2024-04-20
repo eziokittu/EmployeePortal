@@ -492,24 +492,47 @@ const approveOffers = async (req, res, next) => {
 
     // Updating the reference ID for the existing user
     try {
+      const checkCreatedRefId = async (ref) => {
+        let existingUserWithRef;
+        try {
+          existingUserWithRef = await User.findOne({ref: ref});
+        } catch (err) {
+          return res.json({ ok:-1, message: `Some error occured! ${err}`})
+        }
+        if (existingUserWithRef){
+          return true;
+        }
+        return false;
+      }
       const createNewReferenceId = async (offerDomain) => {
-        // const uniqueRefIDNumber = Math.floor(Math.random() * 1000); // Generate a random number
         const uniqueRefIDNumber = totalEmployeeCount.toString().padStart(3, '0');
-
-        // updaing the employee count in for admin user
+      
         try {
           totalEmployeeCount++;
           adminUser.employeeCount = totalEmployeeCount;
           await adminUser.save();
         } catch (err) {
-          return res.json({ok:-1, message: "Error in generating unique Reference ID and saving to admin"});
+          return res.json({message: "Error in generating unique Reference ID and saving to admin"});
         }
-        
+      
         const year_start = new Date().getFullYear();
         const year_end = (year_start + 1).toString().slice(-2);
         const name1 = offerDomain.name1;
         const name2 = offerDomain.name2;
-        return `RNPW/${year_start}-${year_end}/${name1}${uniqueRefIDNumber}${name2}`;
+        let createdRef = `RNPW/${year_start}-${year_end}/${name1}${uniqueRefIDNumber}${name2}`;
+      
+        try {
+          // Await the result of checkCreatedRefId
+          const exists = await checkCreatedRefId(createdRef);
+          if (exists) {
+            // Recursively call createNewReferenceId until a unique reference ID is generated
+            return createNewReferenceId(offerDomain);
+          } else {
+            return createdRef;
+          }
+        } catch (err) {
+          return res.json({message: `Error checking existing reference IDs: ${err}`});
+        }
       }
       const referenceId = await createNewReferenceId(offerDomain);
       console.log(referenceId);

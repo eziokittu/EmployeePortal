@@ -272,6 +272,7 @@ const Applynow = () => {
                   <button
                     className="bg-white border border-black hover:bg-blue-700 text-black hover:text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline mr-2"
                     type="button"
+                    onClick={()=>(navigate(`/${loadedOffer.type}s`))}
                   >
                     Cancel
                   </button>
