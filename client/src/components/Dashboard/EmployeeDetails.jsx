@@ -79,6 +79,52 @@ const EmployeeDetails = () => {
 		alert('Project Details will be shown here');
 	}
 
+	const [isEditingRef, setIsEditingRef] = useState(false);
+	const [editedIdNumber, setEditedIdNumber] = useState(0);
+
+	const editEmployeeRef = async () => {
+		if (editedIdNumber<1){
+			alert("INVALID ID number entered!\nNumber must be greater than 0");
+			return;
+		}
+		if (editedIdNumber>999){
+			alert("INVALID ID number entered!\nNumber cannot be greater than 999");
+			return;
+		}
+		if (!Number.isInteger(parseFloat(editedIdNumber))){
+			alert("INVALID ID number entered!\nNumber must be an Integer");
+			return;
+		}
+		try {
+			const responseData = await sendRequest(
+				import.meta.env.VITE_BACKEND_URL+`/users/edit/ref/${userId}`,
+				'PATCH',
+				JSON.stringify({
+					refNumber: editedIdNumber
+				}),
+        {
+          'Content-Type': 'application/json'
+        }
+			);
+			if (responseData.ok === 1) {
+				setEmployeeDetails(responseData.employee);
+				console.log("Successful in updating Employee Reference ID!");
+				alert("Successful in updating Employee Reference ID!");
+				setTimeout(() => {
+					window.location.reload(false);
+				}, 1);
+			}
+			else if (responseData.ok === 2) {
+				alert(responseData.message);
+			}
+			else{
+				console.log(responseData.message);
+			}
+		} catch (err) {
+			console.log("Some error occured: "+err);
+		}
+	};
+
 	return (
 		<div className="p-4 sm:ml-64">
 			{employeeDetails && (
@@ -117,7 +163,45 @@ const EmployeeDetails = () => {
 						<span className="pl-8 mb-4 text-lg font bold">{employeeDetails.date.split('T')[0]} - Present</span> <br />
 						
 						{/* Reference ID */}
-						<span className="pl-8 my-4 text-lg font bold">RefID: {employeeDetails.ref}</span>
+						<span 
+							className="pl-8 my-4 text-lg font bold"
+						>
+							{!auth.isAdmin && (
+								<>RefID: {employeeDetails.ref}</>
+							)}
+							{auth.isAdmin && !isEditingRef && (
+								<>RefID: {employeeDetails.ref}</>
+							)}
+							{auth.isAdmin && isEditingRef && (
+								<>
+									<span>Edit RefID Number:</span>
+									<span>
+										<input 
+											onChange={(event) => setEditedIdNumber(event.target.value)} 
+											type='number' 
+											className='text-black px-2 ml-1 w-20'
+											value={editedIdNumber}
+										/>
+									</span>
+								</>
+							)}
+							{auth.isAdmin && (
+								<span>
+									{isEditingRef && (
+										<button 
+											className="ml-2 px-4 py-1 text-white  bg-blue-700 rounded-lg"
+											onClick={()=>editEmployeeRef()}
+										>Save</button>
+									)}
+									{!isEditingRef && (
+										<button 
+											className="ml-2 px-4 py-1 text-white  bg-blue-700 rounded-lg"
+											onClick={()=>{setIsEditingRef(!isEditingRef)}}
+										>Edit</button>
+									)}
+								</span>
+							)}
+						</span>
 
 						{/* Mobile No */}
 						<button href="#" className="flex justify-between items-center ml-8 mt-2 px-4 py-2 text-sm font-medium text-center text-white  bg-blue-700 rounded-lg cursor-default ">

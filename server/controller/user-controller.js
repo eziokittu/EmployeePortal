@@ -753,6 +753,65 @@ const updateEmployeeRole = async (req, res, next) => {
   }
 };
 
+const updateEmployeeRef = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+
+  const empId = req.params.empId;
+  const { refNumber } = req.body;
+
+  if (refNumber < 0 || refNumber > 999) {
+    return res.json({ ok: -1, message: "Reference number must be between 0 and 999." });
+  }
+
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ _id: empId, isEmployee: true });
+    if (!existingUser) {
+      return res.json({ ok: -1, message: "Invalid Employee ID!" });
+    }
+  } catch (err) {
+    return res.json({ ok: -1, message: "Error in finding employee!" });
+  }
+
+  try {
+    // Generate a new reference ID with the provided number
+    const newRefId = generateNewRefId(existingUser.ref, refNumber);
+
+    // check existance of this reference ID
+    let existingEmployeeWithRef = await User.findOne({'ref': newRefId});
+    if (existingEmployeeWithRef) {
+      return res.json({ ok: 2, message: "This Reference ID already exists! Try Another!" });
+    }
+
+    existingUser.ref = newRefId; // Update the reference ID
+    await existingUser.save();
+    return res.json({ ok: 1, message: "Updated employee reference ID", ref: existingUser.ref });
+  } catch (err) {
+    return res.json({ ok: -1, message: "Error in updating employee reference ID"+err });
+  }
+};
+
+function generateNewRefId(oldRefId, refNumber) {
+  const parts = oldRefId.split('/');
+  const yearPart = parts[1];
+  const prefixPart = parts[2].match(/[a-zA-Z]+/)[0]; // Extract alphabetic characters only
+
+  // Extract the suffix, which consists of alphabetic characters after the numeric part
+  const suffixMatch = parts[2].match(/[0-9]+([a-zA-Z]+)/);
+  const suffixPart = suffixMatch ? suffixMatch[1] : ''; // Extract the alphabetic part of the suffix
+
+  // Ensure refNumber is represented with three digits
+  const paddedRefNumber = refNumber.toString().padStart(3, '0');
+
+  // Concatenate parts to form new reference ID
+  return `RNPW/${yearPart}/${prefixPart}${paddedRefNumber}${suffixPart}`;
+}
+
 const terminateEmployeeByEmail = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -1012,10 +1071,9 @@ const deleteUser = async (req, res) => {
 
   // deleting all the applications linked to user
   try {
-    const allApplied = await Applied.find({user: userId});
-    await Applied.deleteMany(allApplied);
+    await Applied.deleteMany({ user: userId }); // Corrected the deleteMany usage
   } catch (err) {
-    console.log("Error in deleting applications for the user!");
+    console.log("Error in deleting applications for the user:", err);
   }
 
   // deleting the user
@@ -1071,6 +1129,7 @@ module.exports = {
   updateUserImage,
   removeUserImage,
   updateEmployeeRole,
+  updateEmployeeRef,
   updateEmployeeAsUser,
   updateUserAsEmployee,
   giveRating,

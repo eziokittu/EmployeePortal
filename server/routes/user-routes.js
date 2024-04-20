@@ -102,6 +102,16 @@ router.patch(
   ],
   userController.updateEmployeeRole
 );
+
+// PATCH: Update user info
+router.patch(
+  '/edit/ref/:empId',
+  [
+    
+  ],
+  userController.updateEmployeeRef
+);
+
 // PATCH: Update user info
 router.patch(
   '/edit/info/:uid',
