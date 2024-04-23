@@ -34,6 +34,7 @@ import Error from './components/Error/Error.jsx';
 
 import { AuthContext } from './components/Backend/context/auth-context.js'
 import { useAuth } from './components/Backend/hooks/auth-hook.js'
+import EmployeeOfTheMonth from './components/Dashboard/EmployeeOfTheMonth.jsx';
 
 function App() {
   const { 
@@ -42,6 +43,7 @@ function App() {
     logout, 
     userId, 
     isEmployee, 
+    isTerminated, 
     isAdmin, 
     isMobileOtpVerified, 
     userName,
@@ -66,6 +68,7 @@ function App() {
         isEmployee: isEmployee,
         isAdmin: isAdmin,
         isMobileOtpVerified: isMobileOtpVerified,
+        isTerminated: isTerminated,
 
         firstname: firstname,
         lastname: lastname,
@@ -99,6 +102,7 @@ function App() {
               <Route exact path="/jobs" element={<Jobs />} />
               <Route exact path="/contact" element={<ContactForm />} />
               <Route exact path="/edit-profile" element={<EditProfile />} />
+              <Route exact path="/employee-of-the-month/:month" element={<EmployeeOfTheMonth />} />
               <Route exact path="/account-settings" element={<AccountSetting />} />
               <Route exact path="/change-password" element={<ChangePassword />} />
               <Route exact path="/delete-account" element={<DeleteAccount />} />
@@ -120,6 +124,7 @@ function App() {
               <Route exact path="/apply/:oid" element={<Applynow />} />
               <Route exact path="/contact" element={<ContactForm />} />
               <Route exact path="/certificates" element={<Certificates />} />
+              <Route exact path="/employee-of-the-month/:month" element={<EmployeeOfTheMonth />} />
               <Route exact path="/edit-profile" element={<EditProfile />} />
               <Route exact path="/account-settings" element={<AccountSetting />} />
               <Route exact path="/change-password" element={<ChangePassword />} />
@@ -144,6 +149,7 @@ function App() {
               <Route exact path="/edit-offer/:oid" element={<EditOffer />} />
               <Route exact path="/applications/:oid" element={<Applications />} />
               <Route exact path="/certificates" element={<CertificateAdmin />} />
+              <Route exact path="/employee-of-the-month/:month" element={<EmployeeOfTheMonth />} />
               <Route exact path="/others" element={<Others />} />
             </Routes>
           )}

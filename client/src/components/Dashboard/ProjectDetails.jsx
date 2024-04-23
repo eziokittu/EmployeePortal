@@ -344,20 +344,40 @@ const ProjectDetails = () => {
                   </div>
 
                   {/* Project SRS Document */}
-                  <a 
-                    href={`${import.meta.env.VITE_ASSETS_URL}/${loadedProject.srs}`} target="_blank" rel="noopener noreferrer"
-                    className="flex justify-start bg-white border-2 border-gray-400 rounded-xl"
-                  >
-                    <div className='mx-4 my-4'>
-                      <img src={srs} className='w-100' alt="" />
-                    </div>
-                    <div className='my-auto'>
-                      <h2 
-                        className='text-lg font-semibold'
-                      >SRS Document
-                      </h2>
-                    </div>
-                  </a>
+                  <>
+                    {!auth.isTerminated && (
+                      <a 
+                        href={`${import.meta.env.VITE_ASSETS_URL}/${loadedProject.srs}`} target="_blank" rel="noopener noreferrer"
+                        className="cursor-pointer flex justify-start bg-white border-2 border-gray-400 rounded-xl"
+                      >
+                        <div className='mx-4 my-4'>
+                          <img src={srs} className='w-100' alt="" />
+                        </div>
+                        <div className='my-auto'>
+                          <h2 
+                            className='text-lg font-semibold'
+                          >SRS Document
+                          </h2>
+                        </div>
+                      </a>
+                    )}
+                    {auth.isTerminated && (
+                      <div 
+                        onClick={()=>{alert("You are not permitted to access the SRS document!")}}
+                        className="flex justify-start bg-white border-2 border-gray-400 rounded-xl cursor-pointer"
+                      >
+                        <div className='mx-4 my-4'>
+                          <img src={srs} className='w-100' alt="" />
+                        </div>
+                        <div className='my-auto'>
+                          <h2 
+                            className='text-lg font-semibold'
+                          >SRS Document
+                          </h2>
+                        </div>
+                      </div>
+                    )}
+                  </>
                 </div>
               </div>
             )}

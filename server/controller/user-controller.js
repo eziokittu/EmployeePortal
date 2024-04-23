@@ -33,7 +33,7 @@ const getUserCount = async (req, res, next) => {
 
 const getUsers = async (req, res, next) => {
   const page = req.query.page || 0;
-  const usersPerPage = 10;
+  const usersPerPage = process.env.DB_PAGECOUNT_USERS;
   let users;
   try {
     users = await User
@@ -179,7 +179,7 @@ const getEmployeeCount = async (req, res, next) => {
 
 const getEmployees = async (req, res, next) => {
   const page = req.query.page || 0;
-  const employeesPerPage = 5;
+  const employeesPerPage = process.env.DB_PAGECOUNT_EMPLOYEES;
 
   let allEmployees;
   try {
@@ -214,7 +214,7 @@ const getEmployeeById = async (req, res, next) => {
   const userId = req.params['uid'];
   let employee;
   try {
-    employee = await User.findOne({ _id: userId, isEmployee: true, isTerminated: false }, '-password')
+    employee = await User.findOne({ _id: userId, isEmployee: true,  }, '-password')
     if (!employee){
       return res.json({ok:-1, message:"Employee does not exist with userId: "+userId})
     }
@@ -436,6 +436,7 @@ const signup = async (req, res, next) => {
       token: token,
       isEmployee: createdUser.isEmployee,
       isAdmin: createdUser.isAdmin,
+      isTerminated: false,
       isMobileOtpVerified: createdUser.isMobileOtpVerified,
 
       firstname: createdUser.firstname,
@@ -498,6 +499,7 @@ const login = async (req, res, next) => {
     token: token,
     isEmployee: existingUser.isEmployee,
     isAdmin: existingUser.isAdmin,
+    isTerminated: existingUser.isTerminated,
     isMobileOtpVerified: existingUser.isMobileOtpVerified,
 
     firstname: existingUser.firstname,

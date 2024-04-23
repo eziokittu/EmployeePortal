@@ -59,6 +59,7 @@ const Login = () => {
 					responseData.isEmployee, 
 					responseData.isAdmin, 
 					responseData.isMobileOtpVerified, 
+					responseData.isTerminated, 
 					responseData.userName, 
 
 					responseData.firstname, 
