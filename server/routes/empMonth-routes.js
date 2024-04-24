@@ -7,26 +7,17 @@ const router = express.Router();
 
 // GET
 
-// router.get('/', empMonthController.getOffers);
+router.get('/get/:monthyear', empMonthController.getEmployeesForMonth);
 // router.get('/get/internships', empMonthController.getAppliedInternship);
 
 // POST
-
-// router.post(
-//   '/post',
-//   [
-//     check('type')
-//       .not()
-//       .isEmpty(),
-//     check('link')
-//       .not()
-//       .isEmpty(),
-//     check('oid'),
-//     check('uid')
-//   ],
-//   resumeUpload.single('resume'),
-//   empMonthController.applyOffer
-// );
+router.post(
+  '/post',
+  [
+    
+  ],
+  empMonthController.postEmployeesForMonth
+);
 
 // PATCH
 // router.patch(

@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const empMonthSchema = new Schema({
   amount: {type: String, required: false, default: 'Rs 1000' },
   employees: [{ type: mongoose.Types.ObjectId, required: true, ref: 'User' }],
-  date_posted: {type: Date, required: true, default: Date.now() },
+  monthYear: {type: String, required: true },
 });
 
 empMonthSchema.plugin(uniqueValidator);

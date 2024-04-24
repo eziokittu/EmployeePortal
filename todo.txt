@@ -1,2 +1,4 @@
 Reference ID creation needs to be more dynamic
 On deleting user account, the resume file on the offer application should also be deleted
+
+On being interested in video games since my childhood, I had this natural interest growing in me of how these games work and hkw are they made. Since high school this fascination had me have a desire to become a game developer. Had been 

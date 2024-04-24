@@ -13,6 +13,7 @@ const app = express();
 
 // routes
 const userRoutes = require('./routes/user-routes');
+const empMonthRoutes = require('./routes/empMonth-routes');
 const projectRoutes = require('./routes/project-routes');
 const offerRoutes = require('./routes/offer-routes');
 const appliedRoutes = require('./routes/applied-routes');
@@ -47,6 +48,7 @@ app.use('/api/offers', offerRoutes);
 app.use('/api/applied', appliedRoutes);
 app.use('/api/domains', domainRoutes);
 app.use('/api/roles', roleRoutes);
+app.use('/api/empmonth', empMonthRoutes);
 app.use('/api/certificates', certificateRoutes);
 
 app.use((req, res, next) => {
