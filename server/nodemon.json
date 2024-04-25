@@ -8,7 +8,7 @@
     
     "DB_USER_DEFAULT_IMAGE": "uploads/images/defaultUserImage.png",
     "DB_USER_DEFAULT_CERTIFICATE": "uploads/certificates/defaultCertificate.pdf",
-    "DB_USER_DEFAULT_STIPEND": "uploads/certificates/defaultStipend.pdf",
+    "DB_USER_DEFAULT_STIPEND": "uploads/stipends/defaultStipend.pdf",
     "DB_USER_DEFAULT_RESUME": "uploads/resume/defaultResume.pdf",
     "DB_USER_DEFAULT_SRS": "uploads/srs/defaultSrs.pdf",
     "DB_USER_DEFAULT_REF": "-",

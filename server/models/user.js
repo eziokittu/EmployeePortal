@@ -23,10 +23,10 @@ const userSchema = new Schema({
     projects: [{ type: mongoose.Types.ObjectId, required: true, ref: 'Project' }],
     projects_complete: {type: Number, required: true, default: 0},
     projects_ongoing: {type: Number, required: true, default: 0},
-    tenure: {type: String, required: true, default: "1 year" },
     date: {type: Date, required: true, default: Date.now() },
     isTerminated: {type: Boolean, required: true, default: false },
-
+    terminationReason: {type: String, required: false, default: "-" },
+    
     employeeCount: {type: Number, required: false },
 });
 

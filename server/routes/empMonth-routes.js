@@ -21,11 +21,12 @@ router.post(
 );
 
 // PATCH
-// router.patch(
-//   '/patch/approve/offers',
-//   [],
-//   empMonthController.approveOffers
-// );
+router.patch(
+  '/patch',
+  [],
+  stipendUpload.single('stipend'),
+  empMonthController.patchEmployeesForMonth
+);
 
 // DELETE
 

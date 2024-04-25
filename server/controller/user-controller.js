@@ -374,7 +374,7 @@ const getTerminationStatusById = async (req, res, next) => {
     return res.status(500).json({ message: "Something went wrong!" });
   }
 
-  res.status(200).json({ status: existingUser.isTerminated });
+  res.status(200).json({ status: existingUser.isTerminated, reason: existingUser.terminationReason});
 };
 
 const getTerminationStatusByEmail = async (req, res, next) => {
@@ -390,7 +390,7 @@ const getTerminationStatusByEmail = async (req, res, next) => {
     return res.status(500).json({ message: "Something went wrong!" });
   }
 
-  res.status(200).json({ status: existingUser.isTerminated });
+  res.status(200).json({ status: existingUser.isTerminated, reason: existingUser.terminationReason });
 };
 
 // POST
@@ -820,7 +820,7 @@ const terminateEmployeeByEmail = async (req, res, next) => {
     return res.json({ok:-1 , message: "invalid inputs passed!"});
   }
 
-  const { email } = req.body;
+  const { email, reason } = req.body;
 
   try {
     const existingUser = await User.findOne({ email: email, isEmployee: true });
@@ -829,6 +829,7 @@ const terminateEmployeeByEmail = async (req, res, next) => {
     }
 
     existingUser.isTerminated = true;
+    existingUser.terminationReason = reason;
     await existingUser.save();
 
     return res.json({ok:1, message: `Employee with email: ${email} has been terminated!`})

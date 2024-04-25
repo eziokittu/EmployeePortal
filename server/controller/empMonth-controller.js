@@ -1,5 +1,6 @@
 const { validationResult } = require('express-validator');
 
+const fs = require('fs');
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
 const EmpMonth = require('../models/empMonth');
@@ -96,7 +97,46 @@ const postEmployeesForMonth = async (req, res, next) => {
 
 // PATCH
 const patchEmployeesForMonth = async (req, res, next) => {
+  // Checking if date passed in correct or not
+  const errors = validationResult(req.body);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+  
+  const { monthYear, employee } = req.body;
 
+  // Finding the existance of the EmpMonth
+  let existingEmpMonth;
+  try {
+    existingEmpMonth = await EmpMonth.findOne({ employee: employee, monthYear: monthYear });
+    if (!existingEmpMonth) {
+      return res.json({ok:-1, message:'Employee and Month details not found with ID:'});
+    }
+  } catch (error) {
+    return res.json({ok:-1, message:'Error finding employee month'});
+  }
+
+  // Unlinking the existing stipend file
+  const stipendPath = existingEmpMonth.stipend;
+  if (stipendPath !== process.env.DB_USER_DEFAULT_STIPEND){
+    fs.unlink(stipendPath, err => {
+      console.log("Successfully deleted the stipend file for the employee of the month:");
+    })
+  }
+
+  // Linking the Stipend file to the existing emp month
+  try {
+    existingEmpMonth.stipend = req.file.path;
+    await existingEmpMonth.save();
+  }
+  catch (err){
+    console.log("File path error:\n",err);
+    return res.json({ok:-1, message: "Something went wrong! Stipend PDF file could not be updated!"+err})
+  }
+
+  return res.json({ok:1, message: "Stipend PDF file has be updated!"})
 };
 
 // DELETE
@@ -120,6 +160,14 @@ const deleteEmployeesForMonth = async (req, res, next) => {
     }
   } catch (error) {
     return res.json({ok:-1, message:'Error finding employee month'});
+  }
+
+  // Unlinking the existing stipend file
+  const stipendPath = existingEmpMonth.stipend;
+  if (stipendPath !== process.env.DB_USER_DEFAULT_STIPEND){
+    fs.unlink(stipendPath, err => {
+      console.log("Successfully deleted the stipend file for the employee of the month:"+err);
+    })
   }
 
   try {
