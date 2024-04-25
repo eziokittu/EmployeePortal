@@ -28,6 +28,7 @@ app.use(bodyParser.json());
 app.use('/uploads/images', express.static(path.join('uploads', 'images')));
 app.use('/uploads/resume', express.static(path.join('uploads', 'resume')));
 app.use('/uploads/certificates', express.static(path.join('uploads', 'certificates')));
+app.use('/uploads/stipends', express.static(path.join('uploads', 'stipends')));
 app.use('/uploads/srs', express.static(path.join('uploads', 'srs')));
 
 app.use((req, res, next) => {

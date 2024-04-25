@@ -2,6 +2,7 @@ const express = require('express');
 const { check } = require('express-validator');
 
 const empMonthController = require('../controller/empMonth-controller');
+const stipendUpload = require('../middlewares/stipend-upload');
 
 const router = express.Router();
 
@@ -28,10 +29,10 @@ router.post(
 
 // DELETE
 
-// router.delete(
-//   '/delete/:oid',
-//   [],
-//   empMonthController.deleteOffer
-// )
+router.delete(
+  '/delete',
+  [],
+  empMonthController.deleteEmployeesForMonth
+)
 
 module.exports = router;
