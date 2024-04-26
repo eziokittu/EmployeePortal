@@ -332,18 +332,14 @@ const getAllTerminations = async (req, res, next) => {
       .skip(page * terminationsPerPage)
       .limit(terminationsPerPage);
   } catch (err) {
-    const error = new HttpError(
-      'Fetching terminations failed, please try again later.',
-      500
-    );
-    return next(error);
+    return res.json({ok:-1, message:"Something went wrong!"+err})
   }
 
   if (!terminations || terminations.length === 0) {
-    return next(new HttpError('No terminations found.', 404));
+    return res.json({ok:-1, message:"Fetching terminations failed!"})
   }
 
-  res.json({terminations: terminations.map(termination => termination.toObject({ getters: true }))});
+  res.json({ok:1, terminations: terminations});
 };
 
 const getAllTerminationsCount = async (req, res, next) => {
@@ -351,14 +347,10 @@ const getAllTerminationsCount = async (req, res, next) => {
   try {
     terminationCount = await User.find({isTerminated: true}).countDocuments();
   } catch (err) {
-    const error = new HttpError(
-      'Fetching termination count failed, please try again later.',
-      500
-    );
-    return next(error);
+    return res.json({ok:-1, message:"Something went wrong!"+err})
   }
 
-  res.json({count: terminationCount });
+  res.json({ok:1, count: terminationCount });
 };
 
 const getTerminationStatusById = async (req, res, next) => {

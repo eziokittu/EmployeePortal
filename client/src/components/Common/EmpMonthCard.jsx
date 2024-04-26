@@ -113,9 +113,9 @@ const EmpMonthCard = ({ empMonthData }) => {
       );
       if (responseData.ok === 1) {
         console.log("Updated stipend receipt");
-        // setTimeout(() => {
-        //   window.location.reload(false);
-        // }, 700);
+        setTimeout(() => {
+          window.location.reload(false);
+        }, 700);
       } else {
         console.log(responseData.message);
       }
