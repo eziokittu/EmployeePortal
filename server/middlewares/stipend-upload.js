@@ -21,7 +21,7 @@ const stipendUpload = multer({
   limits: 500000,
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, 'uploads/certificates');
+      cb(null, 'uploads/stipends');
     },
     filename: (req, file, cb) => {
       const ext = MIME_TYPE_MAP[file.mimetype];
