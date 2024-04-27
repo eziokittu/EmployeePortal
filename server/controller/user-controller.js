@@ -429,6 +429,7 @@ const signup = async (req, res, next) => {
       isEmployee: createdUser.isEmployee,
       isAdmin: createdUser.isAdmin,
       isTerminated: false,
+      isPaid: false,
       isMobileOtpVerified: createdUser.isMobileOtpVerified,
 
       firstname: createdUser.firstname,
@@ -492,6 +493,7 @@ const login = async (req, res, next) => {
     isEmployee: existingUser.isEmployee,
     isAdmin: existingUser.isAdmin,
     isTerminated: existingUser.isTerminated,
+    isPaid: existingUser.isPaid,
     isMobileOtpVerified: existingUser.isMobileOtpVerified,
 
     firstname: existingUser.firstname,

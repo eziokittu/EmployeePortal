@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 function Applications() {
   const { oid } = useParams(); // Assuming you're correctly extracting the offer ID from the route params
 	const { sendRequest } = useHttpClient();
-  const applicationsDisplayedPerPage = 3;
+  const applicationsDisplayedPerPage = import.meta.env.VITE_APP_PAGECOUNT_APPLICATIONS;
 
   const [userIdsSelected, setUserIdsSelected] = useState([]);
 

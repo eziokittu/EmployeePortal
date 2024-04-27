@@ -45,6 +45,7 @@ function App() {
     userId, 
     isEmployee, 
     isTerminated, 
+    isPaid, 
     isAdmin, 
     isMobileOtpVerified, 
     userName,
@@ -70,6 +71,7 @@ function App() {
         isAdmin: isAdmin,
         isMobileOtpVerified: isMobileOtpVerified,
         isTerminated: isTerminated,
+        isPaid: isPaid,
 
         firstname: firstname,
         lastname: lastname,

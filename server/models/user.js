@@ -10,6 +10,7 @@ const userSchema = new Schema({
     image: {type: String, required: true, minLength: 4, default: process.env.DB_USER_DEFAULT_IMAGE },
     isEmployee: {type: Boolean, required: true, default: false },
     isAdmin: {type: Boolean, required: true, default: false },
+    isPaid: {type: Boolean, required: true, default: false },
     userName: { type: String, required: true, unique: true },
     phone: {type: String, required: true, default: process.env.DB_USER_DEFAULT_PHONE },
     bio: {type: String, required: true, default: process.env.DB_USER_DEFAULT_BIO },

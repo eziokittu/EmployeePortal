@@ -17,7 +17,7 @@ const Projects = () => {
   // onChange={e => setText(e.target.value)}
 
   // handling the pagination
-  const projectsDisplayedPerPage = 2;
+  const projectsDisplayedPerPage = import.meta.env.VITE_APP_PAGECOUNT_PROJECTS;
   const [projectsCount, setProjectsCount] = useState(0);
   const [pageCount, setPageCount] = useState(0);
   const [page, setPage] = useState(0);

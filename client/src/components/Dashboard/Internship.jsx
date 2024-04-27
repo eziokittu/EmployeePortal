@@ -9,7 +9,7 @@ const Internship = () => {
   const navigate = useNavigate();
   const { sendRequest } = useHttpClient();
   const auth = useContext(AuthContext);
-  const internshipsDisplayedPerPage = 3;
+  const internshipsDisplayedPerPage = import.meta.env.VITE_APP_PAGECOUNT_OFFERS;
 
   // declaring states
   const [selectedDomain, setSelectedDomain] = useState("-"); // "-" refers to all the domains

@@ -60,6 +60,7 @@ const Login = () => {
 					responseData.isAdmin, 
 					responseData.isMobileOtpVerified, 
 					responseData.isTerminated, 
+					responseData.isPaid, 
 					responseData.userName, 
 
 					responseData.firstname, 

@@ -8,6 +8,7 @@ export const useAuth = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isMobileOtpVerified, setIsMobileOtpVerified] = useState(false);
   const [isTerminated, setIsTerminated] = useState(false);
+  const [isPaid, setIsPaid] = useState(false);
   const [tokenExpirationDate, setTokenExpirationDate] = useState();
   const [userId, setUserId] = useState(false);
 
@@ -27,6 +28,7 @@ export const useAuth = () => {
       isAdmin, 
       isMobileOtpVerified, 
       isTerminated, 
+      isPaid, 
 
       userName, 
       firstname, 
@@ -44,6 +46,7 @@ export const useAuth = () => {
     setIsAdmin(isAdmin);
     setIsMobileOtpVerified(isMobileOtpVerified);
     setIsTerminated(isTerminated);
+    setIsPaid(isPaid);
     setUserId(uid);
 
     setUserName(userName);
@@ -67,6 +70,7 @@ export const useAuth = () => {
         isAdmin: isAdmin,
         isMobileOtpVerified: isMobileOtpVerified,
         isTerminated: isTerminated,
+        isPaid: isPaid,
 
         userName: userName,
         firstname: firstname,
@@ -90,6 +94,7 @@ export const useAuth = () => {
     setIsAdmin(false);
     setIsMobileOtpVerified(false);
     setIsTerminated(false);
+    setIsPaid(false);
 
     setUserName(null);
     setFirstname(null);
@@ -176,6 +181,7 @@ export const useAuth = () => {
         storedData.isAdmin, 
         storedData.isMobileOtpVerified, 
         storedData.isTerminated, 
+        storedData.isPaid, 
 
         storedData.userName, 
         storedData.firstname, 
@@ -199,6 +205,7 @@ export const useAuth = () => {
     isAdmin,
     isMobileOtpVerified,
     isTerminated,
+    isPaid,
 
     userName,
     firstname,

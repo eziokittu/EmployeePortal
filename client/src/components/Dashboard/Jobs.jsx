@@ -9,7 +9,7 @@ const Jobs = () => {
   const navigate = useNavigate();
   const { sendRequest } = useHttpClient();
   const auth = useContext(AuthContext);
-  const jobsDisplayedPerPage = 3;
+  const jobsDisplayedPerPage = import.meta.env.VITE_APP_PAGECOUNT_OFFERS;
 
   // declaring states
   const [selectedDomain, setSelectedDomain] = useState("-"); // "-" refers to all the domains

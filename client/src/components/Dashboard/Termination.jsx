@@ -112,7 +112,7 @@ const Termination = () => {
 
   const [loadedTerminations, setLoadedTerminations] = useState();
   const [terminationCount, setTerminationCount] = useState(0);
-  const terminationsDisplayedPerPage = 2;
+  const terminationsDisplayedPerPage = import.meta.env.VITE_APP_PAGECOUNT_TERMINATIONS;
 
   // handling the pagination
   const [pageCount, setPageCount] = useState();
@@ -310,6 +310,11 @@ const Termination = () => {
                   }
                 />
               </div>
+            )}
+
+            {/* When no employees terminated */}
+            {terminationCount===0 && (
+              <div className="text-center">No Employees have been terminated!</div>
             )}
           </div>
 
