@@ -11,6 +11,7 @@
     "DB_USER_DEFAULT_STIPEND": "uploads/stipends/defaultStipend.pdf",
     "DB_USER_DEFAULT_RESUME": "uploads/resume/defaultResume.pdf",
     "DB_USER_DEFAULT_SRS": "uploads/srs/defaultSrs.pdf",
+    "DB_USER_DEFAULT_RECEIPT": "uploads/receipts/defaultReceipt.pdf",
     "DB_USER_DEFAULT_REF": "-",
     "DB_USER_DEFAULT_PHONE": "91XXXXXXXX",
     "DB_USER_DEFAULT_BIO": "Some Bio for the user",

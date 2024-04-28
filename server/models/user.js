@@ -27,6 +27,7 @@ const userSchema = new Schema({
     date: {type: Date, required: true, default: Date.now() },
     isTerminated: {type: Boolean, required: true, default: false },
     terminationReason: {type: String, required: false, default: "-" },
+    receipt: {type: String, required: true, minLength: 4, default: process.env.DB_USER_DEFAULT_RECEIPT },
     
     employeeCount: {type: Number, required: false },
 });

@@ -30,6 +30,7 @@ app.use('/uploads/resume', express.static(path.join('uploads', 'resume')));
 app.use('/uploads/certificates', express.static(path.join('uploads', 'certificates')));
 app.use('/uploads/stipends', express.static(path.join('uploads', 'stipends')));
 app.use('/uploads/srs', express.static(path.join('uploads', 'srs')));
+app.use('/uploads/receipts', express.static(path.join('uploads', 'receipts')));
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');

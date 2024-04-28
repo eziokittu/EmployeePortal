@@ -7,7 +7,7 @@ const EmpMonthCard = ({ empMonthData }) => {
   const { sendRequest } = useHttpClient();
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
-  
+
   const [loadedEmployee, setLoadedEmployee] = useState(null);
   const [loadedDomain, setLoadedDomain] = useState(null);
   const [file, setFile] = useState(null);
@@ -32,7 +32,7 @@ const EmpMonthCard = ({ empMonthData }) => {
     };
     fetchEmployeeDetails();
   }, []); // Empty dependency array to run the effect only once
-  
+
   useEffect(() => {
     if (!loadedEmployee) return;
 
@@ -101,7 +101,7 @@ const EmpMonthCard = ({ empMonthData }) => {
   const stipendUploadHandler = async () => {
     try {
       const formData = new FormData();
-      console.log("DEBUG:",file, empMonthData, loadedEmployee);
+      console.log("DEBUG:", file, empMonthData, loadedEmployee);
       formData.append('stipend', file);
       formData.append('employee', empMonthData.employee);
       formData.append('monthYear', empMonthData.monthYear);
@@ -125,8 +125,10 @@ const EmpMonthCard = ({ empMonthData }) => {
   };
 
   return (
-    <div className="flex flex-col gap-0">
-      
+    <div
+      key={"card_"+empMonthData.employee}
+      className="flex flex-col gap-0">
+
       {loadedEmployee && (
         <div className="text-sm grid grid-cols-12 gap-2 bg-white drop-shadow-lg rounded-lg p-2 mb-4 w-full">
           {/* Employee Image */}
@@ -187,7 +189,7 @@ const EmpMonthCard = ({ empMonthData }) => {
           )}
         </div>
       )}
-      {loadedEmployee && (loadedEmployee._id===auth.userId) && (
+      {loadedEmployee && (loadedEmployee._id === auth.userId) && (
         (empMonthData.stipend !== import.meta.env.VITE_USER_DEFAULT_STIPEND_PATH) ? (
           <a
             href={`${import.meta.env.VITE_ASSETS_URL}/${empMonthData.stipend}`}
@@ -198,7 +200,7 @@ const EmpMonthCard = ({ empMonthData }) => {
           </a>
         ) : (
           <p
-            onClick={()=>(navigate('/contact'))} 
+            onClick={() => (navigate('/contact'))}
             className='cursor-pointer justify-center items-center mb-4 bg-red-500 hover:bg-red-800 text-white text-center px-4 py-2  border border-gray-900 hover:border-gray-100 rounded-lg w-full'
           >Your Stipend has not be updated yet. Contact ADMIN!</p>
         )

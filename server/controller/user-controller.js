@@ -41,13 +41,9 @@ const getUsers = async (req, res, next) => {
       .skip(page * usersPerPage)
       .limit(usersPerPage);
   } catch (err) {
-    const error = new HttpError(
-      'Fetching users failed, please try again later.',
-      500
-    );
-    return next(error);
+    return res.json({ok:-1, message: "Fetching user failed, please try again later"});
   }
-  res.json({users: users.map(user => user.toObject({ getters: true }))});
+  res.json({ok:1, users: users.map(user => user.toObject({ getters: true }))});
 };
 
 const getUser = async (req, res, next) => {
@@ -59,11 +55,7 @@ const getUser = async (req, res, next) => {
     user = await User.findOne({userName: userName}, '-password');
     // console.log('DEBUG -- user-controller.js -- 2: '+user.name);
   } catch (err) {
-    const error = new HttpError(
-      'Fetching user failed, please try again later.',
-      500
-    );
-    return next(error);
+    return res.json({ok:-1, message: "Fetching user failed, please try again later"});
   }
   res.json({ok:1, user: user});
 };
@@ -75,12 +67,7 @@ const getUserById = async (req, res, next) => {
   try {
     user = await User.findById({ _id: userId }, '-password')
   } catch (err) {
-    const error = new HttpError(
-      'Fetching Employee failed, please try again later.',
-      500
-    );
-    // console.log(error);
-    return next(error);
+    return res.json({ok:-1, message: "Fetching user failed, please try again later"});
   }
 
   res.json({ok:1, user: user});
@@ -175,6 +162,98 @@ const getEmployeeCount = async (req, res, next) => {
 
   res.json({ ok:1, count: employeeCount });
   // console.log("DEBUG -- Employee-Controller - Fetching employee count successful!");
+};
+
+const getPaidEmployeeCount = async (req, res, next) => {
+  let employeeCount;
+  try {
+    employeeCount = await User.countDocuments({ isEmployee: true, isTerminated: false, isPaid: true });
+  } catch (err) {
+    res.json({ ok:-1, message:"No Paid Employees found" });
+    return;
+  }
+
+  res.json({ ok:1, count: employeeCount });
+  // console.log("DEBUG -- Employee-Controller - Fetching employee count successful!");
+};
+
+const getUnpaidEmployeeCount = async (req, res, next) => {
+  let employeeCount;
+  try {
+    employeeCount = await User.countDocuments({ isEmployee: true, isTerminated: false, isPaid: false });
+  } catch (err) {
+    res.json({ ok:-1, message:"No Unpaid Employees found" });
+    return;
+  }
+
+  res.json({ ok:1, count: employeeCount });
+  // console.log("DEBUG -- Employee-Controller - Fetching employee count successful!");
+};
+
+const getUnpaidEmployees = async (req, res, next) => {
+  const page = req.query.page || 0;
+  const employeesPerPage = process.env.DB_PAGECOUNT_EMPLOYEES;
+
+  let allEmployees;
+  try {
+    allEmployees = await User
+      .find({ isEmployee: true, isTerminated: false, isPaid: false }, '-password')  // Adjust the query to filter by isEmployee
+      .skip(page * employeesPerPage)
+      .limit(employeesPerPage);
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching unpaid Employees failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
+  if (!allEmployees || allEmployees.length === 0) {
+    res.json({
+      ok: -1,
+      message: "No unpaid employees found.",
+    });
+    return;
+  }
+
+  res.json({
+    ok: 1,
+    employees: allEmployees.map((emp) => emp.toObject({ getters: true })),
+  });
+  // console.log("DEBUG -- Employee-Controller - Fetching employees successful!");
+};
+
+const getPaidEmployees = async (req, res, next) => {
+  const page = req.query.page || 0;
+  const employeesPerPage = process.env.DB_PAGECOUNT_EMPLOYEES;
+
+  let allEmployees;
+  try {
+    allEmployees = await User
+      .find({ isEmployee: true, isTerminated: false, isPaid: true }, '-password')  // Adjust the query to filter by isEmployee
+      .skip(page * employeesPerPage)
+      .limit(employeesPerPage);
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching paid Employees failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
+  if (!allEmployees || allEmployees.length === 0) {
+    res.json({
+      ok: -1,
+      message: "No paid employees found.",
+    });
+    return;
+  }
+
+  res.json({
+    ok: 1,
+    employees: allEmployees.map((emp) => emp.toObject({ getters: true })),
+  });
+  // console.log("DEBUG -- Employee-Controller - Fetching employees successful!");
 };
 
 const getEmployees = async (req, res, next) => {
@@ -686,13 +765,53 @@ const updateUserAsEmployee = async (req, res, next) => {
     existingUser.isEmployee = true;
     await existingUser.save();
       
-    res.status(200).json({ok:1,  user: existingUser.toObject({ getters: true }) });
+    return res.status(200).json({ok: 1, message:"User updated to Employee" });
   } catch (err) {
-    const error = new HttpError(
-      'userId does not exist, please try again later.',
-      500
+    return res.json({ok:-1, message:"Something went wrong!"+err})
+  }
+};
+
+const updateEmployeeAsPaid = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
     );
-    return next(error);
+  }
+
+  const { userId } = req.body;
+
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ _id: userId, isEmployee: true });
+    existingUser.isPaid = true;
+    existingUser.save();
+      
+    return res.status(200).json({ok: 1, message:"User updated to Paid" });
+  } catch (err) {
+    return res.json({ok:-1, message:"Something went wrong!"+err});
+  }
+};
+
+const updateEmployeeAsUnpaid = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+
+  const { userId } = req.body;
+
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ _id: userId, isEmployee: true });
+    existingUser.isPaid = false;
+    existingUser.save();
+      
+    res.status(200).json({ok: 1, message:"Employee updated to Unpaid" });
+  } catch (err) {
+    return res.json({ok:-1, message:"UserId does not exist, please try again later"+err});
   }
 };
 
@@ -746,6 +865,100 @@ const updateEmployeeRole = async (req, res, next) => {
     return res.json({ok:1, message: "Updated employee Role", role:existingUser.role})
   } catch (err) {
     return res.json({ok:-1, message: "Error in updating employee role"})
+  }
+};
+
+const uploadPaidEmployeeReceipt = async (req, res, next) => {
+  const { userId } = req.body;
+
+  try {
+    // Find the existing user by email
+    const existingUser = await User.findById({ _id: userId, isEmployee:true, isTerminated:false, isPaid: true });
+    if (!existingUser) {
+      return next(new HttpError('User not found, update failed.', 404));
+    }
+    
+    // Linking the new receipt
+    try {
+      existingUser.receipt = req.file.path;
+    }
+    catch (err){
+      console.log("File path error:\n",err);
+    }
+
+    // Save the updated user
+    await existingUser.save();
+    
+    res.status(200).json({ ok:1, message: "Successfully uploaded employee receipt" });
+  } catch (err) {
+    // Handle database or server errors
+    return next(new HttpError('Something went wrong[1], could not update user receipt.', 500));
+  }
+};
+
+const updatePaidEmployeeReceipt = async (req, res, next) => {
+  const { userId } = req.body;
+
+  try {
+    // Find the existing user by email
+    const existingUser = await User.findById({ _id: userId, isEmployee:true, isTerminated:false, isPaid: true });
+    if (!existingUser) {
+      return next(new HttpError('User not found, update failed.', 404));
+    }
+
+    // Unlinking the user image file
+    const receiptPath = existingUser.receipt;
+    if (receiptPath !== process.env.DB_USER_DEFAULT_RECEIPT){
+      fs.unlink(receiptPath, err => {
+        console.log("Successfully deleted the receipt file for the user with ID:", userId);
+      })
+    }
+    
+    // Linking the new receipt
+    try {
+      existingUser.receipt = req.file.path;
+    }
+    catch (err){
+      console.log("File path error:\n",err);
+    }
+
+    // Save the updated user
+    await existingUser.save();
+    
+    res.status(200).json({ ok:1, message: "Successfully updated employee receipt" });
+  } catch (err) {
+    // Handle database or server errors
+    return next(new HttpError('Something went wrong[1], could not update user receipt.', 500));
+  }
+};
+
+const removePaidEmployeeReceipt = async (req, res, next) => {
+  const { userId } = req.body;
+
+  try {
+    // Find the existing user by email
+    const existingUser = await User.findById({ _id: userId, isEmployee:true, isTerminated:false, isPaid: true });
+    if (!existingUser) {
+      return res.json({ok:-1, message:"User not found, update failed."});
+    }
+
+    // Unlinking the user image file
+    const receiptPath = existingUser.receipt;
+    if (receiptPath !== process.env.DB_USER_DEFAULT_RECEIPT){
+      fs.unlink(receiptPath, err => {
+        console.log("Successfully deleted the receipt file for the user with ID:", userId);
+      })
+    }
+
+    existingUser.receipt = process.env.DB_USER_DEFAULT_RECEIPT;
+
+    // Save the updated user
+    await existingUser.save();
+    
+    return res.status(200).json({ ok:1, message: "Successfully removed employee receipt" });
+  } catch (err) {
+    // Handle database or server errors
+    return res.status(500).json({ ok:-1, message: "Failed to removed employee receipt" });
   }
 };
 
@@ -992,50 +1205,6 @@ const updateUserPasswordOnRecovery = async (req, res, next) => {
 
 // DELETE
 
-// const deleteUser = async (req, res, next) => {
-//   const userId = req.params.uid;
-
-//   let existingUser;
-//   try {
-//     existingUser = await User.findById({_id: userId});
-//   } catch (err) {
-//     res.status(500).json({ok:-1, message:"Something went wrong, could not find user"});
-//   }
-
-//   let imagPath;
-//   try {
-//     imagePath = existingUser.image;
-//   } catch (err) {
-//     console.log("Image path does not exist for this user");
-//   }
-
-//   const password = req.body.password;
-//   let isValidPassword = false;
-//   try {
-//     isValidPassword = await bcrypt.compare(password, existingUser.password);
-//   } catch (err) {
-//     return res.status(500).json({ok:-1, message:"Could not match the passwords"});
-//   }
-
-//   if (!isValidPassword) {
-//     return res.status(500).json({ok:-1, message:"Could not delete Account! Passwords do not match"});
-//   }
-
-//   try {
-//     await User.deleteOne(existingUser);
-//   } catch (err) {
-//     return res.status(500).json({ok:-1, message:"Could not delete Account! Something went wrong!"});
-//   }
-
-//   if (imagePath !== process.env.DB_USER_DEFAULT_IMAGE){
-//     fs.unlink(imagePath, err => {
-//       console.log("Successfully deleted the image file for the user");
-//     })
-//   };
-
-//   res.status(200).json({ok:1, message:"User account deleted successfully!"});
-// };
-
 const deleteUser = async (req, res) => {
   const userId = req.params.uid;
 
@@ -1104,7 +1273,11 @@ const deleteUser = async (req, res) => {
 
 module.exports = {
   getEmployeeCount,
+  getPaidEmployeeCount,
+  getUnpaidEmployeeCount,
   getEmployees,
+  getPaidEmployees,
+  getUnpaidEmployees,
   getEmployeeById,
   getEmployeeByEmail,
   getEmployeeByUsername,
@@ -1132,10 +1305,16 @@ module.exports = {
   updateUserPassword,
   updateUserImage,
   removeUserImage,
+  uploadPaidEmployeeReceipt,
+  updatePaidEmployeeReceipt,
+  removePaidEmployeeReceipt,
+
   updateEmployeeRole,
   updateEmployeeRef,
   updateEmployeeAsUser,
   updateUserAsEmployee,
+  updateEmployeeAsPaid,
+  updateEmployeeAsUnpaid,
   giveRating,
   setmobileOtpVerificationTrue,
 

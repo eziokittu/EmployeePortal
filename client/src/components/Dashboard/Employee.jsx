@@ -9,203 +9,258 @@ const Employee = () => {
   const employeesDisplayedPerPage = import.meta.env.VITE_APP_PAGECOUNT_EMPLOYEES;
 
   // fetching the no. of employees from mongoDB database
-  const [employeeCount, setEmployeeCount] = useState(0);
-  const [pageCount, setPageCount] = useState(0);
+  const [paidEmployeeCount, setPaidEmployeeCount] = useState(0);
+  const [paidPageCount, setPaidPageCount] = useState(0);
   useEffect(() => {
-    const fetchEmployeeCount = async () => {
+    const fetchPaidEmployeeCount = async () => {
       try {
         const responseData = await sendRequest(
-          import.meta.env.VITE_BACKEND_URL + `/users/empcount`
+          import.meta.env.VITE_BACKEND_URL + `/users/paidempcount`
         );
         if (responseData.ok === 1) {
-          setEmployeeCount(responseData.count);
-          setPageCount(Math.ceil(responseData.count / employeesDisplayedPerPage))
+          setPaidEmployeeCount(responseData.count);
+          setPaidPageCount(Math.ceil(responseData.count / employeesDisplayedPerPage))
         }
         else {
           console.log(responseData.message);
         }
       } catch (err) {
-        console.log("Error in fetching employee count: " + err);
+        console.log("Error in fetching Paid employee count: " + err);
       }
     };
-    fetchEmployeeCount();
+    fetchPaidEmployeeCount();
   }, []);
 
   // handling the pagination
-  const [page, setPage] = useState(0);
-  const handlePageClick = (num) => {
-    setPage(num);
+  const [paidPage, setPaidPage] = useState(0);
+  const handlePaidPageClick = (num) => {
+    setPaidPage(num);
   };
 
   // fetching all the employee details from the mongoDB database
-  const [loadedEmployees, setLoadedEmployees] = useState();
+  const [loadedPaidEmployees, setLoadedPaidEmployees] = useState();
   useEffect(() => {
-    const fetchEmployees = async () => {
+    const fetchPaidEmployees = async () => {
       try {
         const responseData = await sendRequest(
-          import.meta.env.VITE_BACKEND_URL + `/users/emp?page=${page}`
+          import.meta.env.VITE_BACKEND_URL + `/users/paidemp?page=${paidPage}`
         );
         if (responseData.ok === 1) {
-          setLoadedEmployees(responseData.employees);
+          setLoadedPaidEmployees(responseData.employees);
         }
         else {
           console.log(responseData.messgae)
         }
       } catch (err) {
-        console.log("Error in fetching employees: " + err);
+        console.log("Error in fetching paid employees: " + err);
       }
     };
-    fetchEmployees();
-  }, [sendRequest, page]);
+    fetchPaidEmployees();
+  }, [sendRequest, paidPage]);
+
+
+  // fetching the no. of employees from mongoDB database
+  const [unpaidEmployeeCount, setUnpaidEmployeeCount] = useState(0);
+  const [unpaidPageCount, setUnpaidPageCount] = useState(0);
+  useEffect(() => {
+    const fetchUnpaidEmployeeCount = async () => {
+      try {
+        const responseData = await sendRequest(
+          import.meta.env.VITE_BACKEND_URL + `/users/unpaidempcount`
+        );
+        if (responseData.ok === 1) {
+          setUnpaidEmployeeCount(responseData.count);
+          setUnpaidPageCount(Math.ceil(responseData.count / employeesDisplayedPerPage))
+        }
+        else {
+          console.log(responseData.message);
+        }
+      } catch (err) {
+        console.log("Error in fetching unpaidemployee count: " + err);
+      }
+    };
+    fetchUnpaidEmployeeCount();
+  }, []);
+
+  // handling the pagination
+  const [unpaidPage, setUnpaidPage] = useState(0);
+  const handleUnpaidPageClick = (num) => {
+    setUnpaidPage(num);
+  };
+
+  // fetching all the employee details from the mongoDB database
+  const [loadedUnpaidEmployees, setLoadedUnpaidEmployees] = useState();
+  useEffect(() => {
+    const fetchUnpaidEmployees = async () => {
+      try {
+        const responseData = await sendRequest(
+          import.meta.env.VITE_BACKEND_URL + `/users/unpaidemp?page=${unpaidPage}`
+        );
+        if (responseData.ok === 1) {
+          setLoadedUnpaidEmployees(responseData.employees);
+        }
+        else {
+          console.log(responseData.messgae)
+        }
+      } catch (err) {
+        console.log("Error in fetching unpaid employees: " + err);
+      }
+    };
+    fetchUnpaidEmployees();
+  }, [sendRequest, unpaidPage]);
 
   return (
     <div className="p-4 sm:ml-64 min-h-[500px]">
       {/* Paid Employees */}
       <div>
-        {employeeCount>0 && (
-        <div className="px-4 border-2 bg-gray-100 border-gray-200 rounded-lg">
-          <div>
-            <h1 className="text-3xl font-bold text-center my-2">Paid Employees</h1>
-            {/* Employee Card  Heading*/}
-            <div className="grid grid-cols-12 gap-5 bg-primary-600 text-white shadow-gray-300 shadow-xl rounded-t-lg p-4 rounded-lg mb-4 w-full">
-              <div className='flex justify-center items-center col-span-2'>
-                <h2 className="text-sm font-bold">Name</h2>
-              </div>
-              <div className='flex justify-center items-center col-span-3'>
-                <h2 className="text-sm font-bold">Employee ID</h2>
-              </div>
-              <div className='flex justify-center items-center col-span-2'>
-                <h2 className="text-sm font-bold">Email</h2>
-              </div>
-              <div className='flex justify-center items-center col-span-3'>
-                <h2 className="text-sm font-bold">Progress</h2>
-              </div>
-              <div className='flex justify-center items-center col-span-2'>
-                <h2 className="text-sm font-bold">Project</h2>
-              </div>
-            </div>
-          </div>
-          {/* Employee Cards mapped to display*/}
-          <div className="">
-            {loadedEmployees && loadedEmployees.map((employee) => {
-              return (
-                <div key={employee.id}>
-                  <EmployeeCard
-                    id={employee.id}
-                    employeeID={employee.ref}
-                    firstname={employee.firstname}
-                    lastname={employee.lastname} 
-                    email={employee.email}
-                    rating={employee.rating}
-                  />
+        {paidEmployeeCount > 0 && (
+          <div className="px-4 border-2 bg-gray-100 border-gray-200 rounded-lg">
+            <div>
+              <h1 className="text-3xl font-bold text-center my-2">Paid Employees</h1>
+              {/* Employee Card  Heading*/}
+              <div className="grid grid-cols-12 gap-5 bg-primary-600 text-white shadow-gray-300 shadow-xl rounded-t-lg p-4 rounded-lg mb-4 w-full">
+                <div className='flex justify-center items-center col-span-2'>
+                  <h2 className="text-sm font-bold">Name</h2>
                 </div>
-              );
-            })}
-          </div>
-
-          {employeeCount > 0 && (
-            <div className='flex justify-center items-center'>
-              <ReactPaginate
-                previousLabel={"previous"}
-                nextLabel={"next"}
-                breakLabel={"..."}
-                pageCount={pageCount}
-                marginPagesDisplayed={2}
-                pageRangeDisplayed={3}
-                onPageChange={(selected) => handlePageClick(selected.selected)}
-                containerClassName={"inline-flex -space-x-px text-sm justify-content-center items-center mt-4 mb-4"}
-                pageLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-blue-100 hover:text-blue-700 focus:bg-blue-100 focus:text-blue-700"}
-                previousLinkClassName={"flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-blue-100 hover:text-blue-700"}
-                nextClassName={"page-item"}
-                nextLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-blue-100 hover:text-blue-700"}
-                breakLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-blue-100 hover:text-blue-700 "}
-              />
+                <div className='flex justify-center items-center col-span-3'>
+                  <h2 className="text-sm font-bold">Employee ID</h2>
+                </div>
+                <div className='flex justify-center items-center col-span-2'>
+                  <h2 className="text-sm font-bold">Email</h2>
+                </div>
+                <div className='flex justify-center items-center col-span-2'>
+                  <h2 className="text-sm font-bold">Progress</h2>
+                </div>
+                <div className='flex justify-center items-center col-span-3'>
+                  <h2 className="text-sm font-bold">Actions</h2>
+                </div>
+              </div>
             </div>
-          )}
+            {/* Employee Cards mapped to display*/}
+            <div className="">
+              {loadedPaidEmployees && loadedPaidEmployees.map((employee) => {
+                return (
+                  <div key={employee.id}>
+                    <EmployeeCard
+                      id={employee.id}
+                      employeeID={employee.ref}
+                      firstname={employee.firstname}
+                      lastname={employee.lastname}
+                      email={employee.email}
+                      rating={employee.rating}
+                      isPaid={employee.isPaid}
+                      receipt={employee.receipt}
+                    />
+                  </div>
+                );
+              })}
+            </div>
 
-        </div>
+            {paidEmployeeCount > 0 && (
+              <div className='flex justify-center items-center'>
+                <ReactPaginate
+                  previousLabel={"previous"}
+                  nextLabel={"next"}
+                  breakLabel={"..."}
+                  pageCount={paidPageCount}
+                  marginPagesDisplayed={2}
+                  pageRangeDisplayed={3}
+                  onPageChange={(selected) => handlePaidPageClick(selected.selected)}
+                  containerClassName={"inline-flex -space-x-px text-sm justify-content-center items-center mt-4 mb-4"}
+                  pageLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-blue-100 hover:text-blue-700 focus:bg-blue-100 focus:text-blue-700"}
+                  previousLinkClassName={"flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-blue-100 hover:text-blue-700"}
+                  nextClassName={"page-item"}
+                  nextLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-blue-100 hover:text-blue-700"}
+                  breakLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-blue-100 hover:text-blue-700 "}
+                />
+              </div>
+            )}
+
+          </div>
         )}
-        
-        {employeeCount === 0 && (
-        <div className='text-2xl font-bold text-center'>
-          No Employees
-        </div>
+
+        {paidEmployeeCount === 0 && (
+          <div className='text-center px-4 py-8 border-2 bg-gray-100 border-gray-200 rounded-lg font-bold text-3xl'>
+            No Paid Employees
+          </div>
         )}
       </div>
 
       {/* Other Employees */}
       <div className='mt-4'>
-        {employeeCount>0 && (
-        <div className="px-4 border-2 bg-gray-100 border-gray-200 rounded-lg">
-          <div>
-            <h1 className="text-3xl font-bold text-center my-2">Other Employees</h1>
-            {/* Employee Card  Heading*/}
-            <div className="grid grid-cols-12 gap-5 bg-primary-600 text-white shadow-gray-300 shadow-xl rounded-t-lg p-4 rounded-lg mb-4 w-full">
-              <div className='flex justify-center items-center col-span-2'>
-                <h2 className="text-sm font-bold">Name</h2>
-              </div>
-              <div className='flex justify-center items-center col-span-3'>
-                <h2 className="text-sm font-bold">Employee ID</h2>
-              </div>
-              <div className='flex justify-center items-center col-span-2'>
-                <h2 className="text-sm font-bold">Email</h2>
-              </div>
-              <div className='flex justify-center items-center col-span-3'>
-                <h2 className="text-sm font-bold">Progress</h2>
-              </div>
-              <div className='flex justify-center items-center col-span-2'>
-                <h2 className="text-sm font-bold">Project</h2>
-              </div>
-            </div>
-          </div>
-          {/* Employee Cards mapped to display*/}
-          <div className="">
-            {loadedEmployees && loadedEmployees.map((employee) => {
-              return (
-                <div key={employee.id}>
-                  <EmployeeCard
-                    id={employee.id}
-                    employeeID={employee.ref}
-                    firstname={employee.firstname}
-                    lastname={employee.lastname} 
-                    email={employee.email}
-                    rating={employee.rating}
-                  />
+        {unpaidEmployeeCount > 0 && (
+          <div className="px-4 border-2 bg-gray-100 border-gray-200 rounded-lg">
+            <div>
+              <h1 className="text-3xl font-bold text-center my-2">Other Employees</h1>
+              {/* Employee Card  Heading*/}
+              <div className="grid grid-cols-12 gap-5 bg-primary-600 text-white shadow-gray-300 shadow-xl rounded-t-lg p-4 rounded-lg mb-4 w-full">
+                <div className='flex justify-center items-center col-span-2'>
+                  <h2 className="text-sm font-bold">Name</h2>
                 </div>
-              );
-            })}
-          </div>
-
-          {employeeCount > 0 && (
-            <div className='flex justify-center items-center'>
-              <ReactPaginate
-                previousLabel={"previous"}
-                nextLabel={"next"}
-                breakLabel={"..."}
-                pageCount={pageCount}
-                marginPagesDisplayed={2}
-                pageRangeDisplayed={3}
-                onPageChange={(selected) => handlePageClick(selected.selected)}
-                containerClassName={"inline-flex -space-x-px text-sm justify-content-center items-center mt-4 mb-4"}
-                pageLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-blue-100 hover:text-blue-700 focus:bg-blue-100 focus:text-blue-700"}
-                previousLinkClassName={"flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-blue-100 hover:text-blue-700"}
-                nextClassName={"page-item"}
-                nextLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-blue-100 hover:text-blue-700"}
-                breakLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-blue-100 hover:text-blue-700 "}
-              />
+                <div className='flex justify-center items-center col-span-3'>
+                  <h2 className="text-sm font-bold">Employee ID</h2>
+                </div>
+                <div className='flex justify-center items-center col-span-2'>
+                  <h2 className="text-sm font-bold">Email</h2>
+                </div>
+                <div className='flex justify-center items-center col-span-2'>
+                  <h2 className="text-sm font-bold">Progress</h2>
+                </div>
+                <div className='flex justify-center items-center col-span-3'>
+                  <h2 className="text-sm font-bold">Actions</h2>
+                </div>
+              </div>
             </div>
-          )}
+            {/* Employee Cards mapped to display*/}
+            <div className="">
+              {loadedUnpaidEmployees && loadedUnpaidEmployees.map((employee) => {
+                return (
+                  <div key={employee.id}>
+                    <EmployeeCard
+                      id={employee.id}
+                      employeeID={employee.ref}
+                      firstname={employee.firstname}
+                      lastname={employee.lastname}
+                      email={employee.email}
+                      rating={employee.rating}
+                      isPaid={employee.isPaid}
+                      receipt={employee.receipt}
+                    />
+                  </div>
+                );
+              })}
+            </div>
 
-        </div>
+            {unpaidEmployeeCount > 0 && (
+              <div className='flex justify-center items-center'>
+                <ReactPaginate
+                  previousLabel={"previous"}
+                  nextLabel={"next"}
+                  breakLabel={"..."}
+                  pageCount={unpaidPageCount}
+                  marginPagesDisplayed={2}
+                  pageRangeDisplayed={3}
+                  onPageChange={(selected) => handleUnpaidPageClick(selected.selected)}
+                  containerClassName={"inline-flex -space-x-px text-sm justify-content-center items-center mt-4 mb-4"}
+                  pageLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-blue-100 hover:text-blue-700 focus:bg-blue-100 focus:text-blue-700"}
+                  previousLinkClassName={"flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-blue-100 hover:text-blue-700"}
+                  nextClassName={"page-item"}
+                  nextLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-blue-100 hover:text-blue-700"}
+                  breakLinkClassName={"flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-blue-100 hover:text-blue-700 "}
+                />
+              </div>
+            )}
+
+          </div>
         )}
-        
-        {employeeCount === 0 && (
-        <div className='text-2xl font-bold text-center'>
-          No Employees
-        </div>
+
+        {unpaidEmployeeCount === 0 && (
+          <div className='text-center px-4 py-8 border-2 bg-gray-100 border-gray-200 rounded-lg font-bold text-3xl'>
+            No Unpaid Employees
+          </div>
         )}
       </div>
-      
+
     </div>
   )
 }

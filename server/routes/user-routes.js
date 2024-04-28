@@ -3,6 +3,7 @@ const { check } = require('express-validator');
 
 const userController = require('../controller/user-controller');
 const imageUpload = require('../middlewares/image-upload');
+const receiptUpload = require('../middlewares/receipt-upload');
 
 const router = express.Router();
 
@@ -14,6 +15,8 @@ router.get('/user/username/:username', userController.getUserByUsername);
 router.get('/employees/project/:pid', userController.getEmployeesByProjectId);
 
 router.get('/emp', userController.getEmployees);
+router.get('/paidemp', userController.getPaidEmployees);
+router.get('/unpaidemp', userController.getUnpaidEmployees);
 router.get('/emp/id/:uid', userController.getEmployeeById);
 router.get('/emp/email/:email', userController.getEmployeeByEmail);
 router.get('/emp/username/:username', userController.getEmployeeByUsername);
@@ -21,6 +24,8 @@ router.get('/emp/ref/:ref', userController.getEmployeeByRef);
 router.get('/emp/search/email/:search_email', userController.searchEmployeeByEmail);
 router.get('/emp/search/ref/:search_ref', userController.searchEmployeeByRef);
 router.get('/empcount', userController.getEmployeeCount);
+router.get('/paidempcount', userController.getPaidEmployeeCount);
+router.get('/unpaidempcount', userController.getUnpaidEmployeeCount);
 
 router.get('/terminations', userController.getAllTerminations);
 router.get('/terminationcount', userController.getAllTerminationsCount);
@@ -145,6 +150,26 @@ router.patch(
   userController.updateUserImage
 );
 
+// PATCH: Update user receipt
+router.patch(
+  '/edit/update-paid-emp-receipt/',
+  receiptUpload.single('receipt'),
+  userController.updatePaidEmployeeReceipt
+);
+
+// PATCH: upload user receipt
+router.patch(
+  '/edit/upload-paid-emp-receipt/',
+  receiptUpload.single('receipt'),
+  userController.uploadPaidEmployeeReceipt
+);
+
+// PATCH: remove user receipt
+router.patch(
+  '/edit/remove-paid-emp-receipt/',
+  userController.removePaidEmployeeReceipt
+);
+
 // PATCH: Update user image
 router.patch(
   '/edit/imagedelete/:uid',
@@ -163,6 +188,20 @@ router.patch(
   '/edit/emptouser/',
   [check('userId').not().isEmpty()],
   userController.updateEmployeeAsUser
+);
+
+// PATCH: Update Employee to paid
+router.patch(
+  '/edit/emptopaid/',
+  [check('userId').not().isEmpty()],
+  userController.updateEmployeeAsPaid
+);
+
+// PATCH: Update Employee to unpaid
+router.patch(
+  '/edit/emptounpaid/',
+  [check('userId').not().isEmpty()],
+  userController.updateEmployeeAsUnpaid
 );
 
 // PATCH: Update Employee rating

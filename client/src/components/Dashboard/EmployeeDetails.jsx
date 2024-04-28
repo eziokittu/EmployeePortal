@@ -148,10 +148,15 @@ const EmployeeDetails = () => {
 					<div className='col-span-2 text-white w-100 h-72 bg-employeeBg bg-no-repeat bg-center rounded-lg shadow'>
 
 						{/* name */}
-						<h5 className="ml-8 mt-8 mb-4 text-2xl lg:text-3xl font-bold">
-							<span>{employeeDetails.firstname}</span>
-							<span className='pl-4'>{employeeDetails.lastname}</span>
-						</h5>
+						<div className='flex flex-row justify-between text-center  items-center'>
+							<h5 className="ml-8 mt-4 mb-4 text-2xl lg:text-3xl font-bold">
+								<span>{employeeDetails.firstname}</span>
+								<span className='pl-4'>{employeeDetails.lastname}</span>
+							</h5>
+							{employeeDetails.isPaid && (
+								<span className='h-[32px] w-[200px] mr-4 flex flex-col text-center justify-center items-center bg-green-500 text-white font-bold rounded-xl'>Paid Employee</span>
+							)}
+						</div>
 
 						{/* Role / Designation  */}
 						{employeeDomain && (
@@ -219,11 +224,28 @@ const EmployeeDetails = () => {
 							)}
 						</button>
 
-						{/* Email */}
-						<button href="#" className="flex justify-between items-center ml-8 mt-2 px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg cursor-default ">
-							<svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 128 96" id="Email"><g data-name="Layer 2" fill="#ffffff" className="color000000 svgShape"><path d="M0 11.283V8a8 8 0 0 1 8-8h112a8 8 0 0 1 8 8v3.283l-64 40zm66.12 48.11a4.004 4.004 0 0 1-4.24 0L0 20.717V88a8 8 0 0 0 8 8h112a8 8 0 0 0 8-8V20.717z" fill="#ffffff" className="color000000 svgShape"></path></g></svg>
-							<span className='ms-3 text-md'> {employeeDetails.email}</span>
-						</button>
+						{/* Email and Payment receipt*/}
+						<div className='flex flex-row justify-between'>
+							<button href="#" className="flex justify-between items-center ml-8 mt-2 px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg cursor-default ">
+								<svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 128 96" id="Email"><g data-name="Layer 2" fill="#ffffff" className="color000000 svgShape"><path d="M0 11.283V8a8 8 0 0 1 8-8h112a8 8 0 0 1 8 8v3.283l-64 40zm66.12 48.11a4.004 4.004 0 0 1-4.24 0L0 20.717V88a8 8 0 0 0 8 8h112a8 8 0 0 0 8-8V20.717z" fill="#ffffff" className="color000000 svgShape"></path></g></svg>
+								<span className='ms-3 text-md'> {employeeDetails.email}</span>
+							</button>
+							{/* Payment Receipt */}
+							{employeeDetails.isPaid && (
+								<div className='mr-4'>
+									{employeeDetails.receipt != import.meta.env.VITE_USER_DEFAULT_RECEIPT_PATH && (
+										<a
+											href={`${import.meta.env.VITE_ASSETS_URL}/${employeeDetails.receipt}`} target="_blank" rel="noopener noreferrer"
+											className="w-[200px] flex flex-col text-center justify-center items-center bg-blue-700 hover:bg-blue-900 text-white font-bold py-2 rounded-xl cursor-pointer">
+											<span className=''>View Payment Receipt</span>
+										</a>
+									)}
+									{employeeDetails.receipt == import.meta.env.VITE_USER_DEFAULT_RECEIPT_PATH && (
+										<span className='flex flex-col text-center justify-center items-center bg-blue-700  text-white font-bold py-2 rounded-xl w-[300px] '>Payment receipt not updated!</span>
+									)}
+								</div>
+							)}
+						</div>
 					</div>
 
 				</div>
